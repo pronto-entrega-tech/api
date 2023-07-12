@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "plugins": ["@nestjs/swagger"],
+    "assets": [{ "include": "**/*.html", "outDir": "dist" }]
+  },
+  "dtoFileNameSuffix": [".dto.ts", ".entity.ts", ".res.ts"]
+}

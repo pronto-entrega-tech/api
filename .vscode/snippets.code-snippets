@@ -1,0 +1,26 @@
+{
+  "Create unit test": {
+    "scope": "typescript",
+    "prefix": ["test"],
+    "body": [
+      "import { describe, it, expect } from 'vitest';",
+      "import { fn } from './${TM_FILENAME_BASE/.spec/$1/}';",
+      "import { format } from 'util';",
+      "",
+      "const from = (i: { input: number }) => ({",
+      "  to: (o: { output: number }) => {",
+      "    const assert = () => {",
+      "      const res = fn(i.input);",
+      "",
+      "      expect(res).toEqual(o.output);",
+      "    };",
+      "    return [format('%o => %o', i, o), assert] as const;",
+      "  },",
+      "});",
+      "",
+      "describe(fn.name, () => {",
+      "  it(...from({ input: 0 }).to({ output: 0 }));",
+      "});"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.spec.ts",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "yarn.lock"
+  },
+  "material-icon-theme.activeIconPack": "nest",
+  "material-icon-theme.folders.associations": {
+    "processors": "queue",
+    "controllers": "public",
+    "dto": "class",
+    "responses": "class",
+    "repositories": "database",
+    "migrations": "ci"
+  },
+  "material-icon-theme.files.associations": {
+    "*.processor.ts": "nest-controller",
+    "*.dto.ts": "nest-pipe",
+    "*.repo.ts": "nest-middleware",
+    "*.service-spec.ts": "test-ts",
+    "*.db-spec.ts": "test-ts",
+    "test.ts": "test-ts",
+    "vitest.config.ts": "vite"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[dockercompose]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "cSpell.language": "en,pt-BR",
+  "cSpell.words": [
+    "asaas",
+    "autorun",
+    "bullmq",
+    "cnpj",
+    "Cnpj",
+    "csrf",
+    "fastify",
+    "Km",
+    "nestjs",
+    "opentelemetry",
+    "unsign",
+    "websockets"
+  ]
+}
