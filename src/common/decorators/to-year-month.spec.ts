@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import TransformToYearMonth from './to-year-month';
+import { describe, expect, it } from 'vitest';
 
 class TestClass {
   @TransformToYearMonth()

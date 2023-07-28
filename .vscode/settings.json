@@ -5,7 +5,7 @@
   "explorer.fileNesting.patterns": {
     "*.ts": "${capture}.spec.ts",
     "tsconfig.json": "tsconfig.*.json",
-    "package.json": "yarn.lock"
+    "package.json": "pnpm-lock.yaml"
   },
   "material-icon-theme.activeIconPack": "nest",
   "material-icon-theme.folders.associations": {

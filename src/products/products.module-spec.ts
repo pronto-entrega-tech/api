@@ -5,6 +5,7 @@ import { pick } from '~/common/functions/pick';
 import { PrismaService } from '~/common/prisma/prisma.service';
 import { RepositoriesModule } from '~/repositories/repositories.module';
 import { ProductsService } from './products.service';
+import { afterAll, beforeEach, it, expect } from 'vitest';
 
 let products: ProductsService;
 let prisma: PrismaService;

@@ -92,7 +92,7 @@ export namespace CreateOrderRepo {
     return items;
   }
 
-  export async function orderCreationData(market_id: string) {
+  export async function market(market_id: string) {
     return prisma.market
       .findFirstOrThrow({
         select: {

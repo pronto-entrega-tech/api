@@ -31,7 +31,8 @@ const getPix = async () => PaymentExample.pix;
 
 describe(orderPaymentPendingAction.name, () => {
   it("return Create given payment don't exist", async () => {
-    const res = await orderPaymentPendingAction(PaymentExample.payOrderDto, {
+    const res = await orderPaymentPendingAction({
+      ...PaymentExample.payOrderDto,
       getExistingPayments: async () => [],
       getPix,
     });
@@ -40,7 +41,8 @@ describe(orderPaymentPendingAction.name, () => {
   });
 
   it('return UpdateOrder given a payment exist', async () => {
-    const res = await orderPaymentPendingAction(PaymentExample.payOrderDto, {
+    const res = await orderPaymentPendingAction({
+      ...PaymentExample.payOrderDto,
       getExistingPayments: async () => [cardPaymentReceived],
       getPix,
     });
@@ -55,7 +57,8 @@ describe(orderPaymentPendingAction.name, () => {
   });
 
   it('return RecreatePayment given payment is overdue', async () => {
-    const res = await orderPaymentPendingAction(PaymentExample.payOrderDto, {
+    const res = await orderPaymentPendingAction({
+      ...PaymentExample.payOrderDto,
       getExistingPayments: async () => [cardPaymentOverdue],
       getPix,
     });
@@ -64,13 +67,12 @@ describe(orderPaymentPendingAction.name, () => {
   });
 
   it('return updateOrder given pix payment is pending and order payment method is pix', async () => {
-    const res = await orderPaymentPendingAction(
-      { ...PaymentExample.payOrderDto, payment_method: InAppPaymentMethod.Pix },
-      {
-        getExistingPayments: async () => [pixPaymentPending],
-        getPix,
-      },
-    );
+    const res = await orderPaymentPendingAction({
+      ...PaymentExample.payOrderDto,
+      payment_method: InAppPaymentMethod.Pix,
+      getExistingPayments: async () => [pixPaymentPending],
+      getPix,
+    });
 
     expect(res).toEqual(
       createDecision('updateOrder', {
@@ -82,13 +84,12 @@ describe(orderPaymentPendingAction.name, () => {
   });
 
   it('return None on status other than PaymentProcessing', async () => {
-    const res = await orderPaymentPendingAction(
-      { ...PaymentExample.payOrderDto, status: OrderStatus.PaymentFailed },
-      {
-        getExistingPayments: async () => [cardPaymentPending],
-        getPix,
-      },
-    );
+    const res = await orderPaymentPendingAction({
+      ...PaymentExample.payOrderDto,
+      status: OrderStatus.PaymentFailed,
+      getExistingPayments: async () => [cardPaymentPending],
+      getPix,
+    });
 
     expect(res).toEqual(createDecision('none'));
   });

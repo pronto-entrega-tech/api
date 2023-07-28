@@ -28,9 +28,10 @@ import {
 } from '~/responses/customer.res';
 import { CustomerCardsService } from './customer-cards.service';
 import { CustomersService } from './customers.service';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 class FakePaymentAccounts {
-  initCreateCustomerPayer = jest.fn();
+  initCreateCustomerPayer = vi.fn();
   createCustomerPayer = () => ({ payer_id: 'payerId' });
 }
 

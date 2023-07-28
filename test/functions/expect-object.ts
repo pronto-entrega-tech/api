@@ -41,9 +41,9 @@ export function expectObject(obj: any) {
         .concat('');
 
     const errors =
-      errs[0].property === 'array' &&
+      errs[0]?.property === 'array' &&
       errs[0].children &&
-      errs[0].children[0].children
+      errs[0].children[0]?.children
         ? errs[0].children.reduce(reduceArr, [] as string[])
         : errs.reduce(reducer, [] as string[]);
 

@@ -1,8 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { fail } from 'assert';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Observable } from 'rxjs';
-import { lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { isDevOrTest } from '~/common/constants/is-dev';
 
 export class AsaasRequests {

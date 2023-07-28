@@ -35,36 +35,36 @@ export const CreateRoute: {
   delete: Route;
 } = {
   get: (path, opts, fn) => {
-    fastify.get(path, async (req: AuthReq) => {
-      transformAndValidateRequest(opts, req);
+    fastify.get(path, async (req) => {
+      transformAndValidateRequest(opts, req as AuthReq);
       return fn(req as any);
     });
   },
 
   post: (path, opts, fn) => {
-    fastify.post(path, async (req: AuthReq) => {
-      transformAndValidateRequest(opts, req);
+    fastify.post(path, async (req) => {
+      transformAndValidateRequest(opts, req as AuthReq);
       return fn(req as any);
     });
   },
 
   patch: (path, opts, fn) => {
-    fastify.patch(path, async (req: AuthReq) => {
-      transformAndValidateRequest(opts, req);
+    fastify.patch(path, async (req) => {
+      transformAndValidateRequest(opts, req as AuthReq);
       return fn(req as any);
     });
   },
 
   put: (path, opts, fn) => {
-    fastify.put(path, async (req: AuthReq) => {
-      transformAndValidateRequest(opts, req);
+    fastify.put(path, async (req) => {
+      transformAndValidateRequest(opts, req as AuthReq);
       return fn(req as any);
     });
   },
 
   delete: (path, opts, fn) => {
-    fastify.delete(path, async (req: AuthReq) => {
-      transformAndValidateRequest(opts, req);
+    fastify.delete(path, async (req) => {
+      transformAndValidateRequest(opts, req as AuthReq);
       return fn(req as any);
     });
   },

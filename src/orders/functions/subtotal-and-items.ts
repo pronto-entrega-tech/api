@@ -7,11 +7,14 @@ import { marketPriceToAppPrice } from '~/payments/functions/market-price-to-app-
 import { CreateOrderPreDto, OrderItemDto } from '../dto/create.dto';
 import { getItemTotalWithOff } from './item-total-with-off';
 
-export function getSubtotalAndOrderItems(dto: CreateOrderPreDto) {
+export function getSubtotalAndOrderItems({
+  client,
+  server,
+}: CreateOrderPreDto) {
   const orderItems = [] as OrderItemDto[];
 
-  const subtotal = dto.items.reduce((subtotal, { item_id, quantity }) => {
-    const item = dto.extra.items.find((v) => v.item_id === item_id);
+  const subtotal = client.items.reduce((subtotal, { item_id, quantity }) => {
+    const item = server.items.find((v) => v.item_id === item_id);
     if (!item) throw new Error('item_ids are not equal');
 
     const price = marketPriceToAppPrice(item.market_price, item.market.markup);

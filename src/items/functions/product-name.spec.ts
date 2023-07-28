@@ -1,5 +1,6 @@
 import { getProductName } from './product-name';
 import { format } from 'util';
+import { describe, expect, it } from 'vitest';
 
 const from = (i: Parameters<typeof getProductName>[0]) => ({
   to: (o: { name: string }) => {

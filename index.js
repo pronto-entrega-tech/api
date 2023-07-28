@@ -1,6 +1,10 @@
+/**
+ * This script is meant to be used by the PM2
+ */
+
 const { exec } = require('child_process');
 
-const app = exec('~/.nvm/nvm-exec yarn start:prod');
+const app = exec('rtx exec pnpm start:prod');
 
 app.stdout.on('data', (data) => {
   process.stdout.write(data);

@@ -22,7 +22,7 @@ const UpdateOrderQueue = createQueueNamed<UpdateOrder>()(
   },
 );
 
-export async function initOrderPayment(order: orders) {
+export async function queueOrderPayment(order: orders) {
   await UpdateOrderQueue.add(
     UpdateOrder.Pay,
     {

@@ -1,36 +1,27 @@
 import { PrismaService } from '~/common/prisma/prisma.service';
 import { AdminRepository } from '~/repositories/admin/admin.repository';
-import { InMemoryAdminRepository } from '~/repositories/admin/in-memory-admin.repository';
-import { CitiesRepository } from '~/repositories/cities/cities.repository';
-import { InMemoryCitiesRepository } from '~/repositories/cities/in-memory-cities.repository';
 import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { InMemoryCustomersRepository } from '~/repositories/customers/in-memory-customers.repository';
-import { InMemoryItemsRepository } from '~/repositories/items/in-memory-items.repository';
 import { ItemsRepository } from '~/repositories/items/items.repository';
-import { InMemoryMarketsRepository } from '~/repositories/markets/in-memory-markets.repository';
 import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { InMemoryOrdersRepository } from '~/repositories/orders/in-memory-orders.repository';
 import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { InMemoryOTPRepository } from '~/repositories/otp/in-memory-otp.repository';
 import { OTPRepository } from '~/repositories/otp/otp.repository';
-import { InMemoryProductsRepository } from '~/repositories/products/in-memory-products.repository';
 import { ProductsRepository } from '~/repositories/products/products.repository';
-import { InMemorySessionsRepository } from '~/repositories/sessions/in-memory-sessions.repository';
 import { SessionsRepository } from '~/repositories/sessions/sessions.repository';
 import { dbAnnihilator, AnnihilateDb } from './db-annihilator';
+import { afterAll, beforeAll, beforeEach, vi } from 'vitest';
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 
-jest.mock('@nestjs/common', () => ({
-  Injectable: jest.fn(),
+vi.mock('@nestjs/common', () => ({
+  Injectable: vi.fn(),
 }));
-jest.mock('@nestjs/swagger', () => ({
-  ApiProperty: jest.fn(),
+vi.mock('@nestjs/swagger', () => ({
+  ApiProperty: vi.fn(),
 }));
-jest.mock('@nestjs/axios', () => ({
-  HttpService: jest.fn(),
+vi.mock('@nestjs/axios', () => ({
+  HttpService: vi.fn(),
 }));
 
 const repos = {

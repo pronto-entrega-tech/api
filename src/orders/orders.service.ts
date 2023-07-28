@@ -83,8 +83,8 @@ export class OrdersService {
       ]);
 
     return createOrderDto({
-      ...dto,
-      extra: { market, items, card, creditLogs, lastMarketOrderId },
+      client: dto,
+      server: { market, items, card, creditLogs, lastMarketOrderId },
     });
   }
 

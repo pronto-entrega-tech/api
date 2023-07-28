@@ -7,10 +7,11 @@ import { InMemoryRepositoriesModule } from '~/repositories/in-memory-repositorie
 import { MarketsRepository } from '~/repositories/markets/markets.repository';
 import { MarketCreateRes } from '~/responses/market.res';
 import { MarketsService } from './markets.service';
+import { vi, beforeEach, describe, expect, it } from 'vitest';
 
 class FakePaymentAccounts {
-  initCreatePayer = jest.fn();
-  initCreateRecipient = jest.fn();
+  initCreatePayer = vi.fn();
+  initCreateRecipient = vi.fn();
 }
 
 let markets: MarketsService;

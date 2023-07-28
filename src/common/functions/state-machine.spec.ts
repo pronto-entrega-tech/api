@@ -1,4 +1,5 @@
 import { newStateMachine } from '~/common/functions/state-machine';
+import { describe, expect, it } from 'vitest';
 
 const machine = {
   oldState: {

@@ -103,7 +103,6 @@ const bootstrap = async () => {
     console.log(`Bull Board is running on:  ${appUrl}${bullBoardPath}`);
   }
 };
-bootstrap();
 
 const logger = new Logger('UnhandledRejection');
 process.on('unhandledRejection', (error) => {
@@ -179,3 +178,5 @@ export class ReqResModifyInterceptor implements NestInterceptor {
     return next.handle();
   }
 }
+
+bootstrap();

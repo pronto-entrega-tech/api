@@ -1,5 +1,4 @@
-import { payment_method } from '.prisma/client';
-import { customer_card } from '@prisma/client';
+import { payment_method, customer_card } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
 import { Type } from 'class-transformer';
 import {

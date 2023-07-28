@@ -1,15 +1,3 @@
-# Use `nvm` to manage node
+# Use `rtx` to manage node and pnpm
 
-https://github.com/nvm-sh/nvm#installing-and-updating
-
-And setup this, so node version change automatically when changing directories
-
-https://github.com/nvm-sh/nvm#deeper-shell-integration
-
-# Use `yarn`
-
-Run the following both to install and upgrade Yarn:
-
-```sh
-npm install --global yarn
-```
+<https://github.com/jdxcode/rtx#installation>

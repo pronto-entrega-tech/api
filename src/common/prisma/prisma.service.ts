@@ -69,16 +69,16 @@ export class PrismaService
 
   private devSetup() {
     console.log('Creating containers');
-    execSync('yarn docker:up');
+    execSync('pnpm docker:up');
 
     console.log('Running migrations');
-    // execSync('yarn migrate:dev');
+    // execSync('pnpm migrate:dev');
     execSync('npx prisma db push');
   }
 
   private teardown() {
     console.log('Destroying containers');
-    execSync('yarn docker:down');
+    execSync('pnpm docker:down');
   }
 }
 

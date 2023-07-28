@@ -14,9 +14,11 @@ import { AuthToken } from './constants/auth-tokens';
 import { JwtPayload } from './constants/jwt-payload';
 import { Role } from './constants/roles';
 import { SessionsModule } from './sessions/sessions.module';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fail } from 'assert';
 
 class FakeMailer {
-  sendMail = jest.fn();
+  sendMail = vi.fn();
 }
 
 let auth: AuthService;

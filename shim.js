@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // Change http trace name
-{
+/* {
   const path = './node_modules/@opentelemetry/instrumentation-http/build/src/http.js';
 
   const oldLines = /\${component\.to(Locale)?UpperCase\(\)} \${method}/
@@ -15,13 +15,14 @@ const fs = require('fs');
 
     fs.writeFileSync(path, modifiedFile);
   }
-}
+} */
 
 // Change name on logger
 {
-  const path = './node_modules/@nestjs/common/services/console-logger.service.js';
+  const path =
+    './node_modules/@nestjs/common/services/console-logger.service.js';
 
-  const oldLine = '[Nest]'
+  const oldLine = '[Nest]';
   const newLine = '[Api]';
 
   const originalFile = fs.readFileSync(path, { encoding: 'utf8' });

@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { Decimal } from '@prisma/client/runtime';
+import { describe, beforeEach, it, expect } from 'vitest';
 import { lastMonth, currentMonth, nextMonth } from '@test/examples/common';
 import { createCustomer } from '@test/examples/customer';
 import { createAsaasAccount, createMarket } from '@test/examples/market';
@@ -32,6 +33,7 @@ import { PayOrderService } from './pay-order.service';
 import { PaymentsService } from './payments.service';
 import { PayoutsService } from './payouts.service';
 import { ProcessInvoiceService } from './process-invoice.service';
+import { fail } from 'assert';
 
 class FakePaymentAccounts {
   createCustomerPayer = () => ({ id: 'customerPayerId' });

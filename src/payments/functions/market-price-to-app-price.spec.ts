@@ -1,6 +1,7 @@
 import { Decimal } from '@prisma/client/runtime';
 import { format } from 'util';
 import { marketPriceToAppPrice } from './market-price-to-app-price';
+import { describe, expect, it } from 'vitest';
 
 const from = (i: { marketPrice: number; markup: number }) => ({
   to: (o: { appPrice: number }) => {

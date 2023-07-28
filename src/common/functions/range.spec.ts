@@ -1,4 +1,5 @@
 import { range } from '~/common/functions/range';
+import { describe, expect, it } from 'vitest';
 
 describe('Range', () => {
   it('should return 0...1', () => {

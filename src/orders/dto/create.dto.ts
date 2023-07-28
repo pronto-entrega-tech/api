@@ -1,5 +1,4 @@
-import { payment_method } from '.prisma/client';
-import { customer_card } from '@prisma/client';
+import { payment_method, customer_card } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
 import { Type } from 'class-transformer';
 import {
@@ -95,8 +94,9 @@ export type CreateOrderDto = CreateOrderBody & {
   readonly ip: string;
 };
 
-export type CreateOrderPreDto = CreateOrderDto & {
-  extra: {
+export type CreateOrderPreDto = {
+  client: CreateOrderDto;
+  server: {
     market: MarketsRepository.OrderCreationData;
     items: ItemsRepository.ItemById[];
     creditLogs?: OrdersRepository.CreditLog[];

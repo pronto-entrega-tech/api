@@ -10,23 +10,23 @@ import { getMarketAmount } from './market-amount';
 import { getSubtotalAndOrderItems } from './subtotal-and-items';
 
 export function createOrderDto(dto: CreateOrderPreDto) {
-  const { extra } = dto;
-  const { delivery_fee, min_time, max_time } = extra.market;
+  const { client, server } = dto;
+  const { delivery_fee } = server.market;
 
   const { subtotal, orderItems } = getSubtotalAndOrderItems(dto);
 
   return {
-    ...omit(dto, 'extra', 'card_id', 'client_total'),
+    ...omit(client, 'card_id', 'client_total'),
     delivery_fee,
     items: orderItems,
     total: getValidatedTotal(),
     status: getInitialStatus(),
-    market_amount: getMarketAmount(subtotal, delivery_fee, dto.paid_in_app),
-    delivery_min_time: getDeliveryTime(min_time),
-    delivery_max_time: getDeliveryTime(max_time),
-    market_order_id: extra.lastMarketOrderId + 1n,
-    ...getCardTokenAndPaymentDescription(dto, extra.card),
-    ...(extra.creditLogs ? getOneCustomerDebit(extra.creditLogs) : {}),
+    market_amount: getMarketAmount(subtotal, delivery_fee, client.paid_in_app),
+    delivery_min_time: getDeliveryTime(server.market.min_time),
+    delivery_max_time: getDeliveryTime(server.market.max_time),
+    market_order_id: server.lastMarketOrderId + 1n,
+    ...getCardTokenAndPaymentDescription(client, server.card),
+    ...(server.creditLogs ? getOneCustomerDebit(server.creditLogs) : {}),
   };
 
   function getValidatedTotal() {
@@ -35,7 +35,7 @@ export function createOrderDto(dto: CreateOrderPreDto) {
     if (!total.isPositive())
       throw new BadRequestException("Total isn't positive");
 
-    if (!total.equals(dto.client_total))
+    if (!total.equals(client.client_total))
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: "Client total don't equals server total",
@@ -46,7 +46,7 @@ export function createOrderDto(dto: CreateOrderPreDto) {
   }
 
   function getInitialStatus() {
-    return dto.paid_in_app
+    return client.paid_in_app
       ? OrderStatus.PaymentProcessing
       : OrderStatus.ApprovalPending;
   }

@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import TransformToBigInt from './to-bigint';
+import { describe, expect, it } from 'vitest';
 
 class TestClass {
   @TransformToBigInt()

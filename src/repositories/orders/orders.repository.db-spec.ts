@@ -1,4 +1,3 @@
-import { createCity } from '@test/examples/city';
 import { currentMonth, nextMonth } from '@test/examples/common';
 import { createCustomer } from '@test/examples/customer';
 import { saveItem } from '@test/examples/item';
@@ -127,7 +126,6 @@ describe.each(repoCases)('%s', (_name, setup) => {
   });
 
   async function setupApp() {
-    await repo.cities.create(createCity);
     await repo.products.createCategory(createCategory);
     await repo.products.create(createProduct);
     await repo.markets.payouts.createMany(currentMonth);

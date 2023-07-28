@@ -13,16 +13,14 @@ import { MarketsRepository } from '~/repositories/markets/markets.repository';
 import { ItemsService } from './items.service';
 import { AnnihilateDb, dbAnnihilator } from '@test/functions/db-annihilator';
 import { PrismaService } from '~/common/prisma/prisma.service';
-import { createCity } from '@test/examples/city';
 import { currentMonth, nextMonth } from '@test/examples/common';
 import { Decimal } from '@prisma/client/runtime';
 import { ProductsService } from '~/products/products.service';
-import { CitiesService } from '~/cities/cities.service';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 let items: ItemsService;
 let prisma: PrismaService;
 let annihilate: AnnihilateDb;
-const { city } = saveItem;
 const { market_id } = createMarket;
 const { id: market_sub_id } = createMarketSub;
 
@@ -37,11 +35,9 @@ beforeAll(async () => {
   prisma = module.get(PrismaService);
   annihilate = dbAnnihilator(prisma);
 
-  const cities = module.get(CitiesService);
   const products = module.get(ProductsService);
   const marketsRepo = module.get(MarketsRepository);
 
-  await cities.create(createCity);
   await products.createCategory(createCategory);
   await products.create(createProduct);
   await products.create(createProduct2);
