@@ -23,7 +23,7 @@ export async function createPayParams(
   {
     const commonParams: PayCommonParams = {
       customer: dto.customerPayerId,
-      value: +calculePaymentAmount(),
+      value: +calcPaymentAmount(),
       split: splitConfig(),
       dueDate: Month.shortDate(addDays(new Date(), 30)),
       externalReference: getOrderExternalId(dto.fullOrderId),
@@ -37,31 +37,31 @@ export async function createPayParams(
     }
   }
 
-  function calculePaymentAmount() {
-    const { customer_debit, total } = dto;
+  function calcPaymentAmount() {
+    const { customer_debit: over_total, total } = dto;
 
-    return !customer_debit ? total : total.plus(customer_debit);
+    return !over_total ? total : total.plus(over_total);
   }
 
   function splitConfig(): Asaas.CreatePayment['split'] {
-    const debit = getDebit();
+    const olderDebit = getOlderDebit();
 
     return [
       {
         walletId: dto.marketRecipientId,
         fixedValue: +dto.market_amount,
       },
-      ...(debit ? [debit] : []),
+      ...(olderDebit ? [olderDebit] : []),
     ];
   }
 
-  function getDebit() {
-    const { debitMarketRecipientId, customer_debit } = dto;
-    if (!debitMarketRecipientId || !customer_debit) return;
+  function getOlderDebit() {
+    const { debitMarketRecipientId, customer_debit: older_debit } = dto;
+    if (!debitMarketRecipientId || !older_debit) return;
 
     return {
       walletId: debitMarketRecipientId,
-      fixedValue: +customer_debit,
+      fixedValue: +older_debit,
     };
   }
 

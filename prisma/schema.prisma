@@ -2,7 +2,8 @@
 // pnpm gen-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -23,6 +24,7 @@ model products {
   brand              String?
   quantity           String?
   category_id        Int                      @db.SmallInt
+  thumbhash          String?
   images_names       String[]
   ts                 Unsupported("tsvector")? @default(dbgenerated("to_tsvector('portuguese', name)||to_tsvector('portuguese', brand)"))
   categories         categories?              @relation(fields: [category_id], references: [category_id])
@@ -156,6 +158,7 @@ model market {
   in_debt                Boolean                  @default(false)
   type                   market_type
   name                   String
+  thumbhash              String?
   address_street         String
   address_number         String
   address_district       String

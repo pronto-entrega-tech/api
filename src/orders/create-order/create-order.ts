@@ -1,16 +1,16 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { confirmationToken } from '../common/confirmation-token';
 import { queueOrderPayment } from '../common/init-order-payment';
 import { validateInAppPayment } from '../common/validate-in-app-payment';
 import { createOrderDto } from '../functions/create-order-dto';
-import { CreateOrderDto as OrderCreationDto } from './create-order.dto';
-import { CreateOrderRepo as Repo } from './create-order.repo';
+import { OneCustomerDebit } from '../functions/customer-debit';
+import { CreateOrderDto as ClientData } from './create-order.dto';
+import { CreateOrderRepo as DB } from './create-order.repo';
 
-export async function createOrder(dto: OrderCreationDto) {
+export async function createOrder(client: ClientData) {
   {
     const order = await saveOrderOnDB();
 
-    if (dto.paid_in_app) await queueOrderPayment(order);
+    if (client.paid_in_app) await queueOrderPayment(order);
 
     return {
       ...order,
@@ -19,57 +19,30 @@ export async function createOrder(dto: OrderCreationDto) {
   }
 
   async function saveOrderOnDB() {
-    const [, serverDto] = await Promise.all([
-      validateOrderCreation(),
-      getServerDto(),
+    const [, server] = await Promise.all([
+      client.paid_in_app ? validateInAppPayment(client) : undefined,
+      getServerData(),
     ]);
 
-    const orderDto = createOrderDto({
-      client: dto,
-      server: serverDto,
-    });
+    const unsavedOrder = createOrderDto({ client, server });
 
-    return Repo.save(orderDto);
+    return DB.save(unsavedOrder);
   }
 
-  async function validateOrderCreation() {
-    await Promise.all([
-      validateCustomerExist(),
-      ...(dto.paid_in_app ? [validateInAppPayment(dto)] : []),
-    ]);
-
-    async function validateCustomerExist() {
-      const exist = await Repo.customerExist(dto.customer_id);
-
-      if (!exist) throw new UnauthorizedException();
-    }
-  }
-
-  async function getServerDto() {
-    const [card, creditLogs, items, market, lastMarketOrderId] =
+  async function getServerData() {
+    const [items, market, lastMarketOrderId, card, creditLogs] =
       await Promise.all([
-        getCustomerCard(),
-        getCreditLogs(),
-        getItems(),
-        Repo.market(dto.market_id),
-        Repo.lastMarketOrderId(dto.market_id),
+        DB.findItems(client),
+        DB.findMarket(client),
+        DB.lastMarketOrderId(client),
+        client.card_id
+          ? DB.findCustomerCard(client, client.card_id)
+          : undefined,
+        client.paid_in_app
+          ? OneCustomerDebit.readDB(client.customer_id)
+          : undefined,
       ]);
 
-    return { card, creditLogs, items, market, lastMarketOrderId };
-
-    async function getCustomerCard() {
-      return dto.card_id
-        ? Repo.findCustomerCard(dto.customer_id, dto.card_id)
-        : undefined;
-    }
-
-    async function getCreditLogs() {
-      return dto.paid_in_app ? Repo.findCreditLogs(dto.customer_id) : undefined;
-    }
-
-    async function getItems() {
-      const itemsIds = dto.items.map((v) => v.item_id);
-      return Repo.findItems(itemsIds, dto.market_id);
-    }
+    return { items, market, lastMarketOrderId, card, creditLogs };
   }
 }

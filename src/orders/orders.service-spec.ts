@@ -173,7 +173,7 @@ describe('Create review', () => {
 
     await orders.createReview(createReview);
 
-    const { review } = await ordersRepo.findOneWithItemsAndReview(fullOrderId);
+    const { review } = await ordersRepo.customerFindOne(fullOrderId);
     expect(review).toMatchObject(createdReview);
   });
 });
@@ -187,7 +187,7 @@ describe('Respond review', () => {
 
     await orders.respondReview({ ...fullOrderId, response });
 
-    const { review } = await ordersRepo.findOneWithItemsAndReview(fullOrderId);
+    const { review } = await ordersRepo.customerFindOne(fullOrderId);
     expect(review).toMatchObject({ response });
   });
 });

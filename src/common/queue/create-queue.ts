@@ -15,6 +15,9 @@ export const createQueueDefault = <
 
   let worker: Worker<DataType, ResultType>;
 
+  /**
+   * Call it inside `onApplicationBootstrap`.
+   */
   const process = (processor: Processor<DataType, ResultType>) => {
     if (worker)
       throw new Error(`Processor already registered for queue ${queueName}`);
@@ -23,12 +26,9 @@ export const createQueueDefault = <
       queueName,
       async (job) => {
         job.data = plainToInstance(dataSchema, job.data);
-        validateOrReject(job.data);
+        await validateOrReject(job.data);
 
         return processor(job);
-      },
-      {
-        autorun: false,
       },
     ));
   };
@@ -64,7 +64,7 @@ export const createQueueNamed =
         if (!processor) throw new Error(`Missing processor of "${job.name}"`);
 
         job.data = plainToInstance(dataSchema[job.name], job.data);
-        validateOrReject(job.data);
+        await validateOrReject(job.data);
 
         return processor(job);
       },
@@ -80,12 +80,15 @@ export const createQueueNamed =
       >,
     ) => {
       processors[name] = processor;
-      return worker;
     };
 
     return {
       add: queue.add.bind(queue),
       getJob: queue.getJob.bind(queue),
       process,
+      /**
+       * Call it inside `onApplicationBootstrap`.
+       */
+      start: worker.run.bind(worker),
     };
   };

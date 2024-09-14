@@ -12,7 +12,7 @@ import { CompleteOrderDto } from '~/payments/dto/complete-order.dto';
 import { ConfirmOrderPaymentDto } from '~/payments/dto/confirm-order-payment.dto';
 import { PayOrderBaseDto } from '~/payments/dto/pay-order.dto';
 
-const UpdateOrderQueue = createQueueNamed<UpdateOrder>()(
+export const UpdateOrderQueue = createQueueNamed<UpdateOrder>()(
   QueueName.UpdateOrder,
   {
     [UpdateOrder.Pay]: PayOrderBaseDto,

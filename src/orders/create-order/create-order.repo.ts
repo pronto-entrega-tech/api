@@ -2,13 +2,10 @@ import { Prisma } from '@prisma/client';
 import { NotFoundError } from '~/common/errors/not-found';
 import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
 import { prisma } from '~/common/prisma/prisma.service';
-import { OrderStatus } from '../constants/order-status';
-import { SaveOrderDto } from './create-order.dto';
+import { SaveOrderDto, CreateOrderDto as ClientData } from './create-order.dto';
 
 export namespace CreateOrderRepo {
-  export async function save(dto: SaveOrderDto) {
-    const { items, ...data } = dto;
-
+  export async function save({ items, ...data }: SaveOrderDto) {
     const orderItems = items.map(({ details, ...args }) =>
       Prisma.validator<Prisma.order_itemUncheckedCreateWithoutOrdersInput>()({
         details: { create: details },
@@ -16,25 +13,18 @@ export namespace CreateOrderRepo {
       }),
     );
 
-    const validDate = Prisma.validator<Prisma.ordersCreateManyInput>();
-
     return prisma.orders.create({
       data: {
-        ...validDate(data),
+        ...Prisma.validator<Prisma.ordersCreateManyInput>()(data),
         items: { create: orderItems },
       },
     });
   }
 
-  export async function customerExist(customer_id: string) {
-    const customer = await prisma.customer.findUnique({
-      select: { email: true },
-      where: { customer_id },
-    });
-    return !!customer?.email;
-  }
-
-  export async function findCustomerCard(customer_id: string, card_id: string) {
+  export async function findCustomerCard(
+    { customer_id }: ClientData,
+    card_id: NonNullable<ClientData['card_id']>,
+  ) {
     return prisma.customer_card
       .findUniqueOrThrow({
         where: { id_customer_id: { id: card_id, customer_id } },
@@ -42,34 +32,14 @@ export namespace CreateOrderRepo {
       .catch(prismaNotFound('Card'));
   }
 
-  export async function findCreditLogs(customer_id: string) {
-    return prisma.orders.findMany({
-      select: {
-        market_id: true,
-        customer_debit: true,
-        credit_used: true,
-        debit_market_id: true,
-        debit_amount: true,
-      },
-      where: {
-        customer_id,
-        OR: [
-          {
-            customer_debit: { not: null },
-            status: OrderStatus.Completed,
-          },
-          {
-            debit_amount: { not: null },
-            status: { not: OrderStatus.Canceled },
-          },
-        ],
-      },
-    });
-  }
+  export async function findItems({
+    market_id,
+    items: clientItems,
+  }: ClientData) {
+    const itemsIds = clientItems.map((v) => v.item_id);
 
-  export async function findItems(itemsIds: string[], market_id: string) {
     const { city_slug } = await prisma.market
-      .findFirstOrThrow({ select: { city_slug: true }, where: { market_id } })
+      .findUniqueOrThrow({ select: { city_slug: true }, where: { market_id } })
       .catch(prismaNotFound('Market'));
 
     const items = await prisma.item.findMany({
@@ -92,7 +62,7 @@ export namespace CreateOrderRepo {
     return items;
   }
 
-  export async function market(market_id: string) {
+  export async function findMarket({ market_id }: ClientData) {
     return prisma.market
       .findFirstOrThrow({
         select: {
@@ -110,7 +80,7 @@ export namespace CreateOrderRepo {
       .catch(prismaNotFound('Market'));
   }
 
-  export async function lastMarketOrderId(market_id: string) {
+  export async function lastMarketOrderId({ market_id }: ClientData) {
     const lastOrder = await prisma.orders.findFirst({
       select: { market_order_id: true },
       where: { market_id },

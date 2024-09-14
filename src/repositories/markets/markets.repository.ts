@@ -34,6 +34,7 @@ const filterNullEmail = createNullEmailFilter(
 
 const publicFields = Prisma.validator<Prisma.marketSelect>()({
   market_id: true,
+  thumbhash: true,
   name: true,
   city_slug: true,
   type: true,
@@ -79,6 +80,7 @@ type MarketFeed = Pick<
 const feedFields = pick(
   publicFields,
   'market_id',
+  'thumbhash',
   'city_slug',
   'name',
   'rating',
@@ -91,7 +93,7 @@ const feedFields = pick(
 const feedJoins = pick(publicJoins, 'business_hours');
 const feedSelectSql = Prisma.raw(
   [
-    ...Object.keys(feedFields).map((v) => `${v}`),
+    ...Object.keys(feedFields),
     ...Object.keys(feedJoins).map((v) => `coalesce(${v},'[]'::json) as ${v}`),
   ].join(', '),
 );
@@ -288,6 +290,7 @@ export class MarketsRepository {
       .findFirstOrThrow({
         select: {
           market_id: true,
+          thumbhash: true,
           name: true,
           document: true,
           pix_key: true,

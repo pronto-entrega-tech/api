@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { OrderAction } from '~/orders/constants/order-status';
-import { FullOrderId } from '~/orders/dto/full-order-id.dto';
+import { OrderAction, OrderStatus } from '~/orders/constants/order-status';
 import { OrdersStatusService } from '~/orders/orders-status.service';
 import { PayOrderDto } from '~/payments/dto/pay-order.dto';
 import { CustomersRepository } from '~/repositories/customers/customers.repository';
@@ -31,31 +30,33 @@ export class PayOrderService {
   ) {}
 
   async exec(dto: PayOrderDto) {
-    const { action, data } = await this.orderPaymentPendingAction(dto);
+    const status = await this.ordersRepo.status(dto.fullOrderId);
 
-    switch (action) {
-      case 'createPayment':
-        return this.createPayment(dto);
-      case 'recreatePayment':
-        await this.asaas.payments.delete(data);
-        return this.createPayment(dto);
-      case 'updateOrder':
-        return this.updateOrder(dto.fullOrderId, data);
+    if (status !== OrderStatus.PaymentProcessing) return;
+
+    const action = await this.orderPaymentPendingAction(dto);
+
+    switch (action.type) {
+      case 'createPayment': {
+        const update = await this.createPaymentOnAsaas(dto);
+        return this.updateOrderOnDB(dto, update);
+      }
+
+      case 'recreatePayment': {
+        await this.asaas.payments.delete(action.data);
+        const update = await this.createPaymentOnAsaas(dto);
+        return this.updateOrderOnDB(dto, update);
+      }
+
+      case 'updateOrder': {
+        return this.updateOrderOnDB(dto, action.data);
+      }
     }
-  }
-
-  private async createPayment(dto: PayOrderDto) {
-    const update = await this.createPaymentOnAsaas(dto);
-
-    await this.updateOrder(dto.fullOrderId, update);
   }
 
   private async createPaymentOnAsaas(dto: PayOrderDto) {
     try {
       const params = await this.createPayParams(dto);
-
-      if (dto.payment_method === InAppPaymentMethod.Pix)
-        this.ensurePayerHasDocument(params.customer);
 
       const payment = await this.asaas.payments.create(params);
 
@@ -82,11 +83,11 @@ export class PayOrderService {
     }
   }
 
-  private updateOrder(
-    fullOrderId: FullOrderId,
+  private async updateOrderOnDB(
+    { fullOrderId }: PayOrderDto,
     { payment_id, action, payment_method, extra }: OrderPayUpdate,
   ) {
-    return this.ordersStatus.update(fullOrderId, action, {
+    await this.ordersStatus.update(fullOrderId, action, {
       payment_id,
       payment_method,
       pix_code: null,
@@ -121,18 +122,14 @@ export class PayOrderService {
   }
 
   private async orderPaymentPendingAction(dto: PayOrderDto) {
-    const status = await this.ordersRepo.status(dto.fullOrderId);
+    const { data } = await this.asaas.payments.findByExternalId(
+      getOrderExternalId(dto.fullOrderId),
+    );
 
     return orderPaymentPendingAction({
       ...dto,
-      status,
+      payments: data,
       getPix: (id) => this.getPix(id),
-      getExistingPayments: async () => {
-        const { data } = await this.asaas.payments.findByExternalId(
-          getOrderExternalId(dto.fullOrderId),
-        );
-        return data;
-      },
     });
   }
 
@@ -163,12 +160,25 @@ export class PayOrderService {
       return recipient.id;
     };
 
+    const [customerPayerId, marketRecipientId, debitMarketRecipientId] =
+      await Promise.all([
+        (async () => {
+          const customerPayerId = await getCustomerPayerId();
+
+          if (dto.payment_method === InAppPaymentMethod.Pix)
+            await this.ensurePayerHasDocument(customerPayerId);
+
+          return customerPayerId;
+        })(),
+        getRecipientId(dto.fullOrderId.market_id),
+        dto.debit_market_id && getRecipientId(dto.debit_market_id),
+      ]);
+
     return createPayParams({
       ...dto,
-      customerPayerId: await getCustomerPayerId(),
-      marketRecipientId: await getRecipientId(dto.fullOrderId.market_id),
-      debitMarketRecipientId:
-        dto.debit_market_id && (await getRecipientId(dto.debit_market_id)),
+      customerPayerId,
+      marketRecipientId,
+      debitMarketRecipientId,
     });
   }
 }

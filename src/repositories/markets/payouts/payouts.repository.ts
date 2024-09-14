@@ -12,6 +12,7 @@ export class PayoutsRepository {
   async createMany(month: Date) {
     const markets = await this.prisma.market.findMany({
       select: { market_id: true },
+      where: { email: { not: null } },
     });
 
     const payouts = markets.map(({ market_id }) => ({

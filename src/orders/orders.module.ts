@@ -10,6 +10,7 @@ import {
 import { OrdersService } from './orders.service';
 import { OrderUpdateGateway } from './order-update.gateway';
 import { OrdersGateway } from './orders.gateway';
+import CreateOrderController from './create-order/create-order.controller';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OrdersGateway } from './orders.gateway';
     OrdersCustomerController,
     OrderCustomerAndMarketController,
     OrderMarketController,
+    CreateOrderController,
   ],
   providers: [
     OrdersService,

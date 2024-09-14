@@ -3,9 +3,9 @@ import { Decimal } from '@prisma/client/runtime';
 import { addMinutes } from 'date-fns';
 import { omit } from '~/common/functions/omit';
 import { OrderStatus } from '../constants/order-status';
-import { CreateOrderPreDto } from '../dto/create.dto';
+import { CreateOrderPreDto } from '../create-order/create-order.dto';
 import { getCardTokenAndPaymentDescription } from './card-token-and-payment-description';
-import { getOneCustomerDebit } from './customer-debit';
+import { OneCustomerDebit } from './customer-debit';
 import { getMarketAmount } from './market-amount';
 import { getSubtotalAndOrderItems } from './subtotal-and-items';
 
@@ -26,7 +26,7 @@ export function createOrderDto(dto: CreateOrderPreDto) {
     delivery_max_time: getDeliveryTime(server.market.max_time),
     market_order_id: server.lastMarketOrderId + 1n,
     ...getCardTokenAndPaymentDescription(client, server.card),
-    ...(server.creditLogs ? getOneCustomerDebit(server.creditLogs) : {}),
+    ...(server.creditLogs ? OneCustomerDebit.calc(server.creditLogs) : {}),
   };
 
   function getValidatedTotal() {

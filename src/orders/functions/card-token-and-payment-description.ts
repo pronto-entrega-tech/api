@@ -1,7 +1,7 @@
 import { customer_card } from '@prisma/client';
 import { capitalize } from '~/common/functions/capitalize';
 import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { CreateOrderDto } from '../dto/create.dto';
+import { CreateOrderDto } from '../create-order/create-order.dto';
 
 export function getCardTokenAndPaymentDescription(
   dto: Pick<CreateOrderDto, 'card_id' | 'payment_method'>,

@@ -53,6 +53,8 @@ item.item_id,
 item.city_slug,
 item.prod_id,
 item.market_id,
+products.thumbhash,
+market.thumbhash as market_thumbhash,
 coalesce(item.kit_name, products.name) as name,
 products.brand,
 coalesce(item.kit_quantity, products.quantity) AS quantity,
@@ -77,9 +79,7 @@ item.discount_max_per_client`,
 const queryBase2 = (city: string): BaseQuery => ({
   table: 'products',
   select: marketSelectSql,
-  leftJoin: [
-    sql`item ON products.prod_id = item.prod_id AND item.city_slug = ${city}`,
-  ],
+  leftJoin: sql`item ON products.prod_id = item.prod_id AND item.city_slug = ${city}`,
 });
 
 const getDiscountValues = (dto: any) =>

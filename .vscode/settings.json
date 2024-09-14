@@ -55,6 +55,7 @@
     "Km",
     "nestjs",
     "opentelemetry",
+    "thumbhash",
     "unsign",
     "websockets"
   ]

@@ -2,7 +2,7 @@ import { Decimal } from '@prisma/client/runtime';
 import { fail } from 'assert';
 import { DiscountType } from '~/items/constants/discount-type';
 import { ItemsRepository } from '~/repositories/items/items.repository';
-import { OrderItemDto } from '../dto/create.dto';
+import { OrderItemDto } from '../create-order/create-order.dto';
 
 type ItemWithPrice = Pick<
   ItemsRepository.ItemById,

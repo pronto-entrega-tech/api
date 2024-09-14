@@ -1,29 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { orders } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { fail } from 'assert';
 import { arrayNotEmpty } from 'class-validator';
-import { pick } from '~/common/functions/pick';
 import { OrderAction, OrderStatus } from '~/orders/constants/order-status';
 import { FullOrderId } from '~/orders/dto/full-order-id.dto';
-import { getCustomerCredit } from '~/orders/functions/customer-debit';
 import { OrdersStatusService } from '~/orders/orders-status.service';
 import { CustomersRepository } from '~/repositories/customers/customers.repository';
 import { MarketsRepository } from '~/repositories/markets/markets.repository';
 import { OrdersRepository } from '~/repositories/orders/orders.repository';
 import { AsaasService } from './asaas/asaas.service';
-import { Asaas } from './asaas/asaas.types';
 import { appRecipientKey } from './constants/app-recipient-key';
-import { CompleteOrderDto } from './dto/complete-order.dto';
+import { CompleteOrderDto as ClientData } from './dto/complete-order.dto';
+import { missingItemsAction } from './functions/missing-items-action';
+import { CustomerBalance } from '~/orders/functions/customer-debit';
 
-type OrderWithMissingItems = orders & {
-  missing_items: {
-    quantity: Decimal;
-    order_item: {
-      price: Decimal;
-    };
-  }[];
-};
+type ServerData = OrdersRepository.CompleteData;
 
 @Injectable()
 export class CompleteOrderService {
@@ -35,94 +25,56 @@ export class CompleteOrderService {
     private readonly customersRepo: CustomersRepository,
   ) {}
 
-  async exec({ fullOrderId }: CompleteOrderDto) {
-    const order = await this.ordersRepo.findOneWithMissingItems(fullOrderId);
+  async exec({ fullOrderId: id }: ClientData) {
+    const order = await this.ordersRepo.completeData(id);
 
-    if (order.status === OrderStatus.Completing)
-      await this.start(order, fullOrderId);
+    if (order.status !== OrderStatus.Completing) return;
+
+    if (arrayNotEmpty(order.missing_items))
+      await this.handleMissingItems(id, order);
+
+    await this.markAsCompleted(id);
   }
 
-  private async start(order: OrderWithMissingItems, fullOrderId: FullOrderId) {
-    if (arrayNotEmpty(order.missing_items)) await this.missingItems(order);
+  private async handleMissingItems(id: FullOrderId, order: ServerData) {
+    const creditLogs = await CustomerBalance.readDB(order.customer_id);
+    const action = missingItemsAction(order, creditLogs);
 
-    await this.markAsCompleted(fullOrderId);
+    await Promise.all([
+      this.ordersRepo.update(id, { customer_debit: action.orderOverTotal }),
+      this.customersRepo.updateBalance(
+        order.customer_id,
+        action.customerBalance,
+      ),
+      (async () => {
+        const { type, data } = action.effect;
+
+        if (type === 'transferToMarket') {
+          await this.transferToMarker(id, data.transferValue);
+        } else if (type === 'transferFromMarket') {
+          await this.transferFromMarket(id, data.transferValue);
+        }
+      })(),
+    ]);
   }
 
-  private async missingItems(order: OrderWithMissingItems) {
-    const orderCredit = this.genOrderCredit(order);
-
-    const fullOrderId = pick(order, 'order_id', 'market_id');
-    await this.ordersRepo.update(fullOrderId, { customer_debit: orderCredit });
-
-    const { customer_id } = order;
-    const currentCredit = await this.getCustomerCredit(customer_id);
-
-    await this.customersRepo.updateDebit(
-      customer_id,
-      currentCredit.plus(orderCredit),
-    );
-
-    await this.checkAndTransfer(currentCredit, orderCredit, order);
-  }
-
-  private async checkAndTransfer(
-    currentCredit: Decimal,
-    orderCredit: Decimal,
-    order: OrderWithMissingItems,
-  ) {
-    const customerHasCredit = currentCredit.isPositive();
-    const orderIsInDebt = orderCredit.isNegative();
-    const orderIsGivingCredit = orderCredit.isPositive();
-
-    if (orderIsInDebt && customerHasCredit)
-      await this.transferToMarker(order, orderCredit, currentCredit);
-    else if (orderIsGivingCredit)
-      await this.transferFromMarket(order, orderCredit);
-  }
-
-  private genOrderCredit(order: OrderWithMissingItems) {
-    return order.missing_items.reduce(
-      (credit, { order_item: { price }, quantity }) =>
-        credit.plus(price.times(quantity)),
-      new Decimal(0),
-    );
-  }
-
-  private async transferFromMarket(
-    { market_id }: OrderWithMissingItems,
-    orderCredit: Decimal,
-  ) {
-    const key = await this.marketsRepo.findRecipientKey(market_id);
-    const params: Asaas.CreateTransfer = {
-      value: +orderCredit,
-      walletId: appRecipientKey,
-    };
-    await this.asaas.transfers.create(params, key ?? fail());
-  }
-
-  private async transferToMarker(
-    { market_id }: OrderWithMissingItems,
-    orderCredit: Decimal,
-    currentCredit: Decimal,
-  ) {
-    const orderDebitValue = orderCredit.negated();
-
-    const transferValue = currentCredit.lessThan(orderDebitValue)
-      ? currentCredit
-      : orderDebitValue;
-
+  private async transferToMarker({ market_id }: FullOrderId, value: number) {
+    const recipientId = await this.marketsRepo.findRecipientId(market_id);
     await this.asaas.transfers.create({
-      value: +transferValue,
-      walletId: (await this.marketsRepo.findRecipientId(market_id)) ?? fail(),
+      value,
+      walletId: recipientId ?? fail(),
     });
   }
 
-  private async getCustomerCredit(customer_id: string) {
-    const creditLogs = await this.ordersRepo.findCreditLogs(customer_id);
-    return getCustomerCredit(creditLogs);
+  private async transferFromMarket({ market_id }: FullOrderId, value: number) {
+    const key = await this.marketsRepo.findRecipientKey(market_id);
+    await this.asaas.transfers.create(
+      { value, walletId: appRecipientKey },
+      key ?? fail(),
+    );
   }
 
-  private async markAsCompleted(fullOrderId: FullOrderId) {
-    await this.ordersStatus.update(fullOrderId, OrderAction.MarkAsCompleted);
+  private async markAsCompleted(id: FullOrderId) {
+    await this.ordersStatus.update(id, OrderAction.MarkAsCompleted);
   }
 }

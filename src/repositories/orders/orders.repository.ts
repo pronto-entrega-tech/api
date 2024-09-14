@@ -3,7 +3,6 @@ import { Prisma } from '@prisma/client';
 import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
 import { PrismaService } from '~/common/prisma/prisma.service';
 import { OrderStatus } from '~/orders/constants/order-status';
-import { SaveOrderDto } from '~/orders/dto/create.dto';
 import { FindManyOrdersDto } from '~/orders/dto/find-many.dto';
 import { FullOrderId } from '~/orders/dto/full-order-id.dto';
 import { UpdateOrderPaymentDto } from '~/orders/dto/update.dto';
@@ -20,34 +19,15 @@ import { day } from '~/common/constants/time';
 // that can't be handle, use destruction to prevent this
 
 export namespace OrdersRepository {
-  export type CreditLog = Awaited<
-    ReturnType<OrdersRepository['findCreditLogs']>
-  >[number];
+  export type CompleteData = Awaited<
+    ReturnType<OrdersRepository['completeData']>
+  >;
+  export type CancelData = Awaited<ReturnType<OrdersRepository['cancelData']>>;
 }
 
 @Injectable()
 export class OrdersRepository {
   constructor(private readonly prisma: PrismaService) {}
-
-  async create(dto: SaveOrderDto) {
-    const { items, ...data } = dto;
-
-    const orderItems = items.map(({ details, ...args }) =>
-      Prisma.validator<Prisma.order_itemUncheckedCreateWithoutOrdersInput>()({
-        details: { create: details },
-        ...args,
-      }),
-    );
-
-    const validDate = Prisma.validator<Prisma.ordersCreateManyInput>();
-
-    return this.prisma.orders.create({
-      data: {
-        ...validDate(data),
-        items: { create: orderItems },
-      },
-    });
-  }
 
   async customerFindMany(
     customer_id: string,
@@ -58,7 +38,7 @@ export class OrdersRepository {
         order_id: true,
         market_id: true,
         market_order_id: true,
-        market: { select: { name: true } },
+        market: { select: { thumbhash: true, name: true } },
         status: true,
         is_scheduled: true,
         delivery_min_time: true,
@@ -107,10 +87,19 @@ export class OrdersRepository {
             quantity: true,
             price: true,
             product: {
-              select: { code: true, name: true, brand: true, quantity: true },
+              select: {
+                code: true,
+                thumbhash: true,
+                name: true,
+                brand: true,
+                quantity: true,
+              },
             },
             details: {
-              select: { quantity: true, product: { select: { name: true } } },
+              select: {
+                quantity: true,
+                product: { select: { thumbhash: true, name: true } },
+              },
             },
             missing: { select: { quantity: true } },
           },
@@ -140,7 +129,7 @@ export class OrdersRepository {
       .catch(prismaNotFound('Order'));
   }
 
-  async findOneWithItemsAndReview({
+  async customerFindOne({
     order_id,
     market_id,
     customer_id,
@@ -148,7 +137,7 @@ export class OrdersRepository {
     return this.prisma.orders
       .findFirstOrThrow({
         include: {
-          market: { select: { name: true } },
+          market: { select: { thumbhash: true, name: true } },
           items: {
             select: {
               is_kit: true,
@@ -172,19 +161,6 @@ export class OrdersRepository {
           },
         },
         where: { order_id, market_id, customer_id },
-      })
-      .catch(prismaNotFound('Order'));
-  }
-
-  async findOneWithMissingItems({ order_id, market_id }: FullOrderId) {
-    return this.prisma.orders
-      .findUniqueOrThrow({
-        include: {
-          missing_items: {
-            select: { quantity: true, order_item: { select: { price: true } } },
-          },
-        },
-        where: { order_id_market_id: { order_id, market_id } },
       })
       .catch(prismaNotFound('Order'));
   }
@@ -215,31 +191,6 @@ export class OrdersRepository {
     });
   }
 
-  async findCreditLogs(customer_id: string) {
-    return this.prisma.orders.findMany({
-      select: {
-        market_id: true,
-        customer_debit: true,
-        credit_used: true,
-        debit_market_id: true,
-        debit_amount: true,
-      },
-      where: {
-        customer_id,
-        OR: [
-          {
-            customer_debit: { not: null },
-            status: OrderStatus.Completed,
-          },
-          {
-            debit_amount: { not: null },
-            status: { not: OrderStatus.Canceled },
-          },
-        ],
-      },
-    });
-  }
-
   async findItems({ order_id, market_id }: FullOrderId) {
     return this.prisma.order_item.findMany({
       select: {
@@ -257,7 +208,7 @@ export class OrdersRepository {
   }: FullOrderId & { customer_id: string }) {
     await this.prisma.orders
       .findFirstOrThrow({
-        select: { customer_id: true },
+        select: {},
         where: { order_id, market_id, customer_id },
       })
       .catch(prismaNotFound('Order'));
@@ -345,10 +296,31 @@ export class OrdersRepository {
       .catch(prismaNotFound('Order'));
   }
 
+  async completeData({ order_id, market_id }: FullOrderId) {
+    return this.prisma.orders
+      .findUniqueOrThrow({
+        select: {
+          status: true,
+          customer_id: true,
+          missing_items: {
+            select: { quantity: true, order_item: { select: { price: true } } },
+          },
+        },
+        where: { order_id_market_id: { order_id, market_id } },
+      })
+      .catch(prismaNotFound('Order'));
+  }
+
   async cancelData({ order_id, market_id }: FullOrderId) {
     return this.prisma.orders
       .findUniqueOrThrow({
-        select: { payment_id: true, paid_in_app: true },
+        select: {
+          status: true,
+          payment_id: true,
+          paid_in_app: true,
+          customer_id: true,
+          debit_amount: true,
+        },
         where: { order_id_market_id: { order_id, market_id } },
       })
       .catch(prismaNotFound('Order'));
@@ -387,27 +359,31 @@ export class OrdersRepository {
 
   async update(
     { order_id, market_id }: FullOrderId,
-    dto: UpdateOrderPaymentDto,
+    {
+      missing_items,
+      increasePayout,
+      payoutMonth,
+      ...dto
+    }: UpdateOrderPaymentDto,
   ) {
-    const { missing_items, increasePayout, payoutMonth, ..._dto } = dto;
+    const validMissingItems =
+      Prisma.validator<
+        Prisma.order_missing_itemUncheckedCreateWithoutOrdersInput[]
+      >();
 
-    const validDate = Prisma.validator<Prisma.ordersUncheckedUpdateManyInput>();
-    const validMissingItems = Prisma.validator<
-      Prisma.order_missing_itemUncheckedCreateWithoutOrdersInput[] | undefined
-    >();
+    const updateOrder = () =>
+      this.prisma.orders.update({
+        data: {
+          ...Prisma.validator<Prisma.ordersUncheckedUpdateManyInput>()(dto),
+          ...(missing_items && {
+            deleteMany: { order_id },
+            create: validMissingItems(missing_items),
+          }),
+        },
+        where: { order_id_market_id: { order_id, market_id } },
+      });
 
-    const updateOrder = this.prisma.orders.update({
-      data: {
-        ...validDate(_dto),
-        ...(missing_items && {
-          deleteMany: { order_id },
-          create: validMissingItems(missing_items),
-        }),
-      },
-      where: { order_id_market_id: { order_id, market_id } },
-    });
-
-    if (!increasePayout) return updateOrder.catch(prismaNotFound('Order'));
+    if (!increasePayout) return updateOrder().catch(prismaNotFound('Order'));
 
     const { market_amount } = await this.prisma.orders
       .findUniqueOrThrow({
@@ -426,17 +402,15 @@ export class OrdersRepository {
       },
     });
 
-    const [res] = await this.prisma.$transaction([updateOrder, updatePayout]);
+    const [res] = await this.prisma.$transaction([updateOrder(), updatePayout]);
 
     return res;
   }
 
   async createReview(dto: CreateReviewDto) {
-    const validDate = Prisma.validator<Prisma.reviewCreateManyInput>();
-
     return this.prisma.$transaction(async (prisma) => {
       const review = await prisma.review.create({
-        data: validDate(dto),
+        data: Prisma.validator<Prisma.reviewCreateManyInput>()(dto),
         select: {
           rating: true,
           complaint: true,
@@ -475,11 +449,9 @@ export class OrdersRepository {
   }
 
   async updateReview({ order_id, market_id, ...dto }: RespondReviewDto) {
-    const validDate = Prisma.validator<Prisma.reviewUncheckedUpdateManyInput>();
-
     return this.prisma.review
       .update({
-        data: validDate(dto),
+        data: Prisma.validator<Prisma.reviewUncheckedUpdateManyInput>()(dto),
         where: { order_id_market_id: { order_id, market_id } },
       })
       .catch(prismaNotFound('Review'));

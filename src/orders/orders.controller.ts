@@ -19,7 +19,6 @@ import {
 } from '~/auth/constants/auth-tokens';
 import { AccessAuthGuard } from '~/auth/guards/auth.guard';
 import { CancelOrderBody } from './dto/cancel.dto';
-import { CreateOrderBody } from './dto/create.dto';
 import { FindManyOrdersDto } from './dto/find-many.dto';
 import { FullOrderId } from './dto/full-order-id.dto';
 import { RetryOrderPaymentBody } from './dto/retry-payment.dto';
@@ -40,15 +39,6 @@ import { JwtPayload } from '~/auth/constants/jwt-payload';
 @Controller('orders')
 export class OrdersCustomerController {
   constructor(private readonly orders: OrdersService) {}
-
-  @ApiOperation({ summary: 'Create a order' })
-  @Post()
-  create(
-    @Req() { user: { sub: customer_id }, ip }: AuthReq,
-    @Body() body: CreateOrderBody,
-  ) {
-    return this.orders.create({ ...body, customer_id, ip });
-  }
 
   @ApiOperation({ summary: 'Find one order by customer' })
   @Get(':market_id/:order_id')

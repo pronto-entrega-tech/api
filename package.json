@@ -20,9 +20,9 @@
     "type-check": "tsc --noEmit",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "migrate:dev": "dotenv -e .env.test -- npx prisma migrate dev",
-    "migrate:dev-deploy": "dotenv -e .env.test -- npx prisma migrate deploy",
-    "migrate:prod": "npx prisma migrate deploy",
+    "migrate:dev": "dotenv -e .env.test -- prisma migrate dev",
+    "migrate:dev-deploy": "dotenv -e .env.test -- prisma migrate deploy",
+    "migrate:prod": "prisma migrate deploy",
     "postinstall": "node shim.js",
     "postuninstall": "pnpm postinstall",
     "pre-commit": "cross-env-shell CI=true \"pnpm gen-schema && pnpm lint && pnpm type-check && pnpm test && pnpm test:e2e\""
@@ -95,17 +95,17 @@
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
     "cross-env": "^7.0.3",
-    "dotenv-cli": "^6.0.0",
-    "eslint": "^8.26.0",
-    "eslint-config-prettier": "^8.5.0",
-    "prettier": "^2.7.1",
+    "dotenv-cli": "^7.3.0",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3",
     "prisma": "^4.5.0",
-    "ts-loader": "^9.4.1",
+    "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.1.0",
-    "typescript": "^4.8.4",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.33.0",
-    "zod": "^3.19.1"
+    "zod": "^3.22.2"
   }
 }

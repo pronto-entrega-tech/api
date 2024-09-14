@@ -11,7 +11,7 @@ import { QueueName } from '~/common/constants/queue-names';
 import { Month } from '~/common/functions/month';
 import { FakeMutexModule } from '~/common/mutex/fake-mutex.module';
 import { OrderStatus } from '~/orders/constants/order-status';
-import { SaveOrderDto } from '~/orders/dto/create.dto';
+import { SaveOrderDto } from '~/orders/create-order/create-order.dto';
 import { OrdersStatusService } from '~/orders/orders-status.service';
 import { CustomersRepository } from '~/repositories/customers/customers.repository';
 import { InMemoryRepositoriesModule } from '~/repositories/in-memory-repositories.module';

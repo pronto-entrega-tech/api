@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { discount_type, item, item_details, products } from '@prisma/client';
+import {
+  discount_type,
+  item,
+  item_details,
+  products,
+  market,
+} from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
 
 export class ItemFeed
@@ -14,11 +20,12 @@ export class ItemFeed
       | 'kit_image_name'
       | 'unit_weight'
       | 'discount_value_1'
-    >,
-    Pick<products, 'name' | 'quantity' | 'images_names'>
+    >
 {
   item_id: string;
   market_id: string;
+  thumbhash: products['thumbhash'];
+  market_thumbhash: market['thumbhash'];
   name: string;
   brand: string | null;
   quantity: string;

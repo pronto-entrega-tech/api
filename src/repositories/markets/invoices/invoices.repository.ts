@@ -1,11 +1,11 @@
 import { Prisma } from '@prisma/client';
-import { Month } from '~/common/functions/month';
 import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
 import { PrismaService } from '~/common/prisma/prisma.service';
 import { FullInvoiceId } from '~/markets/dto/full-invoice-id';
 import { CreateInvoices, UpdateInvoice } from '~/markets/dto/invoice';
 import { InvoiceStatus } from '~/payments/constants/invoice-status';
 import { Partitions } from '../partitions';
+import { subYears } from 'date-fns';
 
 const idMonth = ({ invoice_id, month }: FullInvoiceId) => ({
   id: invoice_id,
@@ -27,7 +27,7 @@ export class InvoicesRepository {
       }),
     );
 
-    const lastYear = Month.previous(month);
+    const lastYear = subYears(month, 1);
 
     await this.prisma.$transaction([
       this.createInvoicePartition(month),

@@ -107,7 +107,7 @@ export class CustomersRepository {
       .catch(prismaNotFound('Customer'));
   }
 
-  async updateDebit(customer_id: string, debit: Decimal.Value) {
+  async updateBalance(customer_id: string, debit: Decimal.Value) {
     await this.prisma.customer
       .update({
         data: { debit },

@@ -13,8 +13,6 @@ import { pick } from '~/common/functions/pick';
 import { PaymentMethod } from '~/payments/constants/payment-methods';
 import { OrderUpdaterService } from '~/payments/order-updater/order-updater.service';
 import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { ItemsRepository } from '~/repositories/items/items.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
 import { OrdersRepository } from '~/repositories/orders/orders.repository';
 import {
   OrderAction,
@@ -23,7 +21,6 @@ import {
 } from './constants/order-status';
 import { reviewCreationMaxDays } from './constants/review-max-day';
 import { CancelOrderDto } from './dto/cancel.dto';
-import { CreateOrderDto } from './dto/create.dto';
 import { FindManyOrdersDto } from './dto/find-many.dto';
 import { FullOrderId } from './dto/full-order-id.dto';
 import { RetryOrderPaymentDto } from './dto/retry-payment.dto';
@@ -36,7 +33,8 @@ import { CreateReviewDto, RespondReviewDto } from './dto/review.dto';
 import { OrdersStatusService } from './orders-status.service';
 import { getCardTokenAndPaymentDescription } from './functions/card-token-and-payment-description';
 import { differenceInDays } from 'date-fns';
-import { createOrderDto } from './functions/create-order-dto';
+import { confirmationToken } from './common/confirmation-token';
+import { validateInAppPayment } from './common/validate-in-app-payment';
 
 export type ConfirmationTokenPayload = {
   iss: 'ProntoEntrega';
@@ -53,74 +51,8 @@ export class OrdersService {
     private readonly ordersStatus: OrdersStatusService,
     private readonly orderUpdater: OrderUpdaterService,
     private readonly ordersRepo: OrdersRepository,
-    private readonly itemsRepo: ItemsRepository,
     private readonly customersRepo: CustomersRepository,
-    private readonly marketsRepo: MarketsRepository,
   ) {}
-
-  async create(dto: CreateOrderDto) {
-    const orderDto = await this.createOrderDto(dto);
-
-    const order = await this.ordersRepo.create(orderDto);
-
-    if (dto.paid_in_app) await this.orderUpdater.pay(order);
-
-    return {
-      ...order,
-      confirmation_token: await this.confirmationToken(order),
-    };
-  }
-
-  private async createOrderDto(dto: CreateOrderDto) {
-    const [, card, creditLogs, items, market, lastMarketOrderId] =
-      await Promise.all([
-        this.validateOrderCreation(dto),
-        this.getCustomerCard(dto),
-        this.getCreditLogs(dto),
-        this.getItems(dto),
-        this.marketsRepo.orderCreationData(dto.market_id),
-        this.ordersRepo.lastMarketOrderId(dto.market_id),
-      ]);
-
-    return createOrderDto({
-      client: dto,
-      server: { market, items, card, creditLogs, lastMarketOrderId },
-    });
-  }
-
-  private async validateOrderCreation(dto: CreateOrderDto) {
-    const paidInAppValidations = dto.paid_in_app && [
-      this.validateInAppPayment(dto),
-    ];
-
-    await Promise.all([
-      this.validateCustomerExist(dto.customer_id),
-      ...(paidInAppValidations || []),
-    ]);
-  }
-
-  private async getCreditLogs(dto: CreateOrderDto) {
-    return dto.paid_in_app
-      ? this.ordersRepo.findCreditLogs(dto.customer_id)
-      : undefined;
-  }
-
-  private async getCustomerCard(
-    dto: Pick<CreateOrderDto, 'customer_id' | 'card_id' | 'payment_method'>,
-  ) {
-    return dto.card_id
-      ? this.customersRepo.cards.findOne(dto.customer_id, dto.card_id)
-      : undefined;
-  }
-
-  private async getItems(dto: CreateOrderDto) {
-    const itemsIds = dto.items.map((v) => v.item_id);
-    const items = await this.itemsRepo.findByIds(itemsIds, dto.market_id);
-    if (items.length !== itemsIds.length)
-      throw new BadRequestException("Product(s) don't exist");
-
-    return items;
-  }
 
   async retryPayment(dto: RetryOrderPaymentDto) {
     const updateDto = await this.retryPaymentDto(dto);
@@ -137,26 +69,16 @@ export class OrdersService {
   private async retryPaymentDto(dto: RetryOrderPaymentDto) {
     const order = await this.ordersRepo.retryPaymentData(dto);
     const [, card] = await Promise.all([
-      this.validateInAppPayment({ ...order, ...dto }),
-      this.getCustomerCard(dto),
+      validateInAppPayment({ ...order, ...dto }),
+      dto.card_id
+        ? this.customersRepo.cards.findOne(dto.customer_id, dto.card_id)
+        : undefined,
     ]);
 
     return {
       ...pick(dto, 'payment_method', 'ip'),
       ...getCardTokenAndPaymentDescription(dto, card),
     };
-  }
-
-  private async validateInAppPayment(
-    dto: Pick<
-      CreateOrderDto,
-      'market_id' | 'customer_id' | 'card_id' | 'payment_method'
-    >,
-  ) {
-    await Promise.all([
-      this.validateMarketInAppPaymentSupport(dto.market_id),
-      this.validatePayment(dto),
-    ]);
   }
 
   async findMany(
@@ -169,7 +91,7 @@ export class OrdersService {
   }
 
   async customerFindOne(ids: FullOrderId & { customer_id: string }) {
-    return this.ordersRepo.findOneWithItemsAndReview(ids);
+    return this.ordersRepo.customerFindOne(ids);
   }
 
   async status(fullId: FullOrderId) {
@@ -212,13 +134,13 @@ export class OrdersService {
   }
 
   async createConfirmationToken(dto: CreateConfirmationTokenDto) {
-    const [, , token] = await Promise.all([
+    const [, , serverData] = await Promise.all([
       this.ordersRepo.validateCustomerOwnership(dto),
       this.validateMissingItems(dto),
-      this.confirmationToken(dto),
+      this.ordersRepo.confirmTokenData(dto),
     ]);
 
-    return { token };
+    return { token: confirmationToken({ ...dto, ...serverData }) };
   }
 
   private async validateMissingItems(dto: CreateConfirmationTokenDto) {
@@ -239,17 +161,6 @@ export class OrdersService {
       .filter(Boolean);
 
     if (exceptions.length) throw new ConflictException(exceptions);
-  }
-
-  private async confirmationToken(dto: CreateConfirmationTokenDto) {
-    const payload: ConfirmationTokenPayload = {
-      iss: 'ProntoEntrega',
-      sub: `${dto.order_id}`,
-      type: 'confirm_delivery',
-      items: dto.missing_items,
-      ...(await this.ordersRepo.confirmTokenData(dto)),
-    };
-    return this.jwt.signAsync(payload, { expiresIn: '1d' });
   }
 
   async update(dto: UpdateOrderDto) {
@@ -279,7 +190,7 @@ export class OrdersService {
 
     const now = new Date();
     const base = {
-      finished_at: new Date(now),
+      finished_at: now,
       missing_items,
     };
     return order.paid_in_app
@@ -303,10 +214,11 @@ export class OrdersService {
         'confirmationToken must be defined to complete order',
       );
 
-    const payload = await this.jwt.verifyAsync(token).catch(() => {
-      throw new UnauthorizedException();
-    });
-    const { sub, type, items } = payload as ConfirmationTokenPayload;
+    const { sub, type, items } = await this.jwt
+      .verifyAsync<ConfirmationTokenPayload>(token)
+      .catch(() => {
+        throw new UnauthorizedException();
+      });
 
     if (type !== 'confirm_delivery' || sub !== `${order_id}`)
       throw new UnauthorizedException();
@@ -332,58 +244,5 @@ export class OrdersService {
 
   async respondReview(dto: RespondReviewDto) {
     return this.ordersRepo.updateReview(dto);
-  }
-
-  private async validateCustomerExist(customer_id: string) {
-    const exist = await this.customersRepo.exist(customer_id);
-
-    if (!exist) throw new UnauthorizedException();
-  }
-
-  private async validateMarketInAppPaymentSupport(market_id: string) {
-    const has = await this.marketsRepo.hasInAppPaymentSupport(market_id);
-
-    if (!has)
-      throw new BadRequestException(
-        "This market don't support the payment method chosen",
-      );
-  }
-
-  private async validatePayment(
-    dto: Pick<
-      CreateOrderDto,
-      'customer_id' | 'market_id' | 'card_id' | 'payment_method'
-    >,
-  ) {
-    const { payment_method: method, customer_id, card_id } = dto;
-
-    const validateCardId = () => {
-      if (!card_id)
-        throw new BadRequestException(
-          'card_id must be provided, when payment_method is CARD and paid_in_app is true',
-        );
-    };
-
-    const checkCustomerDocument = async () => {
-      const { document } = await this.customersRepo.findOne(customer_id);
-
-      if (!document)
-        throw new BadRequestException(
-          'customer must have document, when payment_method is PIX and paid_in_app is true',
-        );
-    };
-
-    switch (method) {
-      case PaymentMethod.Card:
-        return validateCardId();
-
-      case PaymentMethod.Pix:
-        return checkCustomerDocument();
-
-      case PaymentMethod.Cash:
-        throw new BadRequestException(
-          "payment_method CASH can't be used when paid_in_app is true",
-        );
-    }
   }
 }

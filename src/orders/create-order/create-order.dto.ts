@@ -18,10 +18,9 @@ import {
 import { IsDecimalPositive } from '~/common/decorators/is-decimal-positive';
 import TransformToDecimal from '~/common/decorators/to-decimal';
 import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { ItemsRepository } from '~/repositories/items/items.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { OrdersService } from '../orders.service';
+import { createOrderDto } from '../functions/create-order-dto';
+import { OneCustomerDebit } from '../functions/customer-debit';
+import { CreateOrderRepo as DB } from './create-order.repo';
 
 export class CreateOrderBody {
   @Length(1, 256)
@@ -94,19 +93,20 @@ export type CreateOrderDto = CreateOrderBody & {
   readonly ip: string;
 };
 
-export type CreateOrderPreDto = CreateOrderDto & {
-  extra: {
-    market: MarketsRepository.OrderCreationData;
-    items: ItemsRepository.ItemById[];
-    creditLogs?: OrdersRepository.CreditLog[];
+export type CreateOrderPreDto = {
+  client: CreateOrderDto;
+  server: {
+    market: Awaited<ReturnType<typeof DB['findMarket']>>;
+    items: Awaited<ReturnType<typeof DB['findItems']>>;
+    creditLogs?: OneCustomerDebit.CreditLogs;
     card?: customer_card;
     lastMarketOrderId: bigint;
   };
 };
 
-export type SaveOrderDto = Awaited<
-  ReturnType<OrdersService['createOrderDto']>
-> & { order_id?: bigint };
+export type SaveOrderDto = Awaited<ReturnType<typeof createOrderDto>> & {
+  order_id?: bigint;
+};
 
 export class OrderItemDto {
   readonly prod_id: bigint | null;
