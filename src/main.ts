@@ -20,7 +20,8 @@ import {
 import { isDev } from './common/constants/is-dev';
 import { QueueName } from './common/constants/queue-names';
 import { STATIC_PATH } from '~/common/constants/paths';
-import fs from 'fs';
+import { readFileSync } from 'fs';
+import fs from 'fs/promises';
 import { networkInterfaces } from 'os';
 import {
   Injectable,
@@ -54,15 +55,20 @@ const bootstrap = async () => {
   });
   await app.register(fastifyHelmet, isDev ? devHelmetOpts : prodHelmetOpts);
   app.register(contentParser);
-  app.useStaticAssets({
-    root: STATIC_PATH,
-    serve: isDev,
-    prefix: '/static/',
-  });
 
   const docsPath = '/docs';
   const bullBoardPath = '/bull-board';
   if (isDev) {
+    app.useStaticAssets({
+      root: STATIC_PATH,
+      prefix: '/static/',
+    });
+    await fs.cp('./example/static', STATIC_PATH, {
+      recursive: true,
+      force: false,
+      errorOnExist: false,
+    });
+
     const { SwaggerModule, DocumentBuilder } = await import('@nestjs/swagger');
     const config = new DocumentBuilder()
       .setTitle('ProntoEntrega API')
@@ -152,8 +158,8 @@ const httpsOpts =
   useHttps && isDev
     ? {
         https: {
-          key: fs.readFileSync('./https_cert/localhost-key.pem'),
-          cert: fs.readFileSync('./https_cert/localhost.pem'),
+          key: readFileSync('./https_cert/localhost-key.pem'),
+          cert: readFileSync('./https_cert/localhost.pem'),
         },
       }
     : undefined;
