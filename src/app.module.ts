@@ -32,7 +32,7 @@ import { ChatsModule } from './chats/chats.module';
     OpenTelemetryModule.forRoot({
       resource: new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]: 'api',
-      }) as any,
+      }),
       traceAutoInjectors: [
         ControllerInjector,
         RepositoryInjector,

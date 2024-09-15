@@ -13,33 +13,15 @@ import { ConfirmOrderPaymentDto } from '../dto/confirm-order-payment.dto';
 import { PayOrderDto } from '../dto/pay-order.dto';
 import { PayOrderBaseDto } from '../dto/pay-order.dto';
 import { PayOrderService } from '../pay-order.service';
-import { UpdateOrderQueue } from '~/orders/common/init-order-payment';
-import { OnApplicationBootstrap } from '@nestjs/common';
 
 @Processor(QueueName.UpdateOrder)
-export class UpdateOrderConsumer implements OnApplicationBootstrap {
+export class UpdateOrderConsumer {
   constructor(
     private readonly payOrder: PayOrderService,
     private readonly confirmOrderPayment: ConfirmOrderPaymentService,
     private readonly completeOrderService: CompleteOrderService,
     private readonly cancelOrder: CancelOrderService,
   ) {}
-
-  async onApplicationBootstrap() {
-    UpdateOrderQueue.process(UpdateOrder.Pay, async (job) => {
-      return this.payOrder.exec(job.data as PayOrderDto);
-    });
-    UpdateOrderQueue.process(UpdateOrder.ConfirmPayment, async (job) => {
-      return this.confirmOrderPayment.exec(job.data);
-    });
-    UpdateOrderQueue.process(UpdateOrder.Complete, async (job) => {
-      return this.completeOrderService.exec(job.data);
-    });
-    UpdateOrderQueue.process(UpdateOrder.Cancel, async (job) => {
-      return this.cancelOrder.exec(job.data);
-    });
-    await UpdateOrderQueue.start();
-  }
 
   @Process(UpdateOrder.Pay)
   async pay(job: Job<PayOrderBaseDto>) {

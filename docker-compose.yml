@@ -3,13 +3,13 @@ version: '3.9'
 services:
   redis:
     image: redis:alpine
-    container_name: integration-tests-redis
+    container_name: dev-redis
     ports:
       - '6379'
   db:
-    image: postgres:14
+    image: postgis/postgis:16-3.4-alpine
     restart: always
-    container_name: integration-tests-database
+    container_name: dev-database
     ports:
       - '5433:5432'
     environment:

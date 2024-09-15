@@ -1,6 +1,3 @@
-// After change this file, run:
-// pnpm gen-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
@@ -26,15 +23,18 @@ model products {
   category_id        Int                      @db.SmallInt
   thumbhash          String?
   images_names       String[]
-  ts                 Unsupported("tsvector")? @default(dbgenerated("to_tsvector('portuguese', name)||to_tsvector('portuguese', brand)"))
-  categories         categories?              @relation(fields: [category_id], references: [category_id])
+  ingredients        String?
+  portion            String?
+  nutrition_facts    Json?
+  ts                 Unsupported("tsvector")? // GENERATED ALWAYS AS (to_tsvector('portuguese', name)||to_tsvector('portuguese', brand)) STORED
+  categories         categories               @relation(fields: [category_id], references: [category_id], onDelete: Restrict)
   items              item[]
   details            item_details[]
   order_items        order_item[]
   order_item_details order_item_details[]
 
   // @@index([category_id])
-  @@index([ts], map: "ts_idx")
+  @@index([ts], type: Gin)
 }
 
 model item {
@@ -53,8 +53,8 @@ model item {
   discount_value_1        Decimal?        @db.Decimal(7, 2)
   discount_value_2        Int?            @db.SmallInt
   discount_max_per_client Int?            @db.SmallInt
-  market                  market          @relation(fields: [market_id], references: [market_id])
-  product                 products?       @relation(fields: [prod_id], references: [prod_id])
+  market                  market          @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
+  product                 products?       @relation(fields: [prod_id], references: [prod_id], onDelete: Restrict)
   details                 item_details[]
   activities              item_activity[]
 
@@ -65,10 +65,10 @@ model item {
 
 model item_details {
   id        BigInt   @default(autoincrement())
-  item      item     @relation(fields: [item_id, city_slug], references: [item_id, city_slug])
+  item      item     @relation(fields: [item_id, city_slug], references: [item_id, city_slug], onDelete: Cascade)
   item_id   String
   city_slug String
-  product   products @relation(fields: [prod_id], references: [prod_id])
+  product   products @relation(fields: [prod_id], references: [prod_id], onDelete: Restrict)
   prod_id   BigInt
   quantity  Decimal  @db.Decimal(5, 3)
 
@@ -77,11 +77,11 @@ model item_details {
 
 model item_activity {
   id              BigInt      @default(autoincrement())
-  market          market      @relation(fields: [market_id], references: [market_id])
+  market          market      @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id       String
-  market_sub      market_sub? @relation(fields: [market_sub_id], references: [id])
+  market_sub      market_sub? @relation(fields: [market_sub_id], references: [id], onDelete: SetNull)
   market_sub_id   String?
-  item            item?       @relation(fields: [item_id, city_slug], references: [item_id, city_slug])
+  item            item?       @relation(fields: [item_id, city_slug], references: [item_id, city_slug], onDelete: SetNull)
   item_id         String?
   city_slug       String?
   product_code    BigInt?
@@ -134,14 +134,14 @@ model customer_address {
   complement  String?
   latitude    Float
   longitude   Float
-  customer    customer @relation(fields: [customer_id], references: [customer_id])
+  customer    customer @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
 
   @@id([id, customer_id])
 }
 
 model customer_card {
   id          String   @default(cuid())
-  customer    customer @relation(fields: [customer_id], references: [customer_id])
+  customer    customer @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
   customer_id String
   nickname    String?
   brand       String
@@ -167,7 +167,7 @@ model market {
   address_complement     String?
   address_latitude       Float
   address_longitude      Float
-  location               Unsupported("geometry")? @default(dbgenerated("ST_POINT(address_longitude, address_latitude)"))
+  location               Unsupported("geometry")? // GENERATED ALWAYS AS (ST_POINT(address_longitude, address_latitude)) STORED
   order_min              Decimal                  @db.Decimal(5, 2)
   delivery_fee           Decimal                  @db.Decimal(4, 2)
   markup                 Decimal                  @db.Decimal(4, 2)
@@ -203,11 +203,11 @@ model market {
   reviews                review[]
   chat_message           chat_message[]
 
-  @@index([location])
+  @@index([location], type: Gist)
 }
 
 model bank_account {
-  market         market            @relation(fields: [market_id], references: [market_id])
+  market         market            @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id      String            @id
   holder_name    String
   holder_type    holder_type
@@ -222,7 +222,7 @@ model bank_account {
 
 model business_hour {
   id         BigInt     @id @default(autoincrement())
-  market     market     @relation(fields: [market_id], references: [market_id])
+  market     market     @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id  String
   days       week_day[]
   open_time  String
@@ -231,7 +231,7 @@ model business_hour {
 
 model special_day {
   id          BigInt   @id @default(autoincrement())
-  market      market   @relation(fields: [market_id], references: [market_id])
+  market      market   @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id   String
   date        DateTime @db.Date
   reason_code Int      @db.SmallInt
@@ -242,7 +242,7 @@ model special_day {
 
 model open_flip {
   id         BigInt         @id @default(autoincrement())
-  market     market         @relation(fields: [market_id], references: [market_id])
+  market     market         @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id  String
   created_at DateTime       @default(now()) @db.Timestamptz(6)
   type       open_flip_type
@@ -251,7 +251,7 @@ model open_flip {
 model market_invoice {
   id                BigInt                @default(autoincrement())
   month             DateTime              @db.Date
-  market            market                @relation(fields: [market_id], references: [market_id])
+  market            market                @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id         String
   status            market_invoice_status @default(PENDING)
   amount            Decimal               @db.Decimal(7, 2)
@@ -270,7 +270,7 @@ model market_invoice {
 model market_payout {
   id         BigInt    @default(autoincrement())
   month      DateTime  @db.Date
-  market     market    @relation(fields: [market_id], references: [market_id])
+  market     market    @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id  String
   amount     Decimal   @default(0) @db.Decimal(7, 2)
   is_paid    Boolean   @default(false)
@@ -288,7 +288,7 @@ model market_sub {
   deleted         Boolean              @default(false)
   name            String
   permissions     m_sub_permission[]
-  market          market               @relation(fields: [market_id], references: [market_id])
+  market          market               @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   sessions        market_sub_session[]
   item_activities item_activity[]
 }
@@ -305,28 +305,28 @@ model admin_session {
   session_id String   @id @default(uuid()) @db.Uuid
   expires_in DateTime @db.Timestamptz(6)
   user_id    String   @map("admin_id")
-  admin      admin    @relation(fields: [user_id], references: [admin_id])
+  admin      admin    @relation(fields: [user_id], references: [admin_id], onDelete: Cascade)
 }
 
 model customer_session {
   session_id String   @id @default(uuid()) @db.Uuid
   expires_in DateTime @db.Timestamptz(6)
   user_id    String   @map("customer_id")
-  customer   customer @relation(fields: [user_id], references: [customer_id])
+  customer   customer @relation(fields: [user_id], references: [customer_id], onDelete: Cascade)
 }
 
 model market_session {
   session_id String   @id @default(uuid()) @db.Uuid
   expires_in DateTime @db.Timestamptz(6)
   user_id    String   @map("market_id")
-  market     market   @relation(fields: [user_id], references: [market_id])
+  market     market   @relation(fields: [user_id], references: [market_id], onDelete: Cascade)
 }
 
 model market_sub_session {
   session_id String     @id @default(uuid()) @db.Uuid
   expires_in DateTime   @db.Timestamptz(6)
   user_id    String     @map("market_sub_id")
-  market_sub market_sub @relation(fields: [user_id], references: [id])
+  market_sub market_sub @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model orders {
@@ -366,9 +366,9 @@ model orders {
   address_complement  String?
   address_latitude    Float
   address_longitude   Float
-  market              market               @relation(fields: [market_id], references: [market_id])
-  debit_market        market?              @relation("debit_order", fields: [debit_market_id], references: [market_id])
-  customer            customer             @relation(fields: [customer_id], references: [customer_id])
+  market              market               @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
+  debit_market        market?              @relation("debit_order", fields: [debit_market_id], references: [market_id], onDelete: SetNull)
+  customer            customer             @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
   review              review?
   items               order_item[]
   missing_items       order_missing_item[]
@@ -379,10 +379,10 @@ model orders {
 
 model order_item {
   id        BigInt               @default(autoincrement())
-  orders    orders               @relation(fields: [order_id, market_id], references: [order_id, market_id])
+  orders    orders               @relation(fields: [order_id, market_id], references: [order_id, market_id], onDelete: Cascade)
   market_id String
   order_id  BigInt
-  product   products?            @relation(fields: [prod_id], references: [prod_id])
+  product   products?            @relation(fields: [prod_id], references: [prod_id], onDelete: Restrict)
   prod_id   BigInt?
   quantity  Decimal              @db.Decimal(5, 3)
   price     Decimal              @db.Decimal(7, 2)
@@ -395,10 +395,10 @@ model order_item {
 
 model order_item_details {
   id            BigInt     @default(autoincrement())
-  order_item    order_item @relation(fields: [order_item_id, market_id], references: [id, market_id])
+  order_item    order_item @relation(fields: [order_item_id, market_id], references: [id, market_id], onDelete: Cascade)
   market_id     String
   order_item_id BigInt
-  product       products   @relation(fields: [prod_id], references: [prod_id])
+  product       products   @relation(fields: [prod_id], references: [prod_id], onDelete: Restrict)
   prod_id       BigInt
   quantity      Decimal    @db.Decimal(5, 3)
 
@@ -406,10 +406,10 @@ model order_item_details {
 }
 
 model order_missing_item {
-  order_item    order_item @relation(fields: [order_item_id, market_id], references: [id, market_id])
+  order_item    order_item @relation(fields: [order_item_id, market_id], references: [id, market_id], onDelete: Cascade)
   order_item_id BigInt
   market_id     String
-  orders        orders     @relation(fields: [order_id, market_id], references: [order_id, market_id])
+  orders        orders     @relation(fields: [order_id, market_id], references: [order_id, market_id], onDelete: Cascade)
   order_id      BigInt
   quantity      Decimal    @db.Decimal(5, 3)
 
@@ -425,27 +425,27 @@ model review {
   complaint   String[]
   message     String?
   response    String?
-  market      market   @relation(fields: [market_id], references: [market_id])
-  customer    customer @relation(fields: [customer_id], references: [customer_id])
-  order       orders   @relation(fields: [order_id, market_id], references: [order_id, market_id])
+  market      market   @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
+  customer    customer @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
+  order       orders   @relation(fields: [order_id, market_id], references: [order_id, market_id], onDelete: Cascade)
 
   @@id([order_id, market_id])
 }
 
 model chat_message {
   id              BigInt              @default(autoincrement())
-  customer        customer            @relation(fields: [customer_id], references: [customer_id])
+  customer        customer            @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
   customer_id     String
-  market          market              @relation(fields: [market_id], references: [market_id])
+  market          market              @relation(fields: [market_id], references: [market_id], onDelete: Cascade)
   market_id       String
-  order           orders              @relation(fields: [order_id, market_id], references: [order_id, market_id])
+  order           orders              @relation(fields: [order_id, market_id], references: [order_id, market_id], onDelete: Cascade)
   order_id        BigInt
   market_order_id BigInt
   created_at      DateTime            @default(now()) @db.Timestamptz(6)
   author          chat_message_author
   message         String
 
-  @@id([id, market_id])
+  @@id([id, customer_id])
 }
 
 enum discount_type {
