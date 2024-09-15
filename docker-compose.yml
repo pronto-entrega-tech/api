@@ -16,3 +16,10 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: test
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - '1025'
+      - '8025'
+      

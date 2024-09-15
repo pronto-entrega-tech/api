@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { Role } from '~/auth/constants/roles';
+import { STATIC_URL } from '../constants/urls';
 
 async function otp(code: string, time: number, link: string, role: Role) {
   const type = {
@@ -17,6 +18,7 @@ async function otp(code: string, time: number, link: string, role: Role) {
     .replace('$TYPE', type ? ` ${type}` : '')
     .replace('$TIME', time.toString())
     .replace('$LINK', link)
+    .replace('$STATIC_URL', STATIC_URL)
     .replace('$YEAR', new Date().getFullYear().toString());
 }
 

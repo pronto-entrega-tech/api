@@ -17,17 +17,16 @@ import { StrategiesModule } from './strategies/strategies.module';
     }),
     Argon2Module.forRootAsync(),
     MailerModule.forRoot({
-      options: {
-        host: 'smtp.zoho.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: process.env.LOGIN_EMAIL_ADDRESS,
-          pass: process.env.LOGIN_EMAIL_PASSWORD,
-        },
-      },
+      options: { url: process.env.SMTP_URL },
       defaults: {
-        from: `ProntoEntrega ${process.env.LOGIN_EMAIL_ADDRESS}`,
+        from: {
+          name: 'ProntoEntrega',
+          address: 'notificacao@prontoentrega.com.br',
+        },
+        replyTo: {
+          name: 'ProntoEntrega',
+          address: 'contato@prontoentrega.com.br',
+        },
       },
     }),
   ],

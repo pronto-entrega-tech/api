@@ -8,7 +8,11 @@
 
 ## Run
 
-Start docker compose.
+Run docker compose to start:
+
+- Postgres
+- Redis
+- Mailpit (An email and SMTP testing tool with an UI on <http://localhost:8025>)
 
 ```sh
 pnpm docker:up
