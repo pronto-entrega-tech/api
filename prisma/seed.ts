@@ -130,6 +130,9 @@ async function main() {
   await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS order_missing_item_market_1 PARTITION OF order_missing_item FOR VALUES IN ('market_1');`;
   await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS review_market_1 PARTITION OF review FOR VALUES IN ('market_1');`;
 
+  await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS item_activity_market_2 PARTITION OF item_activity FOR VALUES IN ('market_2');`;
+  await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS item_activity_market_3 PARTITION OF item_activity FOR VALUES IN ('market_3');`;
+
   await prisma.business_hour.createMany({
     data: [
       {
@@ -215,7 +218,7 @@ async function main() {
       {
         item_id: '2',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_2',
         prod_id: 2,
         market_price: 22.5,
         discount_type: 'DISCOUNT_VALUE',
@@ -224,7 +227,7 @@ async function main() {
       {
         item_id: '3',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_3',
         prod_id: 3,
         market_price: 14.69,
         discount_type: 'DISCOUNT_PERCENT',
@@ -240,7 +243,7 @@ async function main() {
       {
         item_id: '5',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_2',
         prod_id: 5,
         market_price: 8.2,
         discount_type: 'ONE_FREE',
@@ -249,7 +252,7 @@ async function main() {
       {
         item_id: '6',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_3',
         prod_id: 6,
         market_price: 4.84,
       },
@@ -276,7 +279,7 @@ async function main() {
         action: 'CREATE',
         item_id: '2',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_2',
         product_code: 2416420975375,
         item_name: 'Arroz Branco Cristal Pacote 5kg',
         new_price: 22.5,
@@ -288,7 +291,7 @@ async function main() {
         action: 'CREATE',
         item_id: '3',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_3',
         product_code: 4640426163742,
         item_name: 'Filé de Peito de Frango Sadia Bandeja 1kg',
         new_price: 14.69,
@@ -311,7 +314,7 @@ async function main() {
         action: 'CREATE',
         item_id: '5',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_2',
         product_code: 3428747357514,
         item_name: 'Biscoito Rosca Coco Mabel Pacote 700g',
         new_price: 8.2,
@@ -322,7 +325,7 @@ async function main() {
         action: 'CREATE',
         item_id: '6',
         city_slug: 'jatai-go',
-        market_id: 'market_1',
+        market_id: 'market_3',
         product_code: 4278467537575,
         item_name: 'Leite Integral Italac Caixa 1l',
         new_price: 4.84,
