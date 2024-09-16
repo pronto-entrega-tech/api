@@ -1,7 +1,6 @@
 {
   "name": "api",
   "author": "ProntoEntrega",
-  "type": "module",
   "private": true,
   "scripts": {
     "dotenv": "dotenvx run --convention=nextjs",
