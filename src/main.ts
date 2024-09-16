@@ -96,8 +96,7 @@ const bootstrap = async () => {
   }
 
   const port = process.env.PORT ?? 3000;
-  const useLocalIp = process.env.USE_LOCAL_IP === 'true';
-  const address = useLocalIp && isDev ? localIp : undefined;
+  const address = isDev ? localIp : undefined;
 
   // Start
   await app.listen(port, address ?? 'localhost');

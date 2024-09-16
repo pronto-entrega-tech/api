@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "dotenv": "dotenvx run --convention=nextjs",
-    "use-local-ip": "cross-env USE_LOCAL_IP=true pnpm",
     "dev": "cross-env NODE_ENV=development nest start --watch",
     "build": "rimraf dist && nest build",
     "start": "node dist/main",
