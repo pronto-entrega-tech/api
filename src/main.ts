@@ -93,7 +93,7 @@ const bootstrap = async () => {
         basePath: "",
         prefix: bullBoardPath,
       })
-      .catch(console.error);
+      .catch?.(console.error);
   }
 
   const port = process.env.PORT ?? 3000;

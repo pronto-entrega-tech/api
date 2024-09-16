@@ -22,7 +22,7 @@ export class CompleteOrderService {
     private readonly ordersStatus: OrdersStatusService,
     private readonly ordersRepo: OrdersRepository,
     private readonly marketsRepo: MarketsRepository,
-    private readonly customersRepo: CustomersRepository,
+    private readonly customersRepo: CustomersRepository
   ) {}
 
   async exec({ fullOrderId: id }: ClientData) {
@@ -44,7 +44,7 @@ export class CompleteOrderService {
       this.ordersRepo.update(id, { customer_debit: action.orderOverTotal }),
       this.customersRepo.updateBalance(
         order.customer_id,
-        action.customerBalance,
+        action.customerBalance
       ),
       (async () => {
         const { type, data } = action.effect;
@@ -69,8 +69,8 @@ export class CompleteOrderService {
   private async transferFromMarket({ market_id }: FullOrderId, value: number) {
     const key = await this.marketsRepo.findRecipientKey(market_id);
     await this.asaas.transfers.create(
-      { value, walletId: appRecipientKey },
-      key ?? fail(),
+      { value, walletId: appRecipientKey() },
+      key ?? fail()
     );
   }
 

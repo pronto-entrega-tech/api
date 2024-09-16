@@ -18,7 +18,7 @@ class AddressWoNumberRes extends OmitType(AddressRes, ["number"]) {}
 export class LocationService {
   constructor(private readonly marketsRepo: MarketsRepository) {}
 
-  private readonly API_KEY =
+  private readonly API_KEY = () =>
     process.env.GOOGLE_MAPS_API_KEY ??
     fail("GOOGLE_MAPS_API_KEY must be defined");
 
@@ -26,7 +26,7 @@ export class LocationService {
 
   async addressFromCoords({ coords }: AddressFromCoordsDto) {
     const { data } = await this.googlemaps.reverseGeocode({
-      params: { key: this.API_KEY, latlng: coords },
+      params: { key: this.API_KEY(), latlng: coords },
     });
     const result = data.results[0] ?? fail(new NotFoundError("Location"));
 
@@ -80,7 +80,7 @@ export class LocationService {
 
   async coords({ address }: CoordsDto) {
     const { data } = await this.googlemaps.geocode({
-      params: { key: this.API_KEY, address },
+      params: { key: this.API_KEY(), address },
     });
     const result = data.results[0] ?? fail(new NotFoundError("Location"));
 

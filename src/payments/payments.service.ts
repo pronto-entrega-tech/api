@@ -25,11 +25,11 @@ export class PaymentsService {
     @InjectQueue(QueueName.ConfirmInvoice)
     private readonly confirmInvoiceQueue: Queue<ConfirmInvoiceJobDto>
   ) {}
-  private readonly ASAAS_WH_SECRET =
+  private readonly ASAAS_WH_SECRET = () =>
     process.env.ASAAS_WH_SECRET ?? fail("ASAAS_WH_SECRET must be defined");
 
   async handleWebhook(body: Asaas.WebHookBody, token: string) {
-    if (token !== this.ASAAS_WH_SECRET) throw new UnauthorizedException();
+    if (token !== this.ASAAS_WH_SECRET()) throw new UnauthorizedException();
 
     await this.handleEvent(body);
 
