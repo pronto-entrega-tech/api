@@ -1,17 +1,15 @@
 import { DynamicModule } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import Argon2, { argon2id } from 'argon2';
 import { KiB } from '~/common/constants/bytes-sizes';
 
-const options = Prisma.validator<Argon2.Options>()({
+const options = {
   type: argon2id,
   timeCost: 12,
   memoryCost: 32 * KiB,
   parallelism: 1,
-  saltLength: 16,
   hashLength: 32,
-});
+} satisfies Argon2.Options;
 
 export class Argon2Module {
   static async forRootAsync() {
