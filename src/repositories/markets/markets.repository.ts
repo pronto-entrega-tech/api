@@ -19,7 +19,7 @@ import { InvoicesRepository } from './invoices/invoices.repository';
 import { PayoutsRepository } from './payouts/payouts.repository';
 import { MarketSubsRepository } from './subs/market-subs.repository';
 import { pick } from '~/common/functions/pick';
-import { OrderBy } from '~/common/constants/order-by';
+import { orderBy } from '~/common/constants/order-by';
 import {
   DeleteOpenFlipDto,
   CreateOpenFlipDto,
@@ -258,11 +258,11 @@ export class MarketsRepository {
           sql`to_tsvector('portuguese', name) @@ plainto_tsquery('portuguese', ${query})`,
       ],
       orderBy:
-        order_by !== OrderBy.Default &&
+        order_by !== orderBy.Default &&
         {
-          [OrderBy.Rating]: sql`rating`,
-          [OrderBy.Distance]: sql`min_time + max_time / 1000`,
-          [OrderBy.DeliveryTime]:
+          [orderBy.Rating]: sql`rating`,
+          [orderBy.Distance]: sql`min_time + max_time / 1000`,
+          [orderBy.DeliveryTime]:
             coords && sql`ST_POINT(${coords.lng}, ${coords.lat}) <-> location`,
         }[order_by],
     });

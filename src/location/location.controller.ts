@@ -14,21 +14,21 @@ export class LocationController {
   constructor(private readonly location: LocationService) {}
 
   @ApiOperation({ summary: 'Find address using coordinates' })
-  @Throttle(5, 5)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Get('address/from-coords/:coords')
   addressFromCoords(@Param() params: AddressFromCoordsDto) {
     return this.location.addressFromCoords(params);
   }
 
   @ApiOperation({ summary: 'Find address using company document' })
-  @Throttle(5, 5)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Get('address/from-document/:document')
   addressFromDocument(@Param() params: AddressFromDocumentDto) {
     return this.location.addressFromDocument(params);
   }
 
   @ApiOperation({ summary: 'Find coordinates using address' })
-  @Throttle(5, 5)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Get('coords/from-address/:address')
   coords(@Param() params: CoordsDto) {
     return this.location.coords(params);

@@ -37,7 +37,7 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @ApiOperation({ summary: 'Send a validation code via email' })
-  @Throttle(5, 60)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('email')
   async email(@Body() dto: EmailDto) {
     return this.auth.email(dto);
@@ -47,7 +47,7 @@ export class AuthController {
     summary: 'Generate create_token, or access_token and refresh_token cookie',
   })
   @ApiQuery(useCookieQueryOpts)
-  @Throttle(5, 60)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('validate')
   async validate(
     @Query(useCookieQueryOpts.name) useCookie: boolean,
@@ -73,7 +73,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Generate a new access_token and refresh_token' })
   @ApiQuery(useCookieQueryOpts)
   @ApiQuery({ name: 'refresh_token', required: false })
-  @Throttle(5, 60)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('revalidate')
   async revalidate(
     @Query(useCookieQueryOpts.name) useCookie: boolean,
@@ -103,7 +103,7 @@ export class AuthController {
   @ApiQuery(useCookieQueryOpts)
   @UseGuards(ConnectAuthGuard)
   @Roles(Role.MarketSub)
-  @Throttle(5, 60)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('connect')
   async connect(
     @Query(useCookieQueryOpts.name) useCookie: boolean,

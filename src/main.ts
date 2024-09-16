@@ -8,7 +8,6 @@ import { HttpException, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import { FastifyRegisterOptions } from 'fastify';
 import BullQueue from 'bull';
 import { AppModule } from './app.module';
 import {
@@ -29,7 +28,6 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { contentParser } from 'fastify-file-interceptor';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -53,8 +51,7 @@ const bootstrap = async () => {
   await app.register(fastifyCsrf, {
     cookieOpts: { path: '/', sameSite: true, httpOnly: true, signed: true },
   });
-  await app.register(fastifyHelmet, isDev ? devHelmetOpts : prodHelmetOpts);
-  app.register(contentParser);
+  if (!isDev) await app.register(fastifyHelmet, prodHelmetOpts);
 
   const docsPath = '/docs';
   const bullBoardPath = '/bull-board';
@@ -129,18 +126,7 @@ const localIp = networkInterfaces().en0?.find(
   (v) => v.family === 'IPv4',
 )?.address;
 
-const devHelmetOpts: FastifyRegisterOptions<FastifyHelmetOptions> = {
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: [`'self'`],
-      styleSrc: [`'self'`, `'unsafe-inline'`],
-      imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
-      scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-    },
-  },
-  crossOriginResourcePolicy: { policy: 'cross-origin' },
-};
-const prodHelmetOpts: FastifyRegisterOptions<FastifyHelmetOptions> = {
+const prodHelmetOpts: FastifyHelmetOptions = {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: [`'self'`],

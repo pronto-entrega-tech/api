@@ -13,39 +13,39 @@ import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ProductsModule } from './products/products.module';
 import { RepositoriesModule } from './repositories/repositories.module';
+import { ChatsModule } from './chats/chats.module';
 import {
   ControllerInjector,
   GuardInjector,
-  LoggerInjector,
+  ConsoleLoggerInjector,
   ScheduleInjector,
   OpenTelemetryModule,
-} from '@metinseylan/nestjs-opentelemetry';
-import { ZipkinExporter } from '@opentelemetry/exporter-zipkin';
-import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+} from '@amplication/opentelemetry-nestjs';
 import { RepositoryInjector } from './common/monitoring/repository.injector';
-import { ChatsModule } from './chats/chats.module';
+import { Tracing } from '@amplication/opentelemetry-nestjs';
+import { ZipkinExporter } from '@opentelemetry/exporter-zipkin';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
+import { FastifyMulterModule } from '@nest-lab/fastify-multer';
+
+Tracing.init({
+  serviceName: 'api',
+  spanProcessor: new BatchSpanProcessor(new ZipkinExporter()),
+});
 
 @Module({
   imports: [
-    OpenTelemetryModule.forRoot({
-      resource: new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: 'api',
-      }),
-      traceAutoInjectors: [
-        ControllerInjector,
-        RepositoryInjector,
-        GuardInjector,
-        LoggerInjector,
-        ScheduleInjector,
-      ],
-      spanProcessor: new SimpleSpanProcessor(new ZipkinExporter()),
-    }),
+    OpenTelemetryModule.forRoot([
+      ControllerInjector,
+      RepositoryInjector,
+      GuardInjector,
+      ConsoleLoggerInjector,
+      ScheduleInjector,
+    ]),
     ConfigModule.forRoot({ envFilePath: envPath() }),
     ScheduleModule.forRoot(),
     BullModule.forRoot({}),
     MutexModule,
+    FastifyMulterModule,
     RepositoriesModule,
     AuthModule,
     ProductsModule,

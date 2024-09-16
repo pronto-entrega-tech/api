@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { AsaasRequests } from './asaas-requests';
@@ -6,9 +5,7 @@ import { Asaas } from './asaas.types';
 
 @Injectable()
 export class AsaasService {
-  constructor(private readonly http: HttpService) {}
-
-  private readonly req = new AsaasRequests(this.http);
+  private readonly req = new AsaasRequests();
 
   readonly payments = new AsaasPayments(this.req);
   readonly accounts = new AsaasAccounts(this.req);

@@ -18,7 +18,7 @@ export class UpdateKitDto extends PartialType(
   readonly details?: UpdateDetailsDto[];
 }
 
-class UpdateDetailsDto extends OmitType(CreateDetailsDto, ['code']) {
+export class UpdateDetailsDto extends OmitType(CreateDetailsDto, ['code']) {
   @TransformToBigInt()
   readonly prod_id: bigint;
 }

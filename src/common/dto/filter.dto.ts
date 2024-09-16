@@ -11,7 +11,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { OrderBy } from '../constants/order-by';
+import { OrderBy, orderBy } from '../constants/order-by';
 
 export class ItemByMarketFilter {
   @ApiProperty({ description: 'Full text search' })
@@ -35,8 +35,8 @@ export class ItemFeedFilter extends ItemByMarketFilter {
   readonly ids?: string[];
 
   @IsOptional()
-  @IsEnum(OrderBy)
-  readonly order_by: OrderBy = OrderBy.Default;
+  @IsEnum(orderBy)
+  readonly order_by: OrderBy = 'DEFAULT';
 
   @ApiProperty({ description: 'Latitude,Longitude' })
   @IsOptional()

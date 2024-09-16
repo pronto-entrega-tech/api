@@ -68,7 +68,7 @@ export const createQueueNamed =
 
         return processor(job);
       },
-      { autorun: false },
+      { autorun: false, connection: {} },
     );
 
     const process = <Name extends NameType>(

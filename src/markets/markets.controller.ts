@@ -22,8 +22,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { FileFastifyInterceptor, diskStorage } from 'fastify-file-interceptor';
-import multer from 'multer';
+import {
+  FileInterceptor,
+  Options as MulterOptions,
+  File,
+} from '@nest-lab/fastify-multer';
 import { AuthReq } from '~/auth/constants/auth-req';
 import {
   ADMIN_ACCESS_TOKEN,
@@ -43,11 +46,11 @@ import { MarketsService } from './markets.service';
 import { UploadFileDto } from './dto/upload-file.dto';
 import { DeleteOpenFlipDto, CreateOpenFlipDto } from './dto/open-flip.dto';
 
-const validateImage: multer.Options['fileFilter'] = (_, file, callback) => {
+const validateImage: MulterOptions['fileFilter'] = (_, file, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/))
     return callback(new UnprocessableEntityException('File must be a image'));
 
-  if (file.size >= 1 * MiB)
+  if (file.size && file.size >= 1 * MiB)
     return callback(
       new PayloadTooLargeException('File size must be lower than 1MiB'),
     );
@@ -154,8 +157,8 @@ export class MarketsPrivateController {
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload a profile picture' })
   @UseInterceptors(
-    FileFastifyInterceptor('picture', {
-      storage: diskStorage({}),
+    FileInterceptor('picture', {
+      dest: '/tmp/pronto-entrega-uploads',
       fileFilter: validateImage,
     }),
   )
@@ -164,9 +167,10 @@ export class MarketsPrivateController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() _: UploadFileDto,
     @Req() { user: { sub: id } }: AuthReq,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile() file?: File,
   ) {
-    if (!file) throw new BadRequestException('Image file must be attached');
+    if (!file || !file.path)
+      throw new BadRequestException('Image file must be attached');
 
     return this.markets.savePicture(id, file.path);
   }

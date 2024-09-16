@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
-import { BaseTraceInjector } from '@metinseylan/nestjs-opentelemetry/dist/Trace/Injectors/BaseTraceInjector';
-import { Injector } from '@metinseylan/nestjs-opentelemetry/dist/Trace/Injectors/Injector';
+import { BaseTraceInjector } from '@amplication/opentelemetry-nestjs/dist/Trace/Injectors/BaseTraceInjector';
+import { Injector } from '@amplication/opentelemetry-nestjs/dist/Trace/Injectors/Injector';
 
 @Injectable()
 export class RepositoryInjector extends BaseTraceInjector implements Injector {
