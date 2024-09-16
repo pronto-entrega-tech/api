@@ -1,5 +1,6 @@
-import { isDevOrTest } from '../constants/is-dev';
+import { isDev, isTest } from '../constants/is-dev';
 
 export function envPath() {
-  return isDevOrTest ? ['.env.local', '.env.development'] : undefined;
+  if (isDev) return ['.env.local', '.env.development'];
+  if (isTest) return ['.env.local', '.env.development', '.env.test.local'];
 }

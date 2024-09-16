@@ -1,17 +1,12 @@
-import { InlineConfig } from 'vitest';
 import { defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import swc from 'unplugin-swc';
 
-const integrationConfig: InlineConfig = {
-  testTimeout: 30000,
-};
-
-export default defineConfig(({ mode }) => ({
-  plugins: [tsconfigPaths()],
-  test: {
-    dir: 'src',
-    globals: true,
-    setupFiles: 'test/setup.ts',
-    ...(mode === 'integration' && integrationConfig),
-  },
-}));
+export default defineConfig({
+  plugins: [
+    tsconfigPaths(),
+    swc.vite({
+      module: { type: 'es6' },
+    }),
+  ],
+});

@@ -12,16 +12,11 @@
     "controllers": "public",
     "dto": "class",
     "responses": "class",
-    "repositories": "database",
-    "migrations": "ci"
+    "repositories": "database"
   },
   "material-icon-theme.files.associations": {
     "*.processor.ts": "nest-controller",
     "*.dto.ts": "nest-pipe",
-    "*.repo.ts": "nest-middleware",
-    "*.service-spec.ts": "test-ts",
-    "*.db-spec.ts": "test-ts",
-    "test.ts": "test-ts",
-    "vitest.config.ts": "vite"
+    "*.repo.ts": "nest-middleware"
   }
 }

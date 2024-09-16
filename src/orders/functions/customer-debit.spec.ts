@@ -1,10 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { getOneCustomerDebit } from './customer-debit';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
+import { OneCustomerDebit } from './customer-debit';
 import { Decimal } from '@prisma/client/runtime';
 
-type CreditLog = OrdersRepository.CreditLog;
-type Output = ReturnType<typeof getOneCustomerDebit>;
+type Output = ReturnType<typeof OneCustomerDebit.calc>;
 
 const market_id = 'market_id';
 const debit_market_id = market_id;
@@ -17,15 +15,15 @@ const base = {
   debit_amount: null,
 };
 
-const from = (i: Partial<CreditLog>[]) => ({
+const from = (i: Partial<OneCustomerDebit.CreditLogs[number]>[]) => ({
   to: (o: Output) => {
-    const res = getOneCustomerDebit(i.map((v) => ({ ...base, ...v })));
+    const res = OneCustomerDebit.calc(i.map((v) => ({ ...base, ...v })));
 
     expect(res).toEqual(o);
   },
 });
 
-describe(`${getOneCustomerDebit.name} (Debit)`, () => {
+describe(`OneCustomerDebit (Debit)`, () => {
   it('given debit, will pay more', () =>
     from([{ customer_debit: new Decimal(-10) }]).to({
       debit_market_id,
@@ -42,7 +40,7 @@ describe(`${getOneCustomerDebit.name} (Debit)`, () => {
     from([{ debit_market_id, debit_amount: new Decimal(10) }]).to(undefined));
 });
 
-describe(`${getOneCustomerDebit.name} (Credit)`, () => {
+describe(`OneCustomerDebit (Credit)`, () => {
   it('given credit, will not pay more', () =>
     from([{ customer_debit: new Decimal(10) }]).to(undefined));
 
@@ -62,7 +60,7 @@ describe(`${getOneCustomerDebit.name} (Credit)`, () => {
     }));
 });
 
-describe(`${getOneCustomerDebit.name} (Credit & Debit)`, () => {
+describe(`OneCustomerDebit (Credit & Debit)`, () => {
   it('given more credit than debit, will not pay more', () =>
     from([
       { customer_debit: new Decimal(10) },

@@ -7,7 +7,7 @@ const from = (i: Parameters<typeof getProductName>[0]) => ({
     const assert = () => {
       const res = getProductName(i);
 
-      expect(+res).toEqual(o.name);
+      expect(res).toEqual(o.name);
     };
     return [format('%o => %o', i, o), assert] as const;
   },

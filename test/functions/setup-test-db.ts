@@ -1,7 +1,9 @@
 import { beforeEach, afterEach } from 'vitest';
 import { second } from '~/common/constants/time';
-import { prisma } from '~/common/prisma/prisma.service';
+import { PrismaService } from '~/common/prisma/prisma.service';
 import { dbAnnihilator, AnnihilateDb } from './db-annihilator';
+
+const prisma = new PrismaService();
 
 export function setupTestDb() {
   let annihilate: AnnihilateDb;

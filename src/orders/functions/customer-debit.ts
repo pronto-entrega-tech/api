@@ -1,5 +1,5 @@
 import { Decimal } from '@prisma/client/runtime';
-import { prisma } from '~/common/prisma/prisma.service';
+import { prisma } from '~/common/prisma/prisma';
 import { OrderStatus } from '../constants/order-status';
 import { Prisma } from '@prisma/client';
 

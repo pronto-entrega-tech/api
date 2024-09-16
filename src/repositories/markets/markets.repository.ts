@@ -125,29 +125,19 @@ export class MarketsRepository {
     const nextMonth = Month.next(currentMonth);
 
     Prisma.validator<Prisma.marketUncheckedCreateInput>()(_dto);
-    return this.prisma.$transaction(async (prisma) => {
-      const { market_id } = await prisma.market.create({
-        data: {
-          created_at: now,
-          ..._dto,
-          bank_account: { create: bank_account },
-          business_hours: { create: business_hours },
-          payouts: {
-            create: [{ month: currentMonth }, { month: nextMonth }],
-          },
+    const { market_id } = await this.prisma.market.create({
+      data: {
+        created_at: now,
+        ..._dto,
+        bank_account: { create: bank_account },
+        business_hours: { create: business_hours },
+        payouts: {
+          create: [{ month: currentMonth }, { month: nextMonth }],
         },
-      });
-
-      await this.createPartitions(prisma, market_id, [
-        'orders',
-        'order_item',
-        'order_missing_item',
-        'item_activity',
-        'review',
-      ]);
-
-      return market_id;
+      },
     });
+
+    return market_id;
   }
 
   async update(market_id: string, dto: UpdateMarketDto) {
@@ -213,12 +203,23 @@ export class MarketsRepository {
   }
 
   async approve(market_id: string) {
-    return this.prisma.market
-      .update({
-        data: { approved: true },
-        where: { market_id },
-      })
-      .catch(prismaNotFound('Market'));
+    await this.prisma.$transaction(async (prisma) => {
+      const { city_slug } = await prisma.market
+        .update({
+          data: { approved: true },
+          where: { market_id },
+        })
+        .catch(prismaNotFound('Market'));
+
+      await this.createPartitions(prisma, market_id, [
+        'orders',
+        'order_item',
+        'order_missing_item',
+        'item_activity',
+        'review',
+      ]);
+      await this.createPartitions(prisma, city_slug, ['item']);
+    });
   }
 
   findMany(

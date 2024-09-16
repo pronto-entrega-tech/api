@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { PaymentMethod } from '~/payments/constants/payment-methods';
 import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { prisma } from '~/common/prisma/prisma.service';
+import { prisma } from '~/common/prisma/prisma';
 import { CreateOrderDto } from '../create-order/create-order.dto';
 
 type Dto = Pick<

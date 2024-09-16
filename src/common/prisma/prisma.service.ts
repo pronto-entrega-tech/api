@@ -1,45 +1,29 @@
 import { INestApplication, OnModuleInit } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { fail } from 'assert';
-import { execSync } from 'child_process';
-import { isDevOrTest } from '../constants/is-dev';
 
 const config = Prisma.validator<Prisma.PrismaClientOptions>()({
   log: [{ emit: 'event', level: 'query' }],
 });
 
-type PrismaOptions = typeof config & { datasources?: { db: { url: string } } };
-
-const createUrl = (instance?: string) => {
-  const DATABASE_URL =
-    process.env.DATABASE_URL ?? fail('DATABASE_URL must be defined');
-
-  if (!instance) return DATABASE_URL;
-
-  return DATABASE_URL.replace(/(?<=\/\/.*\/).*?(?=\?|$)/, `db_${instance}`);
-};
-
 @Injectable()
 export class PrismaService
-  extends PrismaClient<PrismaOptions, 'query', false>
+  extends PrismaClient<typeof config, 'query', false>
   implements OnModuleInit
 {
-  /* constructor() {
-    const url = createUrl(process.env.JEST_WORKER_ID);
-
-    super({ ...config, datasources: { db: { url } } });
-  } */
+  constructor() {
+    super({ ...config });
+  }
 
   async onModuleInit() {
-    // if (isDevOrTest) this.devSetup();
+    // if (isDevOrTest) await this.devSetup();
 
     await this.$connect();
   }
 
   async enableShutdownHooks(app: INestApplication) {
     this.$on('beforeExit', async () => {
-      // if (isDevOrTest) this.teardown();
+      // if (isDevOrTest) await this.teardown();
 
       await app.close();
     });
@@ -67,19 +51,16 @@ export class PrismaService
     return tablesNames.map((tableName) => `"public"."${tableName}"`).join();
   }
 
-  private devSetup() {
-    console.log('Creating containers');
-    execSync('pnpm docker:up');
+  // private async devSetup() {
+  //   console.log('Creating containers');
+  //   await exec('pnpm docker:up');
 
-    console.log('Running migrations');
-    // execSync('pnpm migrate:dev');
-    execSync('npx prisma db push');
-  }
+  //   console.log('Running migrations');
+  //   await exec('pnpm prisma db execute --file prisma/schema.sql');
+  // }
 
-  private teardown() {
-    console.log('Destroying containers');
-    execSync('pnpm docker:down');
-  }
+  // private async teardown() {
+  //   console.log('Destroying containers');
+  //   await exec('pnpm docker:down');
+  // }
 }
-
-export const prisma = new PrismaService();

@@ -21,4 +21,8 @@ export const createProduct2: CreateProductDto = {
 export const createdProduct = Prisma.validator<products>()({
   ...createProduct,
   prod_id: 1n,
+  thumbhash: null,
+  ingredients: null,
+  portion: null,
+  nutrition_facts: null,
 });

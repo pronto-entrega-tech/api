@@ -59,6 +59,8 @@ export const itemFeed = Prisma.validator<_ItemFeed>()({
   ),
   price: '10.00',
   details: [] as ItemDetails[],
+  thumbhash: null,
+  market_thumbhash: null,
 });
 
 export const updateItem: UpdateItemDto = { stock: 10 };

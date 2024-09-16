@@ -15,6 +15,7 @@
     "nestjs",
     "opentelemetry",
     "thumbhash",
+    "unplugin",
     "unsign",
     "websockets"
   ]

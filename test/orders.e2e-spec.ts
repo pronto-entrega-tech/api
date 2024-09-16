@@ -65,7 +65,7 @@ beforeAll(async () => {
 
 afterEach(() => annihilate(), 10 * second);
 
-afterAll(() => app.close());
+afterAll(() => app?.close());
 
 test('Customer make a order', async () => {
   await setupApp();

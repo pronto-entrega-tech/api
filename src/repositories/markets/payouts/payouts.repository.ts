@@ -20,10 +20,12 @@ export class PayoutsRepository {
       month,
     }));
 
-    await this.prisma.$transaction([
+    /* await this.prisma.$transaction([
       this.createPayoutPartition(month),
       this.prisma.market_payout.createMany({ data: payouts }),
-    ]);
+    ]); */
+    await this.createPayoutPartition(month);
+    await this.prisma.market_payout.createMany({ data: payouts });
   }
 
   async exist(monthDate: Date) {

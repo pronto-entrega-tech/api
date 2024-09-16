@@ -1,6 +1,7 @@
 {
   "name": "api",
   "author": "ProntoEntrega",
+  "type": "module",
   "private": true,
   "scripts": {
     "dotenv": "dotenvx run --convention=nextjs",
@@ -8,18 +9,17 @@
     "dev": "cross-env NODE_ENV=development nest start --watch",
     "build": "rimraf dist && nest build",
     "start": "node dist/main",
-    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,test}/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "db:migrate": "pnpm -s dotenv -- sh -c \"prisma generate && prisma db execute --file prisma/schema.sql && tsx prisma/seed.ts\"",
     "db:studio": "pnpm -s dotenv -- prisma studio",
     "db:deploy": "prisma migrate deploy",
-    "test": "pnpm -s dotenv -- vitest",
-    "test:service": "pnpm test run -t .service-spec.ts$",
-    "test:e2e": "pnpm test run --dir test -t .e2e-spec$",
-    "test:cov": "pnpm test --coverage",
-    "pre-commit": "pnpm -s dotenv -e CI=true -- sh -c \"pnpm lint && pnpm type-check && pnpm test && pnpm test:e2e\""
+    "test": "cross-env NODE_ENV=test pnpm -s dotenv -- vitest run",
+    "test:unit": "cross-env NODE_ENV=test pnpm -s dotenv -- vitest --project unit",
+    "test:e2e": "cross-env NODE_ENV=test pnpm -s dotenv -- vitest run --project e2e",
+    "pre-commit": "pnpm -s dotenv -e CI=true -- sh -c \"pnpm lint && pnpm type-check && pnpm test\""
   },
   "dependencies": {
     "@bull-board/api": "^4.6.0",
@@ -77,6 +77,7 @@
     "@nestjs/cli": "^9.1.4",
     "@nestjs/schematics": "^9.0.3",
     "@nestjs/testing": "^9.1.5",
+    "@swc/core": "^1.7.26",
     "@types/bull": "^3.15.9",
     "@types/cron": "^2.0.0",
     "@types/crypto-js": "^4.1.1",
@@ -97,8 +98,9 @@
     "ts-loader": "^9.4.4",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^4.3.5",
-    "vite-tsconfig-paths": "^4.2.0",
-    "vitest": "^0.33.0",
+    "unplugin-swc": "^1.5.1",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1",
     "zod": "^3.22.2"
   }
 }

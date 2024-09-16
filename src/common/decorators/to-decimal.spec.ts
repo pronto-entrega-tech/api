@@ -10,7 +10,7 @@ class TestClass {
 
 describe('TransformToDecimal', () => {
   it('should return decimal', () => {
-    const { value } = plainToInstance(TestClass, { value: '1' });
+    const { value } = plainToInstance(TestClass, { value: 1 });
 
     expect(value).toBeInstanceOf(Decimal);
   });

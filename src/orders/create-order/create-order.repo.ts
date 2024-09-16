@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { NotFoundError } from '~/common/errors/not-found';
 import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { prisma } from '~/common/prisma/prisma.service';
+import { prisma } from '~/common/prisma/prisma';
 import { SaveOrderDto, CreateOrderDto as ClientData } from './create-order.dto';
 
 export namespace CreateOrderRepo {
