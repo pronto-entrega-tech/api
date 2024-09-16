@@ -1,5 +1,5 @@
-import { ArrayUnique, IsEnum, Length } from 'class-validator';
-import { SubPermission } from '~/auth/constants/sub-permissions';
+import { ArrayUnique, IsEnum, Length } from "class-validator";
+import { SubPermission } from "~/auth/constants/sub-permissions";
 
 export class CreateMarketSubDto {
   @Length(1, 256)

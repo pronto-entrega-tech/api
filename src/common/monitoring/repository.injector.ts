@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ModulesContainer } from '@nestjs/core';
-import { BaseTraceInjector } from '@amplication/opentelemetry-nestjs/dist/Trace/Injectors/BaseTraceInjector';
-import { Injector } from '@amplication/opentelemetry-nestjs/dist/Trace/Injectors/Injector';
+import { Injectable, Logger } from "@nestjs/common";
+import { ModulesContainer } from "@nestjs/core";
+import { BaseTraceInjector } from "@amplication/opentelemetry-nestjs/dist/Trace/Injectors/BaseTraceInjector";
+import { Injector } from "@amplication/opentelemetry-nestjs/dist/Trace/Injectors/Injector";
 
 @Injectable()
 export class RepositoryInjector extends BaseTraceInjector implements Injector {
@@ -15,7 +15,7 @@ export class RepositoryInjector extends BaseTraceInjector implements Injector {
     const providers = this.getProviders();
 
     for (const provider of providers) {
-      if (!provider.name.endsWith('Repository')) continue;
+      if (!provider.name.endsWith("Repository")) continue;
 
       const keys = this.metadataScanner.getAllFilteredMethodNames(
         provider.metatype.prototype,

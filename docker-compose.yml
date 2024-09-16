@@ -1,17 +1,17 @@
-version: '3.9'
+version: "3.9"
 
 services:
   redis:
     image: redis:alpine
     container_name: dev-redis
     ports:
-      - '6379'
+      - "6379"
   db:
     image: postgis/postgis:16-3.4-alpine
     restart: always
     container_name: dev-database
     ports:
-      - '5433:5432'
+      - "5433:5432"
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
@@ -20,6 +20,5 @@ services:
     image: axllent/mailpit
     container_name: mailpit
     ports:
-      - '1025'
-      - '8025'
-      
+      - "1025"
+      - "8025"

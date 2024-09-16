@@ -1,6 +1,6 @@
-import { payment_method, customer_card } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { payment_method, customer_card } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -14,13 +14,13 @@ import {
   Length,
   Max,
   ValidateNested,
-} from 'class-validator';
-import { IsDecimalPositive } from '~/common/decorators/is-decimal-positive';
-import TransformToDecimal from '~/common/decorators/to-decimal';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { createOrderDto } from '../functions/create-order-dto';
-import { OneCustomerDebit } from '../functions/customer-debit';
-import { CreateOrderRepo as DB } from './create-order.repo';
+} from "class-validator";
+import { IsDecimalPositive } from "~/common/decorators/is-decimal-positive";
+import TransformToDecimal from "~/common/decorators/to-decimal";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { createOrderDto } from "../functions/create-order-dto";
+import { OneCustomerDebit } from "../functions/customer-debit";
+import { CreateOrderRepo as DB } from "./create-order.repo";
 
 export class CreateOrderBody {
   @Length(1, 256)
@@ -96,8 +96,8 @@ export type CreateOrderDto = CreateOrderBody & {
 export type CreateOrderPreDto = {
   client: CreateOrderDto;
   server: {
-    market: Awaited<ReturnType<(typeof DB)['findMarket']>>;
-    items: Awaited<ReturnType<(typeof DB)['findItems']>>;
+    market: Awaited<ReturnType<(typeof DB)["findMarket"]>>;
+    items: Awaited<ReturnType<(typeof DB)["findItems"]>>;
     creditLogs?: OneCustomerDebit.CreditLogs;
     card?: customer_card;
     lastMarketOrderId: bigint;

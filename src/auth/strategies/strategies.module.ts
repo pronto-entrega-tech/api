@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
+import { Module } from "@nestjs/common";
+import { PassportModule } from "@nestjs/passport";
 import {
   CreateJwtStrategy,
   AccessJwtStrategy,
   ConnectJwtStrategy,
-} from './jwt.strategy';
+} from "./jwt.strategy";
 
 @Module({
   imports: [PassportModule],

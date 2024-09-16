@@ -1,4 +1,4 @@
-import { IsNumberString, IsOptional, Length } from 'class-validator';
+import { IsNumberString, IsOptional, Length } from "class-validator";
 
 export class CreateCardDto {
   @IsOptional()

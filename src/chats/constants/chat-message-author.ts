@@ -1,4 +1,4 @@
 export enum ChatMessageAuthor {
-  Customer = 'CUSTOMER',
-  Market = 'MARKET',
+  Customer = "CUSTOMER",
+  Market = "MARKET",
 }

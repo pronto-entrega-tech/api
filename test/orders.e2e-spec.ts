@@ -1,28 +1,28 @@
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { Test } from '@nestjs/testing';
-import { fail } from 'assert';
-import { AppModule } from '~/app.module';
-import { Role } from '~/auth/constants/roles';
-import { SessionsService } from '~/auth/sessions/sessions.service';
-import { Month } from '~/common/functions/month';
-import { PrismaService } from '~/common/prisma/prisma.service';
+import { NestFastifyApplication } from "@nestjs/platform-fastify";
+import { Test } from "@nestjs/testing";
+import { fail } from "assert";
+import { AppModule } from "~/app.module";
+import { Role } from "~/auth/constants/roles";
+import { SessionsService } from "~/auth/sessions/sessions.service";
+import { Month } from "~/common/functions/month";
+import { PrismaService } from "~/common/prisma/prisma.service";
 import {
   OrderPublicAction,
   OrderStatus,
-} from '~/orders/constants/order-status';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { ItemsRepository } from '~/repositories/items/items.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { ProductsRepository } from '~/repositories/products/products.repository';
-import { createCustomer } from './examples/customer';
-import { saveItem } from './examples/item';
-import { createMarket, createdMarket } from './examples/market';
-import { createOrder, saveOrder } from './examples/order';
-import { createCategory, createProduct } from './examples/product';
-import { initApp } from './functions/init-app';
-import { dbAnnihilator, AnnihilateDb } from './functions/db-annihilator';
-import { beforeAll, afterEach, afterAll, test, expect } from 'vitest';
-import { second } from '~/common/constants/time';
+} from "~/orders/constants/order-status";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { ItemsRepository } from "~/repositories/items/items.repository";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { ProductsRepository } from "~/repositories/products/products.repository";
+import { createCustomer } from "./examples/customer";
+import { saveItem } from "./examples/item";
+import { createMarket, createdMarket } from "./examples/market";
+import { createOrder, saveOrder } from "./examples/order";
+import { createCategory, createProduct } from "./examples/product";
+import { initApp } from "./functions/init-app";
+import { dbAnnihilator, AnnihilateDb } from "./functions/db-annihilator";
+import { beforeAll, afterEach, afterAll, test, expect } from "vitest";
+import { second } from "~/common/constants/time";
 
 let app: NestFastifyApplication;
 let customer_access_token: string;
@@ -67,7 +67,7 @@ afterEach(() => annihilate(), 10 * second);
 
 afterAll(() => app?.close());
 
-test('Customer make a order', async () => {
+test("Customer make a order", async () => {
   await setupApp();
   const { order_id, confirmation_token } = await createOrderFn();
 
@@ -92,7 +92,7 @@ test('Customer make a order', async () => {
 
 async function createOrderFn() {
   const res = await app.inject({
-    method: 'POST',
+    method: "POST",
     url: `/orders`,
     headers: authHeader(customer_access_token),
     payload: createOrder,
@@ -108,7 +108,7 @@ async function marketUpdateStatus(
   confirmation_token?: string,
 ) {
   const res = await app.inject({
-    method: 'PATCH',
+    method: "PATCH",
     url: `/orders/market/${order_id}`,
     headers: authHeader(market_access_token),
     payload: { action, confirmation_token },
@@ -119,7 +119,7 @@ async function marketUpdateStatus(
 
 async function customerCheckStatus(order_id: string, status: OrderStatus) {
   const res = await app.inject({
-    method: 'GET',
+    method: "GET",
     url: `/orders/${market_id}/${order_id}`,
     headers: authHeader(customer_access_token),
   });
@@ -129,12 +129,12 @@ async function customerCheckStatus(order_id: string, status: OrderStatus) {
 
 async function marketCheckPayout() {
   const res = await app.inject({
-    method: 'GET',
+    method: "GET",
     url: `/markets/payouts`,
     headers: authHeader(market_access_token),
   });
 
-  expect(res.json()).toMatchObject({ amount: '0' });
+  expect(res.json()).toMatchObject({ amount: "0" });
 }
 
 async function createInvoices() {
@@ -146,7 +146,7 @@ async function createInvoices() {
 
 async function marketCheckInvoice() {
   const res = await app.inject({
-    method: 'GET',
+    method: "GET",
     url: `/markets/invoices`,
     headers: authHeader(market_access_token),
   });

@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { fail } from 'assert';
+import { Injectable } from "@nestjs/common";
+import { fail } from "assert";
 import {
   AddressFromCoordsDto,
   AddressFromDocumentDto,
   AddressRes,
-} from './dto/address.dto';
-import { CoordsDto, CoordsRes } from './dto/coords.dto';
-import * as GMaps from '@googlemaps/google-maps-services-js';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OmitType } from '@nestjs/mapped-types';
-import { NotFoundError } from '~/common/errors/not-found';
-import { BrasilApi } from '~/common/brasil-api/brasil-api';
+} from "./dto/address.dto";
+import { CoordsDto, CoordsRes } from "./dto/coords.dto";
+import * as GMaps from "@googlemaps/google-maps-services-js";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { OmitType } from "@nestjs/mapped-types";
+import { NotFoundError } from "~/common/errors/not-found";
+import { BrasilApi } from "~/common/brasil-api/brasil-api";
 
-class AddressWoNumberRes extends OmitType(AddressRes, ['number']) {}
+class AddressWoNumberRes extends OmitType(AddressRes, ["number"]) {}
 
 @Injectable()
 export class LocationService {
@@ -20,7 +20,7 @@ export class LocationService {
 
   private readonly API_KEY =
     process.env.GOOGLE_MAPS_API_KEY ??
-    fail('GOOGLE_MAPS_API_KEY must be defined');
+    fail("GOOGLE_MAPS_API_KEY must be defined");
 
   private readonly googlemaps = new GMaps.Client();
 
@@ -28,7 +28,7 @@ export class LocationService {
     const { data } = await this.googlemaps.reverseGeocode({
       params: { key: this.API_KEY, latlng: coords },
     });
-    const result = data.results[0] ?? fail(new NotFoundError('Location'));
+    const result = data.results[0] ?? fail(new NotFoundError("Location"));
 
     return this.formateAddress(result.address_components);
   }
@@ -42,11 +42,11 @@ export class LocationService {
 
   private getProperty(address: GMaps.AddressComponent) {
     const namesMap = {
-      street: 'route',
-      number: 'street_number',
-      district: 'sublocality',
-      state: 'administrative_area_level_1',
-      city: 'administrative_area_level_2',
+      street: "route",
+      number: "street_number",
+      district: "sublocality",
+      state: "administrative_area_level_1",
+      city: "administrative_area_level_2",
     };
 
     return Object.entries(namesMap).reduce(
@@ -82,7 +82,7 @@ export class LocationService {
     const { data } = await this.googlemaps.geocode({
       params: { key: this.API_KEY, address },
     });
-    const result = data.results[0] ?? fail(new NotFoundError('Location'));
+    const result = data.results[0] ?? fail(new NotFoundError("Location"));
 
     return result.geometry.location as CoordsRes;
   }

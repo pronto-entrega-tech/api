@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
-import { prisma } from '~/common/prisma/prisma';
-import { OrderStatus } from '../constants/order-status';
+import { Prisma } from "@prisma/client";
+import { prisma } from "~/common/prisma/prisma";
+import { OrderStatus } from "../constants/order-status";
 
 export namespace CustomerBalance {
   export function readDB(customer_id: string) {

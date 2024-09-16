@@ -1,17 +1,17 @@
-import { describe, it, expect } from 'vitest';
-import { otpEmail } from './otp-email';
-import { format } from 'util';
-import { Role } from '../constants/roles';
+import { describe, it, expect } from "vitest";
+import { otpEmail } from "./otp-email";
+import { format } from "util";
+import { Role } from "../constants/roles";
 
 type Params = Parameters<typeof otpEmail>[0];
 type Return = Awaited<ReturnType<typeof otpEmail>>;
 
-type Input = Pick<Params, 'role'> & { adminExist?: boolean };
+type Input = Pick<Params, "role"> & { adminExist?: boolean };
 type Output = Return;
 
-const email = 'name@email.com';
-const key = 'key';
-const fakeKey = 'fakeKey';
+const email = "name@email.com";
+const key = "key";
+const fakeKey = "fakeKey";
 
 const assert = (i: Input, o: Output) => async () => {
   const res = await otpEmail(
@@ -29,7 +29,7 @@ const assert = (i: Input, o: Output) => async () => {
 };
 
 const from = (i: Input) => ({
-  to: (o: Output) => [format('%o => %o', i, o), assert(i, o)] as const,
+  to: (o: Output) => [format("%o => %o", i, o), assert(i, o)] as const,
 });
 
 describe(otpEmail.name, () => {

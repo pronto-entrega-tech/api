@@ -1,4 +1,4 @@
-import { PRONTO_ENTREGA } from '../constants/urls';
+import { PRONTO_ENTREGA } from "../constants/urls";
 
 export const CreateUrl = {
   verificationCode: (id: string, code: string) =>

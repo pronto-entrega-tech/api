@@ -1,7 +1,7 @@
-import { applyDecorators, BadRequestException } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { Allow } from 'class-validator';
+import { applyDecorators, BadRequestException } from "@nestjs/common";
+import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { Allow } from "class-validator";
 
 const allow = Allow();
 

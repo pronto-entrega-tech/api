@@ -1,13 +1,13 @@
-import { Process, Processor } from '@nestjs/bull';
-import { Job } from 'bull';
-import { QueueName } from '~/common/constants/queue-names';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { AsaasService } from '../asaas/asaas.service';
+import { Process, Processor } from "@nestjs/bull";
+import { Job } from "bull";
+import { QueueName } from "~/common/constants/queue-names";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { AsaasService } from "../asaas/asaas.service";
 import {
   CreateCustomerPayerDto,
   CustomerPayerReturnDto,
-} from '../dto/create-customer-payer.dto';
-import { getCustomerExternalId } from '../functions/external-id';
+} from "../dto/create-customer-payer.dto";
+import { getCustomerExternalId } from "../functions/external-id";
 
 @Processor(QueueName.CreateCustomerPayer)
 export class CreateCustomerPayerConsumer {
@@ -43,7 +43,7 @@ export class CreateCustomerPayerConsumer {
       email,
       cpfCnpj: document,
       notificationDisabled: true,
-      groupName: 'customer',
+      groupName: "customer",
       externalReference: getCustomerExternalId(customer_id),
     });
 

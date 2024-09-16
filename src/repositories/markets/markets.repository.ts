@@ -1,35 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma, business_hour, market, open_flip } from '@prisma/client';
-import { MarketFilter } from '~/common/dto/filter.dto';
-import { NotFoundError } from '~/common/errors/not-found';
-import { Month } from '~/common/functions/month';
-import { createQuery } from '~/common/functions/create-query';
+import { Injectable } from "@nestjs/common";
+import { Prisma, business_hour, market, open_flip } from "@prisma/client";
+import { MarketFilter } from "~/common/dto/filter.dto";
+import { NotFoundError } from "~/common/errors/not-found";
+import { Month } from "~/common/functions/month";
+import { createQuery } from "~/common/functions/create-query";
 import {
   createNullEmailFilter,
   prismaAlreadyExist,
   prismaNotFound,
-} from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { CreateBankAccountDto, SaveMarketDto } from '~/markets/dto/create.dto';
+} from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { CreateBankAccountDto, SaveMarketDto } from "~/markets/dto/create.dto";
 import {
   UpdateBankAccountDto,
   UpdateMarketDto,
-} from '~/markets/dto/update.dto';
-import { InvoicesRepository } from './invoices/invoices.repository';
-import { PayoutsRepository } from './payouts/payouts.repository';
-import { MarketSubsRepository } from './subs/market-subs.repository';
-import { pick } from '~/common/functions/pick';
-import { orderBy } from '~/common/constants/order-by';
+} from "~/markets/dto/update.dto";
+import { InvoicesRepository } from "./invoices/invoices.repository";
+import { PayoutsRepository } from "./payouts/payouts.repository";
+import { MarketSubsRepository } from "./subs/market-subs.repository";
+import { pick } from "~/common/functions/pick";
+import { orderBy } from "~/common/constants/order-by";
 import {
   DeleteOpenFlipDto,
   CreateOpenFlipDto,
-} from '~/markets/dto/open-flip.dto';
-import { fail } from 'assert';
-import { BrasilApi } from '~/common/brasil-api/brasil-api';
+} from "~/markets/dto/open-flip.dto";
+import { fail } from "assert";
+import { BrasilApi } from "~/common/brasil-api/brasil-api";
 const { sql } = Prisma;
 
 const filterNullEmail = createNullEmailFilter(
-  () => new NotFoundError('Market'),
+  () => new NotFoundError("Market"),
 );
 
 const publicFields = Prisma.validator<Prisma.marketSelect>()({
@@ -69,45 +69,45 @@ const publicSelect = { ...publicFields, ...publicJoins };
 
 type MarketFeed = Pick<
   market,
-  | 'market_id'
-  | 'city_slug'
-  | 'name'
-  | 'rating'
-  | 'min_time'
-  | 'max_time'
-  | 'delivery_fee'
+  | "market_id"
+  | "city_slug"
+  | "name"
+  | "rating"
+  | "min_time"
+  | "max_time"
+  | "delivery_fee"
 > & { business_hours: business_hour };
 const feedFields = pick(
   publicFields,
-  'market_id',
-  'thumbhash',
-  'city_slug',
-  'name',
-  'rating',
-  'min_time',
-  'max_time',
-  'delivery_fee',
-  'address_latitude',
-  'address_longitude',
+  "market_id",
+  "thumbhash",
+  "city_slug",
+  "name",
+  "rating",
+  "min_time",
+  "max_time",
+  "delivery_fee",
+  "address_latitude",
+  "address_longitude",
 );
-const feedJoins = pick(publicJoins, 'business_hours');
+const feedJoins = pick(publicJoins, "business_hours");
 const feedSelectSql = Prisma.raw(
   [
     ...Object.keys(feedFields),
     ...Object.keys(feedJoins).map((v) => `coalesce(${v},'[]'::json) as ${v}`),
-  ].join(', '),
+  ].join(", "),
 );
 
 export namespace MarketsRepository {
   export type OrderCreationData = Awaited<
-    ReturnType<MarketsRepository['orderCreationData']>
+    ReturnType<MarketsRepository["orderCreationData"]>
   >;
   export type DocumentData = Awaited<
-    ReturnType<MarketsRepository['documentData']>
+    ReturnType<MarketsRepository["documentData"]>
   >;
 
   export type IdentificationData = Awaited<
-    ReturnType<MarketsRepository['identificationData']>
+    ReturnType<MarketsRepository["identificationData"]>
   >;
 }
 
@@ -159,7 +159,7 @@ export class MarketsRepository {
         },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async delete(market_id: string) {
@@ -178,11 +178,11 @@ export class MarketsRepository {
           where: { market_id },
         }),
         ...this.partitionDropper(this.prisma, market_id, [
-          'item_activity',
-          'review',
+          "item_activity",
+          "review",
         ]),
       ])
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
 
     return market;
   }
@@ -193,7 +193,7 @@ export class MarketsRepository {
         select: { market_id: true },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async findNotApproved() {
@@ -209,16 +209,16 @@ export class MarketsRepository {
           data: { approved: true },
           where: { market_id },
         })
-        .catch(prismaNotFound('Market'));
+        .catch(prismaNotFound("Market"));
 
       await this.createPartitions(prisma, market_id, [
-        'orders',
-        'order_item',
-        'order_missing_item',
-        'item_activity',
-        'review',
+        "orders",
+        "order_item",
+        "order_missing_item",
+        "item_activity",
+        "review",
       ]);
-      await this.createPartitions(prisma, city_slug, ['item']);
+      await this.createPartitions(prisma, city_slug, ["item"]);
     });
   }
 
@@ -236,12 +236,12 @@ export class MarketsRepository {
     const coords = (() => {
       if (!latLong) return undefined;
 
-      const [lat, lng] = latLong.split(',');
+      const [lat, lng] = latLong.split(",");
       return { lat: +(lat ?? fail()), lng: +(lng ?? fail()) };
     })();
 
     const sqlQuery = createQuery({
-      table: 'market',
+      table: "market",
       select: justIds ? sql`market.market_id` : feedSelectSql,
       leftJoin: !justIds && [
         sql`(SELECT market_id, json_agg(json_build_object('days', days, 'open_time', open_time, 'close_time', close_time)) AS business_hours FROM business_hour h GROUP BY h.market_id) h USING (market_id)`,
@@ -283,7 +283,7 @@ export class MarketsRepository {
           email: { not: null },
         },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async findProfile(market_id: string) {
@@ -311,7 +311,7 @@ export class MarketsRepository {
           email: { not: null },
         },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async findReviews(market_id: string) {
@@ -331,12 +331,12 @@ export class MarketsRepository {
               message: true,
               response: true,
             },
-            orderBy: { created_at: 'desc' },
+            orderBy: { created_at: "desc" },
           },
         },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async identificationData(market_id: string) {
@@ -349,7 +349,7 @@ export class MarketsRepository {
         },
         where: { market_id, email: { not: null } },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
     return filterNullEmail(email, res);
   }
 
@@ -358,7 +358,7 @@ export class MarketsRepository {
 
     return {
       legalName: data.razao_social,
-      phone: `${data.ddd_telefone_1}`.replace(/\D/g, ''),
+      phone: `${data.ddd_telefone_1}`.replace(/\D/g, ""),
       address: {
         street: data.logradouro,
         number: data.numero,
@@ -386,7 +386,7 @@ export class MarketsRepository {
           email: { not: null },
         },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async findId(email: string) {
@@ -403,7 +403,7 @@ export class MarketsRepository {
         select: { asaas_customer_id: true },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
     return market.asaas_customer_id;
   }
 
@@ -413,7 +413,7 @@ export class MarketsRepository {
         select: { asaas_account_id: true },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
     return account.asaas_account_id;
   }
 
@@ -423,7 +423,7 @@ export class MarketsRepository {
         select: { asaas_account_key: true },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
     return account.asaas_account_key;
   }
 
@@ -433,7 +433,7 @@ export class MarketsRepository {
         data: { asaas_customer_id: payer_id },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async updateRecipient(
@@ -448,7 +448,7 @@ export class MarketsRepository {
         },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async hasInAppPaymentSupport(market_id: string) {
@@ -461,7 +461,7 @@ export class MarketsRepository {
         },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
 
     return !!(m.bank_account || (m.pix_key && m.pix_key_type));
   }
@@ -471,7 +471,7 @@ export class MarketsRepository {
 
     return this.prisma.open_flip
       .create({ data: validData({ market_id, ...dto }) })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   async deleteOpenFlip(market_id: string, dto: DeleteOpenFlipDto) {
@@ -488,7 +488,7 @@ export class MarketsRepository {
 
     return this.prisma.bank_account
       .create({ data: validData({ market_id, ...dto }) })
-      .catch(prismaAlreadyExist('Bank account'));
+      .catch(prismaAlreadyExist("Bank account"));
   }
 
   async updateBankAccount(market_id: string, dto: UpdateBankAccountDto) {
@@ -500,7 +500,7 @@ export class MarketsRepository {
         data: validData(dto),
         where: { market_id },
       })
-      .catch(prismaNotFound('Bank account'));
+      .catch(prismaNotFound("Bank account"));
   }
 
   /**

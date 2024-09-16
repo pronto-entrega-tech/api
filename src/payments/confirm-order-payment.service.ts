@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { OrderAction } from '~/orders/constants/order-status';
-import { OrdersStatusService } from '~/orders/orders-status.service';
-import { ConfirmOrderPaymentDto as ClientData } from '~/payments/dto/confirm-order-payment.dto';
+import { Injectable } from "@nestjs/common";
+import { OrderAction } from "~/orders/constants/order-status";
+import { OrdersStatusService } from "~/orders/orders-status.service";
+import { ConfirmOrderPaymentDto as ClientData } from "~/payments/dto/confirm-order-payment.dto";
 
 @Injectable()
 export class ConfirmOrderPaymentService {

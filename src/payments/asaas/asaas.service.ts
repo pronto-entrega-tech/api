@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { AxiosError } from 'axios';
-import { AsaasRequests } from './asaas-requests';
-import { Asaas } from './asaas.types';
+import { Injectable } from "@nestjs/common";
+import { AxiosError } from "axios";
+import { AsaasRequests } from "./asaas-requests";
+import { Asaas } from "./asaas.types";
 
 @Injectable()
 export class AsaasService {
@@ -144,7 +144,7 @@ class AsaasErrors extends AsaasSubClass {
   isInvalidCard(err: unknown) {
     return (
       err instanceof AxiosError &&
-      err.response?.data.errors[0].code === 'invalid_action'
+      err.response?.data.errors[0].code === "invalid_action"
     );
   }
 }

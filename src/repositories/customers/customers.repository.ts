@@ -1,21 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { NotFoundError } from '~/common/errors/not-found';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { NotFoundError } from "~/common/errors/not-found";
 import {
   createNullEmailFilter,
   prismaAlreadyExist,
   prismaNotFound,
-} from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { SaveCardDto } from '~/customers/dto/create-card.dto';
-import { SaveCustomerDto } from '~/customers/dto/create.dto';
-import { UpdateCustomerDto } from '~/customers/dto/update.dto';
-import { UpdateCardDto } from '~/customers/dto/update-card.dto';
-import { CreateAddressDto } from '~/customers/dto/create-address.dto';
-import { UpdateAddressDto } from '~/customers/dto/update-address.dto';
+} from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { SaveCardDto } from "~/customers/dto/create-card.dto";
+import { SaveCustomerDto } from "~/customers/dto/create.dto";
+import { UpdateCustomerDto } from "~/customers/dto/update.dto";
+import { UpdateCardDto } from "~/customers/dto/update-card.dto";
+import { CreateAddressDto } from "~/customers/dto/create-address.dto";
+import { UpdateAddressDto } from "~/customers/dto/update-address.dto";
 
 const filterNullEmail = createNullEmailFilter(
-  () => new NotFoundError('Customer'),
+  () => new NotFoundError("Customer"),
 );
 
 @Injectable()
@@ -35,9 +35,9 @@ export class CustomersRepository {
         .create({
           data: validData({ ..._dto, social_provider: provider }),
         })
-        .catch(prismaAlreadyExist('Customer'));
+        .catch(prismaAlreadyExist("Customer"));
 
-      await this.createPartitions(prisma, customer_id, ['chat_message']);
+      await this.createPartitions(prisma, customer_id, ["chat_message"]);
 
       return { customer_id };
     });
@@ -65,7 +65,7 @@ export class CustomersRepository {
         select: { asaas_id: true },
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
     return customer.asaas_id ?? undefined;
   }
 
@@ -81,7 +81,7 @@ export class CustomersRepository {
         },
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
     return filterNullEmail(email, res);
   }
 
@@ -94,7 +94,7 @@ export class CustomersRepository {
         data: validData(dto),
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
   }
 
   async updatePayerId(customer_id: string, payer_id: string) {
@@ -103,7 +103,7 @@ export class CustomersRepository {
         data: { asaas_id: payer_id },
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
   }
 
   async updateBalance(customer_id: string, debit: Prisma.Decimal.Value) {
@@ -112,14 +112,14 @@ export class CustomersRepository {
         data: { debit },
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
   }
 
   async delete(customer_id: string) {
     return this.prisma.customer
       .update({
         data: {
-          name: '[Apagado]',
+          name: "[Apagado]",
           email: null,
           document: null,
           phone: null,
@@ -129,7 +129,7 @@ export class CustomersRepository {
         },
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
   }
 
   /**
@@ -159,7 +159,7 @@ class CustomerAddressesRepository {
 
     return this.prisma.customer_address
       .create({ data: validData({ customer_id, ...dto }) })
-      .catch(prismaAlreadyExist('Address'));
+      .catch(prismaAlreadyExist("Address"));
   }
 
   async findMany(customer_id: string) {
@@ -177,7 +177,7 @@ class CustomerAddressesRepository {
         data: validData(dto),
         where: { id_customer_id: { id: address_id, customer_id } },
       })
-      .catch(prismaNotFound('Address'));
+      .catch(prismaNotFound("Address"));
   }
 
   async delete(customer_id: string, address_id: string) {
@@ -185,7 +185,7 @@ class CustomerAddressesRepository {
       .delete({
         where: { id_customer_id: { id: address_id, customer_id } },
       })
-      .catch(prismaNotFound('Address'));
+      .catch(prismaNotFound("Address"));
   }
 }
 
@@ -197,7 +197,7 @@ class CustomerCardsRepository {
 
     return this.prisma.customer_card
       .create({ data: validData(dto) })
-      .catch(prismaAlreadyExist('Card'));
+      .catch(prismaAlreadyExist("Card"));
   }
 
   async findMany(customer_id: string) {
@@ -211,7 +211,7 @@ class CustomerCardsRepository {
       .findUniqueOrThrow({
         where: { id_customer_id: { id: card_id, customer_id } },
       })
-      .catch(prismaNotFound('Card'));
+      .catch(prismaNotFound("Card"));
   }
 
   async update(customer_id: string, card_id: string, dto: UpdateCardDto) {
@@ -223,7 +223,7 @@ class CustomerCardsRepository {
         data: validData(dto),
         where: { id_customer_id: { id: card_id, customer_id } },
       })
-      .catch(prismaNotFound('Card'));
+      .catch(prismaNotFound("Card"));
   }
 
   async delete(customer_id: string, card_id: string) {
@@ -231,6 +231,6 @@ class CustomerCardsRepository {
       .delete({
         where: { id_customer_id: { id: card_id, customer_id } },
       })
-      .catch(prismaNotFound('Card'));
+      .catch(prismaNotFound("Card"));
   }
 }

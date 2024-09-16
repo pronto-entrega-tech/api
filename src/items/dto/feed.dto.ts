@@ -1,31 +1,31 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 import {
   discount_type,
   item,
   item_details,
   products,
   market,
-} from '@prisma/client';
-import { Prisma } from '@prisma/client';
+} from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export class ItemFeed
   implements
     Omit<
       item,
-      | 'market_price'
-      | 'stock'
-      | 'city_slug'
-      | 'kit_name'
-      | 'kit_quantity'
-      | 'kit_image_name'
-      | 'unit_weight'
-      | 'discount_value_1'
+      | "market_price"
+      | "stock"
+      | "city_slug"
+      | "kit_name"
+      | "kit_quantity"
+      | "kit_image_name"
+      | "unit_weight"
+      | "discount_value_1"
     >
 {
   item_id: string;
   market_id: string;
-  thumbhash: products['thumbhash'];
-  market_thumbhash: market['thumbhash'];
+  thumbhash: products["thumbhash"];
+  market_thumbhash: market["thumbhash"];
   name: string;
   brand: string | null;
   quantity: string;
@@ -44,7 +44,7 @@ export class ItemOneFeed extends ItemFeed {
   details: ItemDetails[];
 }
 
-type IItemDetails = Pick<item_details, 'quantity'> & Pick<products, 'name'>;
+type IItemDetails = Pick<item_details, "quantity"> & Pick<products, "name">;
 
 export class ItemDetails implements IItemDetails {
   name: string;
@@ -54,8 +54,8 @@ export class ItemDetails implements IItemDetails {
 }
 
 export type ItemMarketFeed = {
-  item_id: item['item_id'];
-  price: item['market_price'];
-  stock: item['stock'];
-  product: Pick<products, 'code' | 'name' | 'brand' | 'quantity'>;
+  item_id: item["item_id"];
+  price: item["market_price"];
+  stock: item["stock"];
+  product: Pick<products, "code" | "name" | "brand" | "quantity">;
 };

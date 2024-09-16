@@ -1,17 +1,17 @@
-import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
-import { QueueName } from '~/common/constants/queue-names';
+import { InjectQueue } from "@nestjs/bull";
+import { Injectable } from "@nestjs/common";
+import { Queue } from "bull";
+import { QueueName } from "~/common/constants/queue-names";
 import {
   CreateCustomerPayerDto,
   CustomerPayerReturnDto,
-} from '../dto/create-customer-payer.dto';
-import { CreatePayerDto, PayerReturnDto } from '../dto/create-payer.dto';
+} from "../dto/create-customer-payer.dto";
+import { CreatePayerDto, PayerReturnDto } from "../dto/create-payer.dto";
 import {
   CreateRecipientDto,
   RecipientReturnDto,
-} from '../dto/create-recipient.dto';
-import { UpdateCustomerPayerDto } from '../dto/update-customer-payer.dto';
+} from "../dto/create-recipient.dto";
+import { UpdateCustomerPayerDto } from "../dto/update-customer-payer.dto";
 
 @Injectable()
 export class PaymentAccountsService {

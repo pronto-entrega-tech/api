@@ -1,5 +1,5 @@
-import { IsString } from 'class-validator';
-import TransformToBigInt from '~/common/decorators/to-bigint';
+import { IsString } from "class-validator";
+import TransformToBigInt from "~/common/decorators/to-bigint";
 
 export class FullOrderId {
   @TransformToBigInt()

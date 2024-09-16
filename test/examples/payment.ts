@@ -1,9 +1,9 @@
-import { OrderStatus } from '~/orders/constants/order-status';
-import { Asaas } from '~/payments/asaas/asaas.types';
-import { InAppPaymentMethod } from '~/payments/constants/payment-methods';
-import { OrderPayUpdate } from '~/payments/functions/order-payment-pending-action';
-import { createMarket } from './market';
-import { createOrder, saveOrder } from './order';
+import { OrderStatus } from "~/orders/constants/order-status";
+import { Asaas } from "~/payments/asaas/asaas.types";
+import { InAppPaymentMethod } from "~/payments/constants/payment-methods";
+import { OrderPayUpdate } from "~/payments/functions/order-payment-pending-action";
+import { createMarket } from "./market";
+import { createOrder, saveOrder } from "./order";
 
 const fullOrderId = {
   order_id: createOrder.order_id,
@@ -15,23 +15,23 @@ const payOrderDto = {
   total: saveOrder.total,
   market_amount: saveOrder.market_amount,
   fullOrderId,
-  ip: 'ip',
-  card_token: 'cardToken',
+  ip: "ip",
+  card_token: "cardToken",
   payment_method: InAppPaymentMethod.Card,
   status: OrderStatus.PaymentProcessing,
 };
 
 const paymentObject: Pick<
   Asaas.PaymentObject,
-  'status' | 'id' | 'billingType'
+  "status" | "id" | "billingType"
 > = {
-  status: 'PENDING',
-  id: 'paymentId',
-  billingType: 'CREDIT_CARD',
+  status: "PENDING",
+  id: "paymentId",
+  billingType: "CREDIT_CARD",
 };
 
-const pix: OrderPayUpdate['extra'] = {
-  pix_code: 'pixCode',
+const pix: OrderPayUpdate["extra"] = {
+  pix_code: "pixCode",
   pix_expires_at: new Date(),
 };
 

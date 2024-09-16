@@ -1,8 +1,8 @@
-import { Process, Processor } from '@nestjs/bull';
-import { Job } from 'bull';
-import { QueueName } from '~/common/constants/queue-names';
-import { AsaasService } from '../asaas/asaas.service';
-import { UpdateCustomerPayerDto } from '../dto/update-customer-payer.dto';
+import { Process, Processor } from "@nestjs/bull";
+import { Job } from "bull";
+import { QueueName } from "~/common/constants/queue-names";
+import { AsaasService } from "../asaas/asaas.service";
+import { UpdateCustomerPayerDto } from "../dto/update-customer-payer.dto";
 
 @Processor(QueueName.UpdateCustomerPayer)
 export class UpdateCustomerPayerConsumer {

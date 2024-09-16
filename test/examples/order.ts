@@ -1,17 +1,17 @@
-import { Prisma } from '@prisma/client';
-import { omit } from '~/common/functions/omit';
-import { OrderStatus } from '~/orders/constants/order-status';
+import { Prisma } from "@prisma/client";
+import { omit } from "~/common/functions/omit";
+import { OrderStatus } from "~/orders/constants/order-status";
 import {
   CreateOrderDto,
   SaveOrderDto,
-} from '~/orders/create-order/create-order.dto';
-import { RetryOrderPaymentDto } from '~/orders/dto/retry-payment.dto';
-import { CreateReviewDto } from '~/orders/dto/review.dto';
-import { Asaas } from '~/payments/asaas/asaas.types';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { createCustomer, createdCustomer } from './customer';
-import { saveItem } from './item';
-import { createMarket } from './market';
+} from "~/orders/create-order/create-order.dto";
+import { RetryOrderPaymentDto } from "~/orders/dto/retry-payment.dto";
+import { CreateReviewDto } from "~/orders/dto/review.dto";
+import { Asaas } from "~/payments/asaas/asaas.types";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { createCustomer, createdCustomer } from "./customer";
+import { saveItem } from "./item";
+import { createMarket } from "./market";
 
 export const createOrder = Prisma.validator<
   CreateOrderDto & { order_id: bigint }
@@ -23,20 +23,20 @@ export const createOrder = Prisma.validator<
   paid_in_app: false,
   payment_method: PaymentMethod.Card,
   items: [{ item_id: saveItem.item_id, quantity: 1 }],
-  address_street: 'Street',
-  address_number: '123',
-  address_district: 'District',
-  address_city: 'City',
-  address_state: 'State',
-  address_complement: 'Complement',
+  address_street: "Street",
+  address_number: "123",
+  address_district: "District",
+  address_city: "City",
+  address_state: "State",
+  address_complement: "Complement",
   address_latitude: 0,
   address_longitude: 0,
-  ip: 'ip',
+  ip: "ip",
   client_total: new Prisma.Decimal(10),
 });
 
 export const saveOrder = Prisma.validator<SaveOrderDto>()({
-  ...omit(createOrder, 'order_id', 'client_total'),
+  ...omit(createOrder, "order_id", "client_total"),
   payment_method: createOrder.payment_method,
   market_order_id: 1n,
   customer_id: createdCustomer.customer_id,
@@ -48,14 +48,14 @@ export const saveOrder = Prisma.validator<SaveOrderDto>()({
       is_kit: false,
     },
   ],
-  card_token: 'card_token',
-  payment_description: 'Cartão de Crédito',
+  card_token: "card_token",
+  payment_description: "Cartão de Crédito",
   status: OrderStatus.ApprovalPending,
   total: new Prisma.Decimal(10),
   delivery_fee: new Prisma.Decimal(0),
   market_amount: new Prisma.Decimal(8.8),
-  delivery_min_time: new Date('2000-01-01'),
-  delivery_max_time: new Date('2000-01-01'),
+  delivery_min_time: new Date("2000-01-01"),
+  delivery_max_time: new Date("2000-01-01"),
 
   /* created_at: new Date('2000-01-01'), */
 });
@@ -65,7 +65,7 @@ export const retryOrderPayment: RetryOrderPaymentDto = {
   order_id: createOrder.order_id,
   market_id: createOrder.market_id,
   payment_method: PaymentMethod.Card,
-  card_id: 'cardId',
+  card_id: "cardId",
   ip: createOrder.ip,
 };
 
@@ -74,18 +74,18 @@ export const createReview: CreateReviewDto = {
   order_id: createOrder.order_id,
   market_id: createOrder.market_id,
   rating: 5,
-  message: 'Review message',
+  message: "Review message",
 };
 
 export const createdReview = {
-  ...omit(createReview, 'customer_id'),
+  ...omit(createReview, "customer_id"),
 };
 
 export const createPayment: Asaas.CreatePayment & { payment_id: string } = {
-  payment_id: 'paymentId',
-  customer: 'cus_000004802657',
-  billingType: 'CREDIT_CARD',
-  creditCardToken: '240e1ec2-7ca1-4a75-8f61-c387c48c515f',
+  payment_id: "paymentId",
+  customer: "cus_000004802657",
+  billingType: "CREDIT_CARD",
+  creditCardToken: "240e1ec2-7ca1-4a75-8f61-c387c48c515f",
   value: 10,
-  dueDate: '2000-01-01',
+  dueDate: "2000-01-01",
 };

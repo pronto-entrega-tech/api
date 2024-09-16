@@ -3,26 +3,26 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { products } from '@prisma/client';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
-import { ItemFeedFilter, ItemFilter } from '~/common/dto/filter.dto';
-import { AlreadyExistError } from '~/common/errors/already-exist';
-import { NotFoundError } from '~/common/errors/not-found';
-import { pick } from '~/common/functions/pick';
-import { ItemsRepository } from '~/repositories/items/items.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { ProductsRepository } from '~/repositories/products/products.repository';
+} from "@nestjs/common";
+import { products } from "@prisma/client";
+import { writeFile } from "fs/promises";
+import { join } from "path";
+import { ItemFeedFilter, ItemFilter } from "~/common/dto/filter.dto";
+import { AlreadyExistError } from "~/common/errors/already-exist";
+import { NotFoundError } from "~/common/errors/not-found";
+import { pick } from "~/common/functions/pick";
+import { ItemsRepository } from "~/repositories/items/items.repository";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { ProductsRepository } from "~/repositories/products/products.repository";
 import {
   CreateDetailsDto,
   CreateItemDto,
   CreateKitDto,
-} from './dto/create.dto';
-import { FullItemId } from './dto/full-item-id.dto';
-import { UpdateItemDto, UpdateKitDto } from './dto/update.dto';
-import { getProductName } from './functions/product-name';
-import { ItemUpdateGateway } from './item-update.gateway';
+} from "./dto/create.dto";
+import { FullItemId } from "./dto/full-item-id.dto";
+import { UpdateItemDto, UpdateKitDto } from "./dto/update.dto";
+import { getProductName } from "./functions/product-name";
+import { ItemUpdateGateway } from "./item-update.gateway";
 
 type MarketOrSubId = { market_id: string; market_sub_id?: string };
 
@@ -35,7 +35,7 @@ export class ItemsService {
     private readonly events: ItemUpdateGateway,
   ) {}
   private readonly logger = new Logger(ItemsService.name);
-  private readonly SHARED_PATH = process.env.SHARED_PATH ?? '';
+  private readonly SHARED_PATH = process.env.SHARED_PATH ?? "";
 
   async logging(body: any) {
     const path = join(this.SHARED_PATH, `item-logging-${Date.now()}`);
@@ -49,7 +49,7 @@ export class ItemsService {
     const prod = await this.productsRepo.findOneByCode(code);
     if (!prod) {
       this.logger.error(`code ${code} not found`);
-      throw new NotFoundError('Product', ['code']);
+      throw new NotFoundError("Product", ["code"]);
     }
 
     const existingItem = await this.itemsRepo.exist(
@@ -57,7 +57,7 @@ export class ItemsService {
       city_slug,
       { prod_id: prod.prod_id },
     );
-    if (existingItem) throw new AlreadyExistError('Item', ['code']);
+    if (existingItem) throw new AlreadyExistError("Item", ["code"]);
 
     const res = await this.itemsRepo.create({
       ...dto,
@@ -71,7 +71,7 @@ export class ItemsService {
       item_id,
       price: res.market_price,
       stock: res.stock,
-      product: { code, ...pick(prod, 'name', 'brand', 'quantity') },
+      product: { code, ...pick(prod, "name", "brand", "quantity") },
     });
     return res;
   }
@@ -84,7 +84,7 @@ export class ItemsService {
       city_slug,
       { kit_name: dto.kit_name },
     );
-    if (existingItem) throw new AlreadyExistError('Item', ['kit_name']);
+    if (existingItem) throw new AlreadyExistError("Item", ["kit_name"]);
 
     return this.itemsRepo.createKit({
       ...dto,
@@ -127,7 +127,7 @@ export class ItemsService {
   }
 
   private async nearbyMarkets(filter: ItemFeedFilter, city: string) {
-    const locFilter = pick(filter, 'latLong', 'distance', 'order_by');
+    const locFilter = pick(filter, "latLong", "distance", "order_by");
     return this.marketsRepo.findMany(city, { ...locFilter, justIds: true });
   }
 
@@ -152,7 +152,7 @@ export class ItemsService {
     const oldItem = await this.oldItem(marketIds, fullId);
     const { is_kit, kit_name, product } = oldItem;
 
-    if (is_kit) throw new BadRequestException('This item is a kit');
+    if (is_kit) throw new BadRequestException("This item is a kit");
 
     const item_name = this.itemName(kit_name, product, fullId);
 
@@ -218,7 +218,7 @@ export class ItemsService {
     const dtoValues = Object.values(dto);
     const hasSomething = dtoValues.filter((v) => v != null).length;
     if (!hasSomething)
-      throw new BadRequestException('Must have at least one field');
+      throw new BadRequestException("Must have at least one field");
   }
 
   private async oldItem({ market_id }: MarketOrSubId, fullId: FullItemId) {
@@ -233,6 +233,6 @@ export class ItemsService {
     const item_name = kit_name ?? (product && getProductName(product));
     if (!item_name) this.logger.log("Item don't have a name", fullId);
 
-    return item_name ?? 'Sem nome';
+    return item_name ?? "Sem nome";
   }
 }

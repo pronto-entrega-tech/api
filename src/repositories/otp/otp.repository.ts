@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { otp } from '@prisma/client';
-import { Role } from '~/auth/constants/roles';
-import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { otp } from "@prisma/client";
+import { Role } from "~/auth/constants/roles";
+import { prismaNotFound } from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
 
 @Injectable()
 export class OTPRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: Omit<otp, 'otp_id'>) {
+  async create(dto: Omit<otp, "otp_id">) {
     return this.prisma.otp.create({
       data: dto,
     });
@@ -27,7 +27,7 @@ export class OTPRepository {
   async delete(otp_id: string) {
     return this.prisma.otp
       .delete({ where: { otp_id } })
-      .catch(prismaNotFound('OTP'));
+      .catch(prismaNotFound("OTP"));
   }
 
   async deleteExpired() {

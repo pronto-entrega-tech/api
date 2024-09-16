@@ -1,7 +1,7 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
-import { WsEvent, wsRoom, WS_PORT } from '~/common/constants/web-sockets';
-import { UpdateOrderPaymentDto } from './dto/update.dto';
+import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { Server } from "socket.io";
+import { WsEvent, wsRoom, WS_PORT } from "~/common/constants/web-sockets";
+import { UpdateOrderPaymentDto } from "./dto/update.dto";
 
 @WebSocketGateway(WS_PORT)
 export class OrderUpdateGateway {
@@ -9,6 +9,6 @@ export class OrderUpdateGateway {
   private readonly server: Server;
 
   orderUpdate(order: { order_id: bigint } & Partial<UpdateOrderPaymentDto>) {
-    this.server.to(wsRoom('order', order.order_id)).emit(WsEvent.Orders, order);
+    this.server.to(wsRoom("order", order.order_id)).emit(WsEvent.Orders, order);
   }
 }

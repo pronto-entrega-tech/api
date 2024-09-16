@@ -1,4 +1,4 @@
-import { IsOptional, IsLatitude, IsLongitude, Length } from 'class-validator';
+import { IsOptional, IsLatitude, IsLongitude, Length } from "class-validator";
 
 export class CreateAddressDto {
   @IsOptional()

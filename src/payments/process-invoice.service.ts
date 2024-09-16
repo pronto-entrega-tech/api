@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Month } from '~/common/functions/month';
-import { FullInvoiceId } from '~/markets/dto/full-invoice-id';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { PaymentAccountsService } from './accounts/payment-accounts.service';
-import { AsaasService } from './asaas/asaas.service';
-import { Asaas } from './asaas/asaas.types';
-import { InvoiceAction } from './constants/invoice-status';
-import { ProcessInvoiceDto } from './dto/process-invoice.dto';
-import { InvoicesStatusService } from './invoices-status.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { Month } from "~/common/functions/month";
+import { FullInvoiceId } from "~/markets/dto/full-invoice-id";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { PaymentAccountsService } from "./accounts/payment-accounts.service";
+import { AsaasService } from "./asaas/asaas.service";
+import { Asaas } from "./asaas/asaas.types";
+import { InvoiceAction } from "./constants/invoice-status";
+import { ProcessInvoiceDto } from "./dto/process-invoice.dto";
+import { InvoicesStatusService } from "./invoices-status.service";
 
 type PaymentExtra = {
   boleto_code?: string;
@@ -49,12 +49,12 @@ export class ProcessInvoiceService {
     const [payment] = payments;
     if (!payment) return false;
 
-    if (payment.status === 'OVERDUE') {
+    if (payment.status === "OVERDUE") {
       await this.asaas.payments.delete(payment.id);
       return false;
     }
 
-    if (payment.status === 'PENDING') {
+    if (payment.status === "PENDING") {
       const extra = await this.paymentExtra(payment);
 
       await this.confirmProcessing(dto, payment.id, extra);
@@ -68,10 +68,10 @@ export class ProcessInvoiceService {
   private async createPayment(dto: ProcessInvoiceDto) {
     const { fullInvoiceId: fullId, amount, market_id } = dto;
 
-    const monthYear = fullId.month.toLocaleDateString('BR').slice(3);
+    const monthYear = fullId.month.toLocaleDateString("BR").slice(3);
 
     const params: Asaas.CreatePayment = {
-      billingType: 'BOLETO', // 'BOLETO' === (BOLETO && PIX)
+      billingType: "BOLETO", // 'BOLETO' === (BOLETO && PIX)
       description: `Fatura ProntoEntrega ${monthYear}`,
       dueDate: Month.shortDate(Month.getNext()),
       value: +amount,

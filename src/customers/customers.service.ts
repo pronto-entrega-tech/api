@@ -1,15 +1,15 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { OAuth2Client } from 'google-auth-library';
-import { GOOGLE_CLIENT_IDS } from '~/auth/constants/google-client-ids';
-import { Role } from '~/auth/constants/roles';
-import { SessionsService } from '~/auth/sessions/sessions.service';
-import { PaymentAccountsService } from '~/payments/accounts/payment-accounts.service';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { SocialProvider } from './constants/social-providers';
-import { CustomerAddressesService } from './customer-addresses.service';
-import { CustomerCardsService } from './customer-cards.service';
-import { CreateCustomerDto, CustomerWSocialDto } from './dto/create.dto';
-import { UpdateCustomerDto } from './dto/update.dto';
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { OAuth2Client } from "google-auth-library";
+import { GOOGLE_CLIENT_IDS } from "~/auth/constants/google-client-ids";
+import { Role } from "~/auth/constants/roles";
+import { SessionsService } from "~/auth/sessions/sessions.service";
+import { PaymentAccountsService } from "~/payments/accounts/payment-accounts.service";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { SocialProvider } from "./constants/social-providers";
+import { CustomerAddressesService } from "./customer-addresses.service";
+import { CustomerCardsService } from "./customer-cards.service";
+import { CreateCustomerDto, CustomerWSocialDto } from "./dto/create.dto";
+import { UpdateCustomerDto } from "./dto/update.dto";
 
 @Injectable()
 export class CustomersService {
@@ -87,7 +87,7 @@ export class CustomersService {
 
     const { email, name } = ticket.getPayload() ?? {};
     if (!email || !name)
-      throw new Error('Google social auth missing email or name');
+      throw new Error("Google social auth missing email or name");
 
     return { email, name };
   }

@@ -1,4 +1,4 @@
 export enum SubPermission {
-  Stock = 'STOCK',
-  Delivery = 'DELIVERY',
+  Stock = "STOCK",
+  Delivery = "DELIVERY",
 }

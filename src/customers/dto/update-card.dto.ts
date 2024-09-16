@@ -1,4 +1,4 @@
-import { Length } from 'class-validator';
+import { Length } from "class-validator";
 
 export class UpdateCardDto {
   @Length(1, 256)

@@ -1,23 +1,23 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { fail } from 'assert';
-import { randomUUID } from 'crypto';
-import { LockedAction } from '~/common/constants/locked-actions';
-import { MailerService } from '~/common/mailer/mailer.service';
-import { MutexService } from '~/common/mutex/mutex.service';
-import { AdminRepository } from '~/repositories/admin/admin.repository';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OTPRepository } from '~/repositories/otp/otp.repository';
-import { SessionsRepository } from '~/repositories/sessions/sessions.repository';
-import { Argon2Service } from './argon2.service';
-import { AuthToken } from './constants/auth-tokens';
-import { Role, RoleWithoutSub } from './constants/roles';
-import { SubPermission } from './constants/sub-permissions';
-import { EmailDto } from './dto/email.dto';
-import { ValidateDto } from './dto/validate.dto';
-import { otpEmail } from './functions/otp-email';
-import { SessionsService } from './sessions/sessions.service';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { fail } from "assert";
+import { randomUUID } from "crypto";
+import { LockedAction } from "~/common/constants/locked-actions";
+import { MailerService } from "~/common/mailer/mailer.service";
+import { MutexService } from "~/common/mutex/mutex.service";
+import { AdminRepository } from "~/repositories/admin/admin.repository";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { OTPRepository } from "~/repositories/otp/otp.repository";
+import { SessionsRepository } from "~/repositories/sessions/sessions.repository";
+import { Argon2Service } from "./argon2.service";
+import { AuthToken } from "./constants/auth-tokens";
+import { Role, RoleWithoutSub } from "./constants/roles";
+import { SubPermission } from "./constants/sub-permissions";
+import { EmailDto } from "./dto/email.dto";
+import { ValidateDto } from "./dto/validate.dto";
+import { otpEmail } from "./functions/otp-email";
+import { SessionsService } from "./sessions/sessions.service";
 
 @Injectable()
 export class AuthService {
@@ -33,9 +33,9 @@ export class AuthService {
     private readonly marketsRepo: MarketsRepository,
   ) {}
   private readonly OTP_SECRET =
-    process.env.OTP_SECRET ?? fail('OTP_SECRET must be defined');
+    process.env.OTP_SECRET ?? fail("OTP_SECRET must be defined");
 
-  @Cron('0 0 * * *')
+  @Cron("0 0 * * *")
   deleteExpired() {
     this.otpRepo.deleteExpired();
     this.sessionsRepo.deleteExpired();

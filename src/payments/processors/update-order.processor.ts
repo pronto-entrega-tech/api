@@ -1,18 +1,18 @@
-import { Process, Processor } from '@nestjs/bull';
-import { Job } from 'bull';
-import { plainToInstance } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
-import { QueueName } from '~/common/constants/queue-names';
-import { CancelOrderService } from '../cancel-order.service';
-import { CompleteOrderService } from '../complete-order.service';
-import { ConfirmOrderPaymentService } from '../confirm-order-payment.service';
-import { UpdateOrder } from '../constants/update-order';
-import { CancelOrderDto } from '../dto/cancel-order.dto';
-import { CompleteOrderDto } from '../dto/complete-order.dto';
-import { ConfirmOrderPaymentDto } from '../dto/confirm-order-payment.dto';
-import { PayOrderDto } from '../dto/pay-order.dto';
-import { PayOrderBaseDto } from '../dto/pay-order.dto';
-import { PayOrderService } from '../pay-order.service';
+import { Process, Processor } from "@nestjs/bull";
+import { Job } from "bull";
+import { plainToInstance } from "class-transformer";
+import { validateOrReject } from "class-validator";
+import { QueueName } from "~/common/constants/queue-names";
+import { CancelOrderService } from "../cancel-order.service";
+import { CompleteOrderService } from "../complete-order.service";
+import { ConfirmOrderPaymentService } from "../confirm-order-payment.service";
+import { UpdateOrder } from "../constants/update-order";
+import { CancelOrderDto } from "../dto/cancel-order.dto";
+import { CompleteOrderDto } from "../dto/complete-order.dto";
+import { ConfirmOrderPaymentDto } from "../dto/confirm-order-payment.dto";
+import { PayOrderDto } from "../dto/pay-order.dto";
+import { PayOrderBaseDto } from "../dto/pay-order.dto";
+import { PayOrderService } from "../pay-order.service";
 
 @Processor(QueueName.UpdateOrder)
 export class UpdateOrderConsumer {

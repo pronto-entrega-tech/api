@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { SessionsRepository } from '~/repositories/sessions/sessions.repository';
-import { AuthToken } from '../constants/auth-tokens';
-import { CreateJwtPayload, JwtPayload } from '../constants/jwt-payload';
-import { Role } from '../constants/roles';
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { SessionsRepository } from "~/repositories/sessions/sessions.repository";
+import { AuthToken } from "../constants/auth-tokens";
+import { CreateJwtPayload, JwtPayload } from "../constants/jwt-payload";
+import { Role } from "../constants/roles";
 
 @Injectable()
 export class SessionsService {
@@ -40,13 +40,13 @@ export class SessionsService {
 
   async genToken(dto: CreateJwtPayload) {
     const payload: JwtPayload = {
-      iss: 'ProntoEntrega',
+      iss: "ProntoEntrega",
       type: AuthToken.Access,
       ...dto,
     };
 
     return this.jwt.signAsync(payload, {
-      expiresIn: payload.type === AuthToken.Create ? '1d' : '15m',
+      expiresIn: payload.type === AuthToken.Create ? "1d" : "15m",
     });
   }
 

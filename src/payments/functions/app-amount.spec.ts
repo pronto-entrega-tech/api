@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
-import { format } from 'util';
-import { getAppAmount } from './app-amount';
-import { describe, expect, it } from 'vitest';
+import { Prisma } from "@prisma/client";
+import { format } from "util";
+import { getAppAmount } from "./app-amount";
+import { describe, expect, it } from "vitest";
 
 const from = (i: { total: number }) => ({
   to: (o: { appAmount: number }) => {
@@ -10,7 +10,7 @@ const from = (i: { total: number }) => ({
 
       expect(+res).toEqual(o.appAmount);
     };
-    return [format('%o => %o', i, o), assert] as const;
+    return [format("%o => %o", i, o), assert] as const;
   },
 });
 

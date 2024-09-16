@@ -1,5 +1,5 @@
-import { IsEnum } from 'class-validator';
-import { Role, RoleWithoutSub } from '~/auth/constants/roles';
+import { IsEnum } from "class-validator";
+import { Role, RoleWithoutSub } from "~/auth/constants/roles";
 
 export class RoleDto {
   @IsEnum(Role)

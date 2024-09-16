@@ -1,13 +1,13 @@
-import { BadRequestException, HttpStatus } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { addMinutes } from 'date-fns';
-import { omit } from '~/common/functions/omit';
-import { OrderStatus } from '../constants/order-status';
-import { CreateOrderPreDto } from '../create-order/create-order.dto';
-import { getCardTokenAndPaymentDescription } from './card-token-and-payment-description';
-import { OneCustomerDebit } from './customer-debit';
-import { getMarketAmount } from './market-amount';
-import { getSubtotalAndOrderItems } from './subtotal-and-items';
+import { BadRequestException, HttpStatus } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { addMinutes } from "date-fns";
+import { omit } from "~/common/functions/omit";
+import { OrderStatus } from "../constants/order-status";
+import { CreateOrderPreDto } from "../create-order/create-order.dto";
+import { getCardTokenAndPaymentDescription } from "./card-token-and-payment-description";
+import { OneCustomerDebit } from "./customer-debit";
+import { getMarketAmount } from "./market-amount";
+import { getSubtotalAndOrderItems } from "./subtotal-and-items";
 
 export function createOrderDto(dto: CreateOrderPreDto) {
   const { client, server } = dto;
@@ -16,7 +16,7 @@ export function createOrderDto(dto: CreateOrderPreDto) {
   const { subtotal, orderItems } = getSubtotalAndOrderItems(dto);
 
   return {
-    ...omit(client, 'card_id', 'client_total'),
+    ...omit(client, "card_id", "client_total"),
     delivery_fee,
     items: orderItems,
     total: getValidatedTotal(),

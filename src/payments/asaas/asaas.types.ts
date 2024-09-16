@@ -1,6 +1,6 @@
 export namespace Asaas {
   type Pagination<T> = {
-    object: 'list';
+    object: "list";
     hasMore: boolean;
     totalCount: number;
     limit: number;
@@ -8,16 +8,16 @@ export namespace Asaas {
     data: T;
   };
 
-  export type BillingType = 'CREDIT_CARD' | 'BOLETO' | 'PIX';
-  export type BankAccountType = 'CONTA_CORRENTE' | 'CONTA_POUPANCA';
+  export type BillingType = "CREDIT_CARD" | "BOLETO" | "PIX";
+  export type BankAccountType = "CONTA_CORRENTE" | "CONTA_POUPANCA";
   type PaymentStatus =
-    | 'PENDING'
-    | 'RECEIVED'
-    | 'CONFIRMED'
-    | 'OVERDUE'
-    | 'REFUNDED'
-    | 'REFUND_REQUESTED'
-    | 'AWAITING_RISK_ANALYSIS';
+    | "PENDING"
+    | "RECEIVED"
+    | "CONFIRMED"
+    | "OVERDUE"
+    | "REFUNDED"
+    | "REFUND_REQUESTED"
+    | "AWAITING_RISK_ANALYSIS";
 
   export type CreatePayment = {
     customer: string;
@@ -41,7 +41,7 @@ export namespace Asaas {
   };
 
   export type PaymentObject = {
-    object: 'payment';
+    object: "payment";
     id: string;
     dataCreated: string;
     customer: string;
@@ -71,7 +71,7 @@ export namespace Asaas {
     name: string;
     email: string;
     cpfCnpj: string;
-    companyType?: 'MEI' | 'LIMITED' | 'INDIVIDUAL' | 'ASSOCIATION';
+    companyType?: "MEI" | "LIMITED" | "INDIVIDUAL" | "ASSOCIATION";
     phone: string;
     //mobilePhone: string;
     postalCode: string;
@@ -161,16 +161,16 @@ export namespace Asaas {
     walletId?: undefined;
     bankAccount?: undefined;
     pixAddressKey: string;
-    pixAddressKeyType?: 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'EVP';
+    pixAddressKeyType?: "CPF" | "CNPJ" | "EMAIL" | "PHONE" | "EVP";
   };
 
   export type TransferObject = {
-    object: 'transfer';
+    object: "transfer";
     id: string;
     dateCreated: string;
-    status: 'PENDING' | 'BANK_PROCESSING' | 'DONE' | 'CANCELLED' | 'FAILED';
+    status: "PENDING" | "BANK_PROCESSING" | "DONE" | "CANCELLED" | "FAILED";
     effectiveDate: string;
-    type: 'BANK_ACCOUNT' | 'ASAAS_ACCOUNT';
+    type: "BANK_ACCOUNT" | "ASAAS_ACCOUNT";
     value: number;
     netValue: number;
     transferFee: number;
@@ -193,13 +193,13 @@ export namespace Asaas {
       bankAccountType: BankAccountType;
     };
     transactionReceiptUrl: string;
-    operationType: 'PIX' | 'TED' | 'INTERNAL';
+    operationType: "PIX" | "TED" | "INTERNAL";
   };
 
   export type TransferPage = Pagination<TransferObject[]>;
 
   export type WebHookBody = {
-    event: 'PAYMENT_RECEIVED';
+    event: "PAYMENT_RECEIVED";
     payment: {
       externalReference?: string;
       billingType: BillingType;

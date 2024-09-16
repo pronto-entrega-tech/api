@@ -1,33 +1,33 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { FastifyAdapter as BullFastifyAdapter } from '@bull-board/fastify';
-import fastifyCookie from '@fastify/cookie';
-import fastifyCsrf from '@fastify/csrf-protection';
-import fastifyHelmet, { FastifyHelmetOptions } from '@fastify/helmet';
-import { HttpException, Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
-import BullQueue from 'bull';
-import { AppModule } from './app.module';
+import { createBullBoard } from "@bull-board/api";
+import { BullAdapter } from "@bull-board/api/bullAdapter";
+import { FastifyAdapter as BullFastifyAdapter } from "@bull-board/fastify";
+import fastifyCookie from "@fastify/cookie";
+import fastifyCsrf from "@fastify/csrf-protection";
+import fastifyHelmet, { FastifyHelmetOptions } from "@fastify/helmet";
+import { HttpException, Logger, ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { NestFastifyApplication } from "@nestjs/platform-fastify";
+import { FastifyAdapter } from "@nestjs/platform-fastify";
+import BullQueue from "bull";
+import { AppModule } from "./app.module";
 import {
   ADMIN_ACCESS_TOKEN,
   CUSTOMER_ACCESS_TOKEN,
   MARKET_ACCESS_TOKEN,
   MARKET_SUB_ACCESS_TOKEN,
-} from './auth/constants/auth-tokens';
-import { isDev } from './common/constants/is-dev';
-import { QueueName } from './common/constants/queue-names';
-import { STATIC_PATH } from '~/common/constants/paths';
-import { readFileSync } from 'fs';
-import fs from 'fs/promises';
-import { networkInterfaces } from 'os';
+} from "./auth/constants/auth-tokens";
+import { isDev } from "./common/constants/is-dev";
+import { QueueName } from "./common/constants/queue-names";
+import { STATIC_PATH } from "~/common/constants/paths";
+import { readFileSync } from "fs";
+import fs from "fs/promises";
+import { networkInterfaces } from "os";
 import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -39,7 +39,7 @@ const bootstrap = async () => {
     origin: [
       /localhost:\d+$/,
       `http://${localIp}:3000`,
-      'https://prontoentrega.com.br',
+      "https://prontoentrega.com.br",
     ],
     credentials: true,
   });
@@ -49,31 +49,31 @@ const bootstrap = async () => {
     secret: process.env.COOKIE_SECRET,
   });
   await app.register(fastifyCsrf, {
-    cookieOpts: { path: '/', sameSite: true, httpOnly: true, signed: true },
+    cookieOpts: { path: "/", sameSite: true, httpOnly: true, signed: true },
   });
   if (!isDev) await app.register(fastifyHelmet, prodHelmetOpts);
 
-  const docsPath = '/docs';
-  const bullBoardPath = '/bull-board';
+  const docsPath = "/docs";
+  const bullBoardPath = "/bull-board";
   if (isDev) {
     app.useStaticAssets({
       root: STATIC_PATH,
-      prefix: '/static/',
+      prefix: "/static/",
     });
-    await fs.cp('./example/static', STATIC_PATH, {
+    await fs.cp("./example/static", STATIC_PATH, {
       recursive: true,
       force: false,
       errorOnExist: false,
     });
 
-    const { SwaggerModule, DocumentBuilder } = await import('@nestjs/swagger');
+    const { SwaggerModule, DocumentBuilder } = await import("@nestjs/swagger");
     const config = new DocumentBuilder()
-      .setTitle('ProntoEntrega API')
-      .setVersion('Evolution')
-      .addBearerAuth({ type: 'http' }, ADMIN_ACCESS_TOKEN)
-      .addBearerAuth({ type: 'http' }, CUSTOMER_ACCESS_TOKEN)
-      .addBearerAuth({ type: 'http' }, MARKET_ACCESS_TOKEN)
-      .addBearerAuth({ type: 'http' }, MARKET_SUB_ACCESS_TOKEN)
+      .setTitle("ProntoEntrega API")
+      .setVersion("Evolution")
+      .addBearerAuth({ type: "http" }, ADMIN_ACCESS_TOKEN)
+      .addBearerAuth({ type: "http" }, CUSTOMER_ACCESS_TOKEN)
+      .addBearerAuth({ type: "http" }, MARKET_ACCESS_TOKEN)
+      .addBearerAuth({ type: "http" }, MARKET_SUB_ACCESS_TOKEN)
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -87,7 +87,7 @@ const bootstrap = async () => {
     );
     createBullBoard({ queues, serverAdapter });
     app.register(serverAdapter.registerPlugin(), {
-      basePath: '',
+      basePath: "",
       prefix: bullBoardPath,
     });
   }
@@ -96,7 +96,7 @@ const bootstrap = async () => {
   const address = isDev ? localIp : undefined;
 
   // Start
-  await app.listen(port, address ?? 'localhost');
+  await app.listen(port, address ?? "localhost");
 
   const appUrl = await app.getUrl();
   console.log(`Application is running on: ${appUrl}`);
@@ -106,8 +106,8 @@ const bootstrap = async () => {
   }
 };
 
-const logger = new Logger('UnhandledRejection');
-process.on('unhandledRejection', (error) => {
+const logger = new Logger("UnhandledRejection");
+process.on("unhandledRejection", (error) => {
   if (error instanceof HttpException) {
     logger.error(error);
   } else {
@@ -123,7 +123,7 @@ process.on('unhandledRejection', (error) => {
 const MiB = 2 ** 20;
 
 const localIp = networkInterfaces().en0?.find(
-  (v) => v.family === 'IPv4',
+  (v) => v.family === "IPv4",
 )?.address;
 
 const prodHelmetOpts: FastifyHelmetOptions = {
@@ -137,14 +137,14 @@ const prodHelmetOpts: FastifyHelmetOptions = {
   },
 };
 
-const useHttps = process.env.HTTPS === 'true';
+const useHttps = process.env.HTTPS === "true";
 
 const httpsOpts =
   useHttps && isDev
     ? {
         https: {
-          key: readFileSync('./https_cert/localhost-key.pem'),
-          cert: readFileSync('./https_cert/localhost.pem'),
+          key: readFileSync("./https_cert/localhost-key.pem"),
+          cert: readFileSync("./https_cert/localhost.pem"),
         },
       }
     : undefined;

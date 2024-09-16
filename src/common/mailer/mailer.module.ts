@@ -1,7 +1,7 @@
-import { DynamicModule } from '@nestjs/common';
-import { createTransport } from 'nodemailer';
-import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { MailerService } from './mailer.service';
+import { DynamicModule } from "@nestjs/common";
+import { createTransport } from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { MailerService } from "./mailer.service";
 
 export class MailerModule {
   static forRoot(p: {

@@ -1,13 +1,13 @@
-import { item } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { omit } from '~/common/functions/omit';
-import { pick } from '~/common/functions/pick';
-import { CreateItemDto, SaveItemDto } from '~/items/dto/create.dto';
-import { ItemDetails, ItemOneFeed } from '~/items/dto/feed.dto';
-import { UpdateItemDto } from '~/items/dto/update.dto';
-import { ActivityExtra } from '~/repositories/items/items.repository';
-import { createMarket } from './market';
-import { createProduct, createdProduct } from './product';
+import { item } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { omit } from "~/common/functions/omit";
+import { pick } from "~/common/functions/pick";
+import { CreateItemDto, SaveItemDto } from "~/items/dto/create.dto";
+import { ItemDetails, ItemOneFeed } from "~/items/dto/feed.dto";
+import { UpdateItemDto } from "~/items/dto/update.dto";
+import { ActivityExtra } from "~/repositories/items/items.repository";
+import { createMarket } from "./market";
+import { createProduct, createdProduct } from "./product";
 
 export const createItem = Prisma.validator<CreateItemDto>()({
   code: createProduct.code,
@@ -17,15 +17,15 @@ export const createItem = Prisma.validator<CreateItemDto>()({
 export const saveItem = Prisma.validator<SaveItemDto>()({
   ...createItem,
   quantity: null,
-  item_id: 'itemId',
-  city_slug: 'city-st',
+  item_id: "itemId",
+  city_slug: "city-st",
   market_id: createMarket.market_id,
   prod_id: createdProduct.prod_id,
-  ...pick(createProduct, 'name', 'brand'),
+  ...pick(createProduct, "name", "brand"),
 });
 
-export const createdItem = Prisma.validator<Omit<item, 'item_id'>>()({
-  ...omit(saveItem, 'item_id', 'code', 'name', 'brand', 'quantity'),
+export const createdItem = Prisma.validator<Omit<item, "item_id">>()({
+  ...omit(saveItem, "item_id", "code", "name", "brand", "quantity"),
   market_price: new Prisma.Decimal(saveItem.market_price),
   stock: null,
   unit_weight: null,
@@ -41,22 +41,22 @@ export const createdItem = Prisma.validator<Omit<item, 'item_id'>>()({
 
 type _ItemFeed = Omit<
   ItemOneFeed,
-  'name' | 'brand' | 'quantity' | 'images_names' | 'item_id' | 'prod_id'
+  "name" | "brand" | "quantity" | "images_names" | "item_id" | "prod_id"
 >;
 export const itemFeed = Prisma.validator<_ItemFeed>()({
   ...pick(
     createdItem,
-    'is_kit',
+    "is_kit",
     /* 'item_id',
     'prod_id', */
-    'market_id',
-    'unit_weight',
-    'discount_type',
-    'discount_value_1',
-    'discount_value_2',
-    'discount_max_per_client',
+    "market_id",
+    "unit_weight",
+    "discount_type",
+    "discount_value_1",
+    "discount_value_2",
+    "discount_max_per_client",
   ),
-  price: '10.00',
+  price: "10.00",
   details: [] as ItemDetails[],
   thumbhash: null,
   market_thumbhash: null,

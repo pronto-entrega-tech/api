@@ -1,22 +1,22 @@
-import { customer_card } from '@prisma/client';
-import { capitalize } from '~/common/functions/capitalize';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { CreateOrderDto } from '../create-order/create-order.dto';
+import { customer_card } from "@prisma/client";
+import { capitalize } from "~/common/functions/capitalize";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { CreateOrderDto } from "../create-order/create-order.dto";
 
 export function getCardTokenAndPaymentDescription(
-  dto: Pick<CreateOrderDto, 'card_id' | 'payment_method'>,
+  dto: Pick<CreateOrderDto, "card_id" | "payment_method">,
   card?: customer_card,
 ) {
   const cardBrand = getFormattedCardBrand();
   const payment_description = {
-    [PaymentMethod.Cash]: 'Dinheiro',
-    [PaymentMethod.Pix]: 'Pix',
+    [PaymentMethod.Cash]: "Dinheiro",
+    [PaymentMethod.Pix]: "Pix",
     [PaymentMethod.Card]: `Crédito ${cardBrand} •••• ${card?.last4}`,
   }[dto.payment_method];
 
   return { card_token: card?.asaas_id, payment_description };
 
   function getFormattedCardBrand() {
-    return capitalize((card?.brand ?? '').replace('UNKNOWN', 'Desconhecido'));
+    return capitalize((card?.brand ?? "").replace("UNKNOWN", "Desconhecido"));
   }
 }

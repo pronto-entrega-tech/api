@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { ApiProperty } from "@nestjs/swagger";
+import { Prisma } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   ArrayNotEmpty,
   ArrayMaxSize,
@@ -14,23 +14,23 @@ import {
   Length,
   Max,
   ValidateNested,
-} from 'class-validator';
-import { DecimalSize } from '~/common/decorators/decimal-size';
-import { IsDecimalNonNegative } from '~/common/decorators/is-decimal-non-negative';
-import { IsDecimalPositive } from '~/common/decorators/is-decimal-positive';
-import TransformToDecimal from '~/common/decorators/to-decimal';
+} from "class-validator";
+import { DecimalSize } from "~/common/decorators/decimal-size";
+import { IsDecimalNonNegative } from "~/common/decorators/is-decimal-non-negative";
+import { IsDecimalPositive } from "~/common/decorators/is-decimal-positive";
+import TransformToDecimal from "~/common/decorators/to-decimal";
 import {
   BankAccountType,
   HolderType,
   MarketsType,
   PixKeyType,
   WeekDay,
-} from '../constants/market-enums';
+} from "../constants/market-enums";
 import {
   IsBusinessHours,
   SortBusinessHours,
-} from '../decorators/business-hours';
-import { MarketsService } from '../markets.service';
+} from "../decorators/business-hours";
+import { MarketsService } from "../markets.service";
 
 export class BusinessHour {
   @ArrayNotEmpty()
@@ -38,11 +38,11 @@ export class BusinessHour {
   @IsEnum(WeekDay, { each: true })
   readonly days: WeekDay[];
 
-  @ApiProperty({ example: '09:00' })
+  @ApiProperty({ example: "09:00" })
   @IsMilitaryTime()
   readonly open_time: string;
 
-  @ApiProperty({ example: '21:30' })
+  @ApiProperty({ example: "21:30" })
   @IsMilitaryTime()
   readonly close_time: string;
 }
@@ -169,5 +169,5 @@ export class CreateMarketDto {
 }
 
 export type SaveMarketDto = Awaited<
-  ReturnType<MarketsService['createMarketDto']>
+  ReturnType<MarketsService["createMarketDto"]>
 > & { now?: Date };

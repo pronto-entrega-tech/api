@@ -1,9 +1,9 @@
-import { SubPermission } from '~/auth/constants/sub-permissions';
-import { AuthToken } from './auth-tokens';
-import { Role, RoleWithoutSub } from './roles';
+import { SubPermission } from "~/auth/constants/sub-permissions";
+import { AuthToken } from "./auth-tokens";
+import { Role, RoleWithoutSub } from "./roles";
 
 export type JwtPayload = {
-  iss: 'ProntoEntrega';
+  iss: "ProntoEntrega";
   sub: string;
   type: AuthToken;
 } & (
@@ -18,8 +18,8 @@ export type JwtPayload = {
 );
 
 export type CreateJwtPayload = {
-  sub: JwtPayload['sub'];
-  type?: JwtPayload['type'];
+  sub: JwtPayload["sub"];
+  type?: JwtPayload["type"];
 } & (
   | {
       role: RoleWithoutSub;

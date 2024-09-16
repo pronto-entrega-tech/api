@@ -1,18 +1,18 @@
-import { Prisma } from '@prisma/client';
-import { fail } from 'assert';
-import { DiscountType } from '~/items/constants/discount-type';
-import { ItemsRepository } from '~/repositories/items/items.repository';
-import { OrderItemDto } from '../create-order/create-order.dto';
+import { Prisma } from "@prisma/client";
+import { fail } from "assert";
+import { DiscountType } from "~/items/constants/discount-type";
+import { ItemsRepository } from "~/repositories/items/items.repository";
+import { OrderItemDto } from "../create-order/create-order.dto";
 
 type ItemWithPrice = Pick<
   ItemsRepository.ItemById,
-  | 'discount_type'
-  | 'discount_value_1'
-  | 'discount_value_2'
-  | 'discount_max_per_client'
-  | 'item_id'
+  | "discount_type"
+  | "discount_value_1"
+  | "discount_value_2"
+  | "discount_max_per_client"
+  | "item_id"
 > &
-  Pick<OrderItemDto, 'price'>;
+  Pick<OrderItemDto, "price">;
 
 export function getItemTotalWithOff(item: ItemWithPrice, quantity: number) {
   {

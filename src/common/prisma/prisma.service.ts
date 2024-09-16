@@ -1,14 +1,14 @@
-import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const config = Prisma.validator<Prisma.PrismaClientOptions>()({
-  log: [{ emit: 'event', level: 'query' }],
+  log: [{ emit: "event", level: "query" }],
 });
 
 @Injectable()
 export class PrismaService
-  extends PrismaClient<typeof config, 'query'>
+  extends PrismaClient<typeof config, "query">
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {

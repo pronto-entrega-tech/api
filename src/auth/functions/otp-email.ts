@@ -1,18 +1,18 @@
-import { otp } from '@prisma/client';
-import { addMinutes } from 'date-fns';
-import Mail from 'nodemailer/lib/mailer';
-import { EmailHtml } from '~/common/emails';
-import { CreateUrl } from '~/common/functions/create-url';
-import { randomNumber } from '~/common/functions/random-number';
-import { otpValidMinutes } from '../constants/opt-expiration';
-import { Role } from '../constants/roles';
-import { EmailDto } from '../dto/email.dto';
+import { otp } from "@prisma/client";
+import { addMinutes } from "date-fns";
+import Mail from "nodemailer/lib/mailer";
+import { EmailHtml } from "~/common/emails";
+import { CreateUrl } from "~/common/functions/create-url";
+import { randomNumber } from "~/common/functions/random-number";
+import { otpValidMinutes } from "../constants/opt-expiration";
+import { Role } from "../constants/roles";
+import { EmailDto } from "../dto/email.dto";
 
 type IO = {
   adminExist(): Promise<boolean>;
   fakeKey(): string;
   createOtpHash(otp: string): Promise<string>;
-  saveOtp(dto: Omit<otp, 'otp_id'>): Promise<{ otp_id: string }>;
+  saveOtp(dto: Omit<otp, "otp_id">): Promise<{ otp_id: string }>;
   sendMail(mail: Mail.Options): Promise<void>;
 };
 

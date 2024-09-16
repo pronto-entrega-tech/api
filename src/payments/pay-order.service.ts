@@ -1,22 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { OrderAction, OrderStatus } from '~/orders/constants/order-status';
-import { OrdersStatusService } from '~/orders/orders-status.service';
-import { PayOrderDto } from '~/payments/dto/pay-order.dto';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { PaymentAccountsService } from './accounts/payment-accounts.service';
-import { AsaasService } from './asaas/asaas.service';
-import { InAppPaymentMethod } from './constants/payment-methods';
-import { createPayParams } from './functions/create-pay-params';
+import { Injectable } from "@nestjs/common";
+import { OrderAction, OrderStatus } from "~/orders/constants/order-status";
+import { OrdersStatusService } from "~/orders/orders-status.service";
+import { PayOrderDto } from "~/payments/dto/pay-order.dto";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
+import { PaymentAccountsService } from "./accounts/payment-accounts.service";
+import { AsaasService } from "./asaas/asaas.service";
+import { InAppPaymentMethod } from "./constants/payment-methods";
+import { createPayParams } from "./functions/create-pay-params";
 import {
   fromCustomerExternalId,
   getOrderExternalId,
-} from './functions/external-id';
+} from "./functions/external-id";
 import {
   orderPaymentPendingAction,
   OrderPayUpdate,
-} from './functions/order-payment-pending-action';
+} from "./functions/order-payment-pending-action";
 
 @Injectable()
 export class PayOrderService {
@@ -37,18 +37,18 @@ export class PayOrderService {
     const action = await this.orderPaymentPendingAction(dto);
 
     switch (action.type) {
-      case 'createPayment': {
+      case "createPayment": {
         const update = await this.createPaymentOnAsaas(dto);
         return this.updateOrderOnDB(dto, update);
       }
 
-      case 'recreatePayment': {
+      case "recreatePayment": {
         await this.asaas.payments.delete(action.data);
         const update = await this.createPaymentOnAsaas(dto);
         return this.updateOrderOnDB(dto, update);
       }
 
-      case 'updateOrder': {
+      case "updateOrder": {
         return this.updateOrderOnDB(dto, action.data);
       }
     }

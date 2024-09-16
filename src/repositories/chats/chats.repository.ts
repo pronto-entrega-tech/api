@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { SaveChatMsgDto } from '~/chats/dto/create-chat-msg.dto';
-import { PrismaService } from '~/common/prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { SaveChatMsgDto } from "~/chats/dto/create-chat-msg.dto";
+import { PrismaService } from "~/common/prisma/prisma.service";
 
 @Injectable()
 export class ChatsRepository {

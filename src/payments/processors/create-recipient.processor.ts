@@ -1,13 +1,13 @@
-import { Process, Processor } from '@nestjs/bull';
-import { fail } from 'assert';
-import { Job } from 'bull';
-import { QueueName } from '~/common/constants/queue-names';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { AsaasService } from '../asaas/asaas.service';
+import { Process, Processor } from "@nestjs/bull";
+import { fail } from "assert";
+import { Job } from "bull";
+import { QueueName } from "~/common/constants/queue-names";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { AsaasService } from "../asaas/asaas.service";
 import {
   CreateRecipientDto,
   RecipientReturnDto,
-} from '../dto/create-recipient.dto';
+} from "../dto/create-recipient.dto";
 
 @Processor(QueueName.CreateRecipient)
 export class CreateRecipientConsumer {
@@ -51,14 +51,14 @@ export class CreateRecipientConsumer {
   }
 
   private companyType(name: string) {
-    const abbreviation = name.split(' ').at(-1) ?? '';
+    const abbreviation = name.split(" ").at(-1) ?? "";
 
     const companyType = (
       {
-        MEI: 'MEI',
-        LTDA: 'LIMITED',
-        EIRELI: 'INDIVIDUAL',
-        SA: 'ASSOCIATION',
+        MEI: "MEI",
+        LTDA: "LIMITED",
+        EIRELI: "INDIVIDUAL",
+        SA: "ASSOCIATION",
       } as const
     )[abbreviation];
 

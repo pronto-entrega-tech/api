@@ -1,6 +1,6 @@
-import { PartialType } from '@nestjs/swagger';
-import { IsOptional, IsPhoneNumber, Length } from 'class-validator';
-import { CreateCustomerDto } from './create.dto';
+import { PartialType } from "@nestjs/swagger";
+import { IsOptional, IsPhoneNumber, Length } from "class-validator";
+import { CreateCustomerDto } from "./create.dto";
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   @IsOptional()
@@ -8,6 +8,6 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   readonly document?: string;
 
   @IsOptional()
-  @IsPhoneNumber('BR')
+  @IsPhoneNumber("BR")
   readonly phone?: string;
 }

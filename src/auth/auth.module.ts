@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { envPath } from '~/common/functions/env-path';
-import { MailerModule } from '~/common/mailer/mailer.module';
-import { Argon2Module } from './argon2.service';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { SessionsModule } from './sessions/sessions.module';
-import { StrategiesModule } from './strategies/strategies.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { envPath } from "~/common/functions/env-path";
+import { MailerModule } from "~/common/mailer/mailer.module";
+import { Argon2Module } from "./argon2.service";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { SessionsModule } from "./sessions/sessions.module";
+import { StrategiesModule } from "./strategies/strategies.module";
 
 @Module({
   imports: [
@@ -20,12 +20,12 @@ import { StrategiesModule } from './strategies/strategies.module';
       options: { url: process.env.SMTP_URL },
       defaults: {
         from: {
-          name: 'ProntoEntrega',
-          address: 'notificacao@prontoentrega.com.br',
+          name: "ProntoEntrega",
+          address: "notificacao@prontoentrega.com.br",
         },
         replyTo: {
-          name: 'ProntoEntrega',
-          address: 'contato@prontoentrega.com.br',
+          name: "ProntoEntrega",
+          address: "contato@prontoentrega.com.br",
         },
       },
     }),

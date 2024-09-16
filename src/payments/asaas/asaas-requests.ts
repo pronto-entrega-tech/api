@@ -1,13 +1,13 @@
-import { fail } from 'assert';
-import axios, { AxiosRequestConfig } from 'axios';
-import { isDevOrTest } from '~/common/constants/is-dev';
+import { fail } from "assert";
+import axios, { AxiosRequestConfig } from "axios";
+import { isDevOrTest } from "~/common/constants/is-dev";
 
 export class AsaasRequests {
   private readonly ASAAS_KEY =
-    process.env.ASAAS_KEY ?? fail('ASAAS_KEY must be defined');
+    process.env.ASAAS_KEY ?? fail("ASAAS_KEY must be defined");
 
   private readonly config: AxiosRequestConfig = {
-    baseURL: `https://${isDevOrTest ? 'sandbox' : 'www'}.asaas.com/api/v3`,
+    baseURL: `https://${isDevOrTest ? "sandbox" : "www"}.asaas.com/api/v3`,
     headers: { access_token: this.ASAAS_KEY },
   };
 

@@ -1,5 +1,5 @@
-import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { ApiProperty, OmitType, PartialType } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import {
   ArrayMaxSize,
   IsDate,
@@ -8,13 +8,13 @@ import {
   IsOptional,
   Length,
   ValidateNested,
-} from 'class-validator';
-import TransformToDate from '~/common/decorators/to-date';
+} from "class-validator";
+import TransformToDate from "~/common/decorators/to-date";
 import {
   SortBusinessHours,
   IsBusinessHours,
-} from '../decorators/business-hours';
-import { CreateBankAccountDto, CreateMarketDto } from './create.dto';
+} from "../decorators/business-hours";
+import { CreateBankAccountDto, CreateMarketDto } from "./create.dto";
 
 export class SpecialDay {
   @ApiProperty({ example: new Date().toISOString().slice(0, 10) })
@@ -28,11 +28,11 @@ export class SpecialDay {
   @Length(1, 256)
   readonly reason_name: string;
 
-  @ApiProperty({ example: '09:00' })
+  @ApiProperty({ example: "09:00" })
   @IsMilitaryTime()
   readonly open_time: string;
 
-  @ApiProperty({ example: '21:30' })
+  @ApiProperty({ example: "21:30" })
   @IsMilitaryTime()
   readonly close_time: string;
 }
@@ -40,7 +40,7 @@ export class SpecialDay {
 export class UpdateBankAccountDto extends PartialType(CreateBankAccountDto) {}
 
 export class UpdateMarketDto extends PartialType(
-  OmitType(CreateMarketDto, ['bank_account']),
+  OmitType(CreateMarketDto, ["bank_account"]),
 ) {
   @IsOptional()
   @ArrayMaxSize(50)

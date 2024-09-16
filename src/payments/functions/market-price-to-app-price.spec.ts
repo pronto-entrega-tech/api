@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
-import { format } from 'util';
-import { marketPriceToAppPrice } from './market-price-to-app-price';
-import { describe, expect, it } from 'vitest';
+import { Prisma } from "@prisma/client";
+import { format } from "util";
+import { marketPriceToAppPrice } from "./market-price-to-app-price";
+import { describe, expect, it } from "vitest";
 
 const from = (i: { marketPrice: number; markup: number }) => ({
   to: (o: { appPrice: number }) => {
@@ -13,7 +13,7 @@ const from = (i: { marketPrice: number; markup: number }) => ({
 
       expect(+res).toEqual(o.appPrice);
     };
-    return [format('%o => %o', i, o), assert] as const;
+    return [format("%o => %o", i, o), assert] as const;
   },
 });
 

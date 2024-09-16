@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { OrderStatus } from '~/orders/constants/order-status';
-import { FindManyOrdersDto } from '~/orders/dto/find-many.dto';
-import { FullOrderId } from '~/orders/dto/full-order-id.dto';
-import { UpdateOrderPaymentDto } from '~/orders/dto/update.dto';
-import { CreateReviewDto, RespondReviewDto } from '~/orders/dto/review.dto';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { day } from '~/common/constants/time';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { prismaNotFound } from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { OrderStatus } from "~/orders/constants/order-status";
+import { FindManyOrdersDto } from "~/orders/dto/find-many.dto";
+import { FullOrderId } from "~/orders/dto/full-order-id.dto";
+import { UpdateOrderPaymentDto } from "~/orders/dto/update.dto";
+import { CreateReviewDto, RespondReviewDto } from "~/orders/dto/review.dto";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { day } from "~/common/constants/time";
 
 // BEWARE!
 //
@@ -20,9 +20,9 @@ import { day } from '~/common/constants/time';
 
 export namespace OrdersRepository {
   export type CompleteData = Awaited<
-    ReturnType<OrdersRepository['completeData']>
+    ReturnType<OrdersRepository["completeData"]>
   >;
-  export type CancelData = Awaited<ReturnType<OrdersRepository['cancelData']>>;
+  export type CancelData = Awaited<ReturnType<OrdersRepository["cancelData"]>>;
 }
 
 @Injectable()
@@ -50,7 +50,7 @@ export class OrdersRepository {
         customer_id,
         order_id: { lt: after_id },
       },
-      orderBy: { order_id: 'desc' },
+      orderBy: { order_id: "desc" },
       /* take: 10, */
     });
   }
@@ -116,7 +116,7 @@ export class OrdersRepository {
           ],
         },
       },
-      orderBy: { order_id: 'desc' },
+      orderBy: { order_id: "desc" },
       /* take: 10, */
     });
   }
@@ -126,7 +126,7 @@ export class OrdersRepository {
       .findUniqueOrThrow({
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async customerFindOne({
@@ -162,7 +162,7 @@ export class OrdersRepository {
         },
         where: { order_id, market_id, customer_id },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async findByStatus(status: OrderStatus) {
@@ -211,7 +211,7 @@ export class OrdersRepository {
         select: {},
         where: { order_id, market_id, customer_id },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async customerId({ order_id, market_id }: FullOrderId) {
@@ -220,7 +220,7 @@ export class OrdersRepository {
         select: { customer_id: true },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
     return order.customer_id;
   }
 
@@ -228,7 +228,7 @@ export class OrdersRepository {
     const lastOrder = await this.prisma.orders.findFirst({
       select: { market_order_id: true },
       where: { market_id },
-      orderBy: { market_order_id: 'desc' },
+      orderBy: { market_order_id: "desc" },
     });
     return lastOrder?.market_order_id ?? 0n;
   }
@@ -243,7 +243,7 @@ export class OrdersRepository {
         select: { paid_in_app: true },
         where: { order_id, market_id, customer_id },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async chatMsgData({
@@ -256,7 +256,7 @@ export class OrdersRepository {
         select: { customer_id: true, market_order_id: true },
         where: { order_id, market_id, customer_id },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async reviewCreationData({
@@ -273,7 +273,7 @@ export class OrdersRepository {
         },
         where: { order_id, market_id, customer_id },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
 
     return { ...rest, hasReview: !!review };
   }
@@ -284,7 +284,7 @@ export class OrdersRepository {
         select: { market_order_id: true },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async confirmData({ order_id, market_id }: FullOrderId) {
@@ -293,7 +293,7 @@ export class OrdersRepository {
         select: { payment_method: true, paid_in_app: true },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async completeData({ order_id, market_id }: FullOrderId) {
@@ -308,7 +308,7 @@ export class OrdersRepository {
         },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async cancelData({ order_id, market_id }: FullOrderId) {
@@ -323,7 +323,7 @@ export class OrdersRepository {
         },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
   }
 
   async status({ order_id, market_id }: FullOrderId) {
@@ -332,7 +332,7 @@ export class OrdersRepository {
         select: { status: true },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
     return status as OrderStatus;
   }
 
@@ -340,7 +340,7 @@ export class OrdersRepository {
     return this.prisma.orders.findMany({
       select: { order_id: true, status: true },
       where: { market_id, order_id: { in: order_ids } },
-      orderBy: { order_id: 'desc' },
+      orderBy: { order_id: "desc" },
     });
   }
 
@@ -353,7 +353,7 @@ export class OrdersRepository {
         select: { status: true },
         where: { customer_id, order_id, market_id },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
     return status;
   }
 
@@ -383,14 +383,14 @@ export class OrdersRepository {
         where: { order_id_market_id: { order_id, market_id } },
       });
 
-    if (!increasePayout) return updateOrder().catch(prismaNotFound('Order'));
+    if (!increasePayout) return updateOrder().catch(prismaNotFound("Order"));
 
     const { market_amount } = await this.prisma.orders
       .findUniqueOrThrow({
         select: { market_amount: true },
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Order'));
+      .catch(prismaNotFound("Order"));
 
     const updatePayout = this.prisma.market_payout.update({
       data: { amount: { increment: market_amount } },
@@ -454,6 +454,6 @@ export class OrdersRepository {
         data: Prisma.validator<Prisma.reviewUncheckedUpdateManyInput>()(dto),
         where: { order_id_market_id: { order_id, market_id } },
       })
-      .catch(prismaNotFound('Review'));
+      .catch(prismaNotFound("Review"));
   }
 }

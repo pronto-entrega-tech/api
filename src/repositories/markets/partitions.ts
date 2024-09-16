@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import { PrismaService } from '~/common/prisma/prisma.service';
+import { Prisma } from "@prisma/client";
+import { PrismaService } from "~/common/prisma/prisma.service";
 
 export class Partitions {
   constructor(private readonly prisma: PrismaService) {}

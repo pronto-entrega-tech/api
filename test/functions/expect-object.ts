@@ -1,6 +1,6 @@
-import { plainToInstance } from 'class-transformer';
-import { ValidationError } from 'class-validator';
-import { isArray, ValidateNested, validateOrReject } from 'class-validator';
+import { plainToInstance } from "class-transformer";
+import { ValidationError } from "class-validator";
+import { isArray, ValidateNested, validateOrReject } from "class-validator";
 
 /* function multiExpects(...fns: (() => void)[]) {
   const errs = fns.reduce((_, fn) => {
@@ -25,7 +25,7 @@ class Array {
 
 export function expectObject(obj: any) {
   function handle(errs: ValidationError[]) {
-    const a = JSON.stringify(errs, null, '  ').replace(/"/g, '');
+    const a = JSON.stringify(errs, null, "  ").replace(/"/g, "");
     console.log(a);
 
     const reducer = (errors: string[], err: ValidationError) =>
@@ -38,18 +38,18 @@ export function expectObject(obj: any) {
     const reduceArr = (errors: string[], err: ValidationError) =>
       errors
         .concat(err.children?.reduce(reducer, [] as string[]) ?? [])
-        .concat('');
+        .concat("");
 
     const errors =
-      errs[0]?.property === 'array' &&
+      errs[0]?.property === "array" &&
       errs[0].children &&
       errs[0].children[0]?.children
         ? errs[0].children.reduce(reduceArr, [] as string[])
         : errs.reduce(reducer, [] as string[]);
 
-    const received = JSON.stringify(obj, null, '  ').replace(/"/g, '');
+    const received = JSON.stringify(obj, null, "  ").replace(/"/g, "");
     const error = new Error(
-      `Errors:\n  ${errors.join('\n  ')}\n\nReceived: ${received}`,
+      `Errors:\n  ${errors.join("\n  ")}\n\nReceived: ${received}`,
     );
     Error.captureStackTrace(error, toBe);
     throw error;

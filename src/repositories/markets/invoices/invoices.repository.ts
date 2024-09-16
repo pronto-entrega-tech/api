@@ -1,11 +1,11 @@
-import { Prisma } from '@prisma/client';
-import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { FullInvoiceId } from '~/markets/dto/full-invoice-id';
-import { CreateInvoices, UpdateInvoice } from '~/markets/dto/invoice';
-import { InvoiceStatus } from '~/payments/constants/invoice-status';
-import { Partitions } from '../partitions';
-import { subYears } from 'date-fns';
+import { Prisma } from "@prisma/client";
+import { prismaNotFound } from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { FullInvoiceId } from "~/markets/dto/full-invoice-id";
+import { CreateInvoices, UpdateInvoice } from "~/markets/dto/invoice";
+import { InvoiceStatus } from "~/payments/constants/invoice-status";
+import { Partitions } from "../partitions";
+import { subYears } from "date-fns";
 
 const idMonth = ({ invoice_id, month }: FullInvoiceId) => ({
   id: invoice_id,
@@ -58,7 +58,7 @@ export class InvoicesRepository {
       .findUniqueOrThrow({
         where: { id_month: idMonth(fullId) },
       })
-      .catch(prismaNotFound('Invoice'));
+      .catch(prismaNotFound("Invoice"));
   }
 
   async status(fullId: FullInvoiceId) {
@@ -67,7 +67,7 @@ export class InvoicesRepository {
         select: { status: true },
         where: { id_month: idMonth(fullId) },
       })
-      .catch(prismaNotFound('Invoice'));
+      .catch(prismaNotFound("Invoice"));
 
     return invoice.status;
   }

@@ -3,43 +3,43 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import assert from 'assert';
-import { AlreadyExistError } from '~/common/errors/already-exist';
-import { Month } from '~/common/functions/month';
-import { omit } from '~/common/functions/omit';
-import { pick } from '~/common/functions/pick';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { OrderUpdaterService } from '~/payments/order-updater/order-updater.service';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import assert from "assert";
+import { AlreadyExistError } from "~/common/errors/already-exist";
+import { Month } from "~/common/functions/month";
+import { omit } from "~/common/functions/omit";
+import { pick } from "~/common/functions/pick";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { OrderUpdaterService } from "~/payments/order-updater/order-updater.service";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
 import {
   OrderAction,
   OrderPublicAction,
   OrderStatus,
-} from './constants/order-status';
-import { reviewCreationMaxDays } from './constants/review-max-day';
-import { CancelOrderDto } from './dto/cancel.dto';
-import { FindManyOrdersDto } from './dto/find-many.dto';
-import { FullOrderId } from './dto/full-order-id.dto';
-import { RetryOrderPaymentDto } from './dto/retry-payment.dto';
+} from "./constants/order-status";
+import { reviewCreationMaxDays } from "./constants/review-max-day";
+import { CancelOrderDto } from "./dto/cancel.dto";
+import { FindManyOrdersDto } from "./dto/find-many.dto";
+import { FullOrderId } from "./dto/full-order-id.dto";
+import { RetryOrderPaymentDto } from "./dto/retry-payment.dto";
 import {
   CreateConfirmationTokenDto,
   OrderMissingItem,
   UpdateOrderDto,
-} from './dto/update.dto';
-import { CreateReviewDto, RespondReviewDto } from './dto/review.dto';
-import { OrdersStatusService } from './orders-status.service';
-import { getCardTokenAndPaymentDescription } from './functions/card-token-and-payment-description';
-import { differenceInDays } from 'date-fns';
-import { confirmationToken } from './common/confirmation-token';
-import { validateInAppPayment } from './common/validate-in-app-payment';
+} from "./dto/update.dto";
+import { CreateReviewDto, RespondReviewDto } from "./dto/review.dto";
+import { OrdersStatusService } from "./orders-status.service";
+import { getCardTokenAndPaymentDescription } from "./functions/card-token-and-payment-description";
+import { differenceInDays } from "date-fns";
+import { confirmationToken } from "./common/confirmation-token";
+import { validateInAppPayment } from "./common/validate-in-app-payment";
 
 export type ConfirmationTokenPayload = {
-  iss: 'ProntoEntrega';
+  iss: "ProntoEntrega";
   sub: string;
-  type: 'confirm_delivery';
+  type: "confirm_delivery";
   market_order_id: bigint;
   items?: OrderMissingItem[];
 };
@@ -76,7 +76,7 @@ export class OrdersService {
     ]);
 
     return {
-      ...pick(dto, 'payment_method', 'ip'),
+      ...pick(dto, "payment_method", "ip"),
       ...getCardTokenAndPaymentDescription(dto, card),
     };
   }
@@ -85,7 +85,7 @@ export class OrdersService {
     id: { customer_id: string } | { market_id: string },
     dto?: FindManyOrdersDto,
   ) {
-    return 'customer_id' in id
+    return "customer_id" in id
       ? this.ordersRepo.customerFindMany(id.customer_id, dto)
       : this.ordersRepo.marketFindMany(id.market_id, dto);
   }
@@ -122,7 +122,7 @@ export class OrdersService {
         `Order is over ${reviewCreationMaxDays} days`,
       );
 
-    if (order.hasReview) throw new AlreadyExistError('Review');
+    if (order.hasReview) throw new AlreadyExistError("Review");
 
     function orderAgeDays() {
       assert(
@@ -164,7 +164,7 @@ export class OrdersService {
   }
 
   async update(dto: UpdateOrderDto) {
-    const { action, ...fullOrderId } = omit(dto, 'confirmation_token');
+    const { action, ...fullOrderId } = omit(dto, "confirmation_token");
 
     const extra = await this.completingData(dto);
     await this.ordersStatus.update(fullOrderId, action, extra);
@@ -208,7 +208,7 @@ export class OrdersService {
   }: UpdateOrderDto) {
     if (!token)
       throw new BadRequestException(
-        'confirmationToken must be defined to complete order',
+        "confirmationToken must be defined to complete order",
       );
 
     const { sub, type, items } = await this.jwt
@@ -217,7 +217,7 @@ export class OrdersService {
         throw new UnauthorizedException();
       });
 
-    if (type !== 'confirm_delivery' || sub !== `${order_id}`)
+    if (type !== "confirm_delivery" || sub !== `${order_id}`)
       throw new UnauthorizedException();
 
     return items;
@@ -225,7 +225,7 @@ export class OrdersService {
 
   async customerCancel(dto: CancelOrderDto) {
     const { customer_id } = dto;
-    const fullOrderId = pick(dto, 'market_id', 'order_id');
+    const fullOrderId = pick(dto, "market_id", "order_id");
 
     const order = await this.ordersStatus.customerUpdate(
       customer_id,

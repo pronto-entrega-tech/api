@@ -1,14 +1,14 @@
-import { addDays } from 'date-fns';
-import { Month } from '~/common/functions/month';
-import { CardData, PayOrderDto } from '~/payments/dto/pay-order.dto';
-import { Asaas } from '../asaas/asaas.types';
-import { InAppPaymentMethod } from '../constants/payment-methods';
-import { getOrderExternalId } from './external-id';
+import { addDays } from "date-fns";
+import { Month } from "~/common/functions/month";
+import { CardData, PayOrderDto } from "~/payments/dto/pay-order.dto";
+import { Asaas } from "../asaas/asaas.types";
+import { InAppPaymentMethod } from "../constants/payment-methods";
+import { getOrderExternalId } from "./external-id";
 
 type PayCommonParams = {
   value: number;
   customer: string;
-  split: Asaas.CreatePayment['split'];
+  split: Asaas.CreatePayment["split"];
   dueDate: string;
   externalReference: string;
 };
@@ -43,7 +43,7 @@ export async function createPayParams(
     return !over_total ? total : total.plus(over_total);
   }
 
-  function splitConfig(): Asaas.CreatePayment['split'] {
+  function splitConfig(): Asaas.CreatePayment["split"] {
     const olderDebit = getOlderDebit();
 
     return [
@@ -71,7 +71,7 @@ export async function createPayParams(
   ): Asaas.CreatePayment {
     return {
       ...commonParams,
-      billingType: 'CREDIT_CARD',
+      billingType: "CREDIT_CARD",
       creditCardToken: payData.card_token,
       remoteIp: payData.ip,
     };
@@ -80,7 +80,7 @@ export async function createPayParams(
   function pix(commonParams: PayCommonParams): Asaas.CreatePayment {
     return {
       ...commonParams,
-      billingType: 'PIX',
+      billingType: "PIX",
     };
   }
 }

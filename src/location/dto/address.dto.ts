@@ -1,14 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsLatLong, Length } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsLatLong, Length } from "class-validator";
 
 export class AddressFromCoordsDto {
-  @ApiProperty({ example: 'latitude,longitude' })
+  @ApiProperty({ example: "latitude,longitude" })
   @IsLatLong()
   readonly coords: string;
 }
 
 export class AddressFromDocumentDto {
-  @ApiProperty({ example: '12345678000001' })
+  @ApiProperty({ example: "12345678000001" })
   @Length(14, 14)
   readonly document: string;
 }

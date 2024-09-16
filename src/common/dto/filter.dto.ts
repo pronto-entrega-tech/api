@@ -1,5 +1,5 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { Type, Transform } from 'class-transformer';
+import { ApiProperty, PickType } from "@nestjs/swagger";
+import { Type, Transform } from "class-transformer";
 import {
   isArray,
   IsEnum,
@@ -10,16 +10,16 @@ import {
   IsString,
   Max,
   Min,
-} from 'class-validator';
-import { OrderBy, orderBy } from '../constants/order-by';
+} from "class-validator";
+import { OrderBy, orderBy } from "../constants/order-by";
 
 export class ItemByMarketFilter {
-  @ApiProperty({ description: 'Full text search' })
+  @ApiProperty({ description: "Full text search" })
   @IsOptional()
   @IsString()
   readonly query?: string;
 
-  @ApiProperty({ description: 'Category id' })
+  @ApiProperty({ description: "Category id" })
   @Type(() => Number)
   @Transform(({ value: v }) => (v && !isArray(v) ? [v] : v))
   @IsOptional()
@@ -28,7 +28,7 @@ export class ItemByMarketFilter {
 }
 
 export class ItemFeedFilter extends ItemByMarketFilter {
-  @ApiProperty({ description: 'Item Id' })
+  @ApiProperty({ description: "Item Id" })
   @Transform(({ value: v }) => (v && !isArray(v) ? [v] : v))
   @IsOptional()
   @IsString({ each: true })
@@ -36,9 +36,9 @@ export class ItemFeedFilter extends ItemByMarketFilter {
 
   @IsOptional()
   @IsEnum(orderBy)
-  readonly order_by: OrderBy = 'DEFAULT';
+  readonly order_by: OrderBy = "DEFAULT";
 
-  @ApiProperty({ description: 'Latitude,Longitude' })
+  @ApiProperty({ description: "Latitude,Longitude" })
   @IsOptional()
   @IsLatLong()
   readonly latLong?: string;
@@ -46,7 +46,7 @@ export class ItemFeedFilter extends ItemByMarketFilter {
   /**
    * In km.
    */
-  @ApiProperty({ description: 'Distance in kilometers' })
+  @ApiProperty({ description: "Distance in kilometers" })
   @Type(() => Number)
   @IsOptional()
   @IsInt()
@@ -60,8 +60,8 @@ export type ItemFilter =
   | (ItemByMarketFilter & { market_id: string });
 
 export class MarketFilter extends PickType(ItemFeedFilter, [
-  'distance',
-  'latLong',
-  'query',
-  'order_by',
+  "distance",
+  "latLong",
+  "query",
+  "order_by",
 ]) {}

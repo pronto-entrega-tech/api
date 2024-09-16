@@ -1,7 +1,7 @@
-import { DynamicModule } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
-import Argon2, { argon2id } from 'argon2';
-import { KiB } from '~/common/constants/bytes-sizes';
+import { DynamicModule } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import Argon2, { argon2id } from "argon2";
+import { KiB } from "~/common/constants/bytes-sizes";
 
 const options = {
   type: argon2id,
@@ -13,7 +13,7 @@ const options = {
 
 export class Argon2Module {
   static async forRootAsync() {
-    const pseudoHash = await Argon2.hash('', options);
+    const pseudoHash = await Argon2.hash("", options);
     const argon2Service = new Argon2Service(pseudoHash);
 
     return {
@@ -39,6 +39,6 @@ export class Argon2Service {
    * Pseudo-process to avoid "timing attack".
    */
   async pseudoVerify() {
-    await this.verify(this.pseudoHash, '');
+    await this.verify(this.pseudoHash, "");
   }
 }

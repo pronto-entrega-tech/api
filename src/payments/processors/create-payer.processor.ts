@@ -1,10 +1,10 @@
-import { Process, Processor } from '@nestjs/bull';
-import { Job } from 'bull';
-import { QueueName } from '~/common/constants/queue-names';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { AsaasService } from '../asaas/asaas.service';
-import { CreatePayerDto, PayerReturnDto } from '../dto/create-payer.dto';
-import { getMarketExternalId } from '../functions/external-id';
+import { Process, Processor } from "@nestjs/bull";
+import { Job } from "bull";
+import { QueueName } from "~/common/constants/queue-names";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { AsaasService } from "../asaas/asaas.service";
+import { CreatePayerDto, PayerReturnDto } from "../dto/create-payer.dto";
+import { getMarketExternalId } from "../functions/external-id";
 
 @Processor(QueueName.CreatePayer)
 export class CreatePayerConsumer {
@@ -38,7 +38,7 @@ export class CreatePayerConsumer {
       email: market.email,
       cpfCnpj: market.document,
       notificationDisabled: true,
-      groupName: 'market',
+      groupName: "market",
       externalReference: getMarketExternalId(market_id),
     });
 

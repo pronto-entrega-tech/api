@@ -1,6 +1,6 @@
-import { IntersectionType, PartialType } from '@nestjs/swagger';
-import { IsDate, IsEnum, IsString } from 'class-validator';
-import { AuthToken } from '~/auth/constants/auth-tokens';
+import { IntersectionType, PartialType } from "@nestjs/swagger";
+import { IsDate, IsEnum, IsString } from "class-validator";
+import { AuthToken } from "~/auth/constants/auth-tokens";
 
 class SessionRes {
   @IsString()

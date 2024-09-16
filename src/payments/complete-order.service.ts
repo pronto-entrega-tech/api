@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { fail } from 'assert';
-import { arrayNotEmpty } from 'class-validator';
-import { OrderAction, OrderStatus } from '~/orders/constants/order-status';
-import { FullOrderId } from '~/orders/dto/full-order-id.dto';
-import { OrdersStatusService } from '~/orders/orders-status.service';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { AsaasService } from './asaas/asaas.service';
-import { appRecipientKey } from './constants/app-recipient-key';
-import { CompleteOrderDto as ClientData } from './dto/complete-order.dto';
-import { missingItemsAction } from './functions/missing-items-action';
-import { CustomerBalance } from '~/orders/functions/customer-debit';
+import { Injectable } from "@nestjs/common";
+import { fail } from "assert";
+import { arrayNotEmpty } from "class-validator";
+import { OrderAction, OrderStatus } from "~/orders/constants/order-status";
+import { FullOrderId } from "~/orders/dto/full-order-id.dto";
+import { OrdersStatusService } from "~/orders/orders-status.service";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
+import { AsaasService } from "./asaas/asaas.service";
+import { appRecipientKey } from "./constants/app-recipient-key";
+import { CompleteOrderDto as ClientData } from "./dto/complete-order.dto";
+import { missingItemsAction } from "./functions/missing-items-action";
+import { CustomerBalance } from "~/orders/functions/customer-debit";
 
 type ServerData = OrdersRepository.CompleteData;
 
@@ -49,9 +49,9 @@ export class CompleteOrderService {
       (async () => {
         const { type, data } = action.effect;
 
-        if (type === 'transferToMarket') {
+        if (type === "transferToMarket") {
           await this.transferToMarker(id, data.transferValue);
-        } else if (type === 'transferFromMarket') {
+        } else if (type === "transferFromMarket") {
           await this.transferFromMarket(id, data.transferValue);
         }
       })(),

@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { isArray } from 'class-validator';
-import { ItemFeedFilter } from '~/common/dto/filter.dto';
-import { NotFoundError } from '~/common/errors/not-found';
-import { BaseQuery } from '~/common/functions/create-query';
-import { createQuery } from '~/common/functions/create-query';
-import { pick } from '~/common/functions/pick';
-import { omit } from '~/common/functions/omit';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { isArray } from "class-validator";
+import { ItemFeedFilter } from "~/common/dto/filter.dto";
+import { NotFoundError } from "~/common/errors/not-found";
+import { BaseQuery } from "~/common/functions/create-query";
+import { createQuery } from "~/common/functions/create-query";
+import { pick } from "~/common/functions/pick";
+import { omit } from "~/common/functions/omit";
 import {
   prismaAlreadyExist,
   prismaNotFound,
-} from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { SaveItemDto, SaveKitDto } from '~/items/dto/create.dto';
-import { ItemFeed, ItemMarketFeed, ItemOneFeed } from '~/items/dto/feed.dto';
-import { FullItemId } from '~/items/dto/full-item-id.dto';
-import { UpdateItemDto, UpdateKitDto } from '~/items/dto/update.dto';
-import { getProductName } from '~/items/functions/product-name';
-import { fail } from 'assert';
+} from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { SaveItemDto, SaveKitDto } from "~/items/dto/create.dto";
+import { ItemFeed, ItemMarketFeed, ItemOneFeed } from "~/items/dto/feed.dto";
+import { FullItemId } from "~/items/dto/full-item-id.dto";
+import { UpdateItemDto, UpdateKitDto } from "~/items/dto/update.dto";
+import { getProductName } from "~/items/functions/product-name";
+import { fail } from "assert";
 const { sql } = Prisma;
 
 export type ActivityExtra = {
@@ -45,7 +45,7 @@ json_build_object(
 ) AS product`;
 
 const queryBase = (city: string, { marketSelect = false } = {}): BaseQuery => ({
-  table: 'item',
+  table: "item",
   select: marketSelect
     ? marketSelectSql
     : sql`
@@ -77,7 +77,7 @@ item.discount_max_per_client`,
 });
 
 const queryBase2 = (city: string): BaseQuery => ({
-  table: 'products',
+  table: "products",
   select: marketSelectSql,
   leftJoin: sql`item ON products.prod_id = item.prod_id AND item.city_slug = ${city}`,
 });
@@ -85,15 +85,15 @@ const queryBase2 = (city: string): BaseQuery => ({
 const getDiscountValues = (dto: any) =>
   pick(
     dto,
-    'discount_type',
-    'discount_value_1',
-    'discount_value_2',
-    'discount_max_per_client',
+    "discount_type",
+    "discount_value_1",
+    "discount_value_2",
+    "discount_max_per_client",
   );
 
 export namespace ItemsRepository {
   export type ItemById = Awaited<
-    ReturnType<ItemsRepository['findByIds']>
+    ReturnType<ItemsRepository["findByIds"]>
   >[number];
 }
 
@@ -114,7 +114,7 @@ export class ItemsRepository {
         include: { activities: true },
         data: {
           ...validData({
-            ...omit(_dto, 'code'),
+            ...omit(_dto, "code"),
             /* kit_name: `${name} ${brand}`,
             kit_quantity: quantity, */
             city_slug,
@@ -125,7 +125,7 @@ export class ItemsRepository {
             create: validActivity({
               market_id,
               market_sub_id,
-              action: 'CREATE',
+              action: "CREATE",
               product_code: dto.code,
               item_name: getProductName({ name, brand, quantity }),
               new_price: dto.market_price,
@@ -136,7 +136,7 @@ export class ItemsRepository {
           },
         },
       })
-      .catch(prismaAlreadyExist('Item'));
+      .catch(prismaAlreadyExist("Item"));
 
     return { ...item, activity: activities[0] ?? fail() };
   }
@@ -157,7 +157,7 @@ export class ItemsRepository {
           create: validActivity({
             market_id,
             market_sub_id,
-            action: 'CREATE',
+            action: "CREATE",
             item_name: dto.kit_name,
             new_price: dto.market_price,
             new_stock: dto.stock,
@@ -186,7 +186,7 @@ export class ItemsRepository {
   async findMany(
     city_slug: string,
     market?: string | string[],
-    filter?: Pick<ItemFeedFilter, 'ids' | 'query' | 'categories'>,
+    filter?: Pick<ItemFeedFilter, "ids" | "query" | "categories">,
   ) {
     const { ids, query, categories } = filter ?? {};
 
@@ -210,7 +210,7 @@ export class ItemsRepository {
 
   async findOne({ city_slug, item_id }: FullItemId) {
     const subQuery = createQuery({
-      table: 'item_details',
+      table: "item_details",
       select: sql`
         item_id,
         json_agg(json_build_object(
@@ -229,7 +229,7 @@ export class ItemsRepository {
     });
 
     const [item] = await this.prisma.$queryRaw<ItemOneFeed[]>(query);
-    if (!item) throw new NotFoundError('Item');
+    if (!item) throw new NotFoundError("Item");
 
     return item;
   }
@@ -274,13 +274,13 @@ export class ItemsRepository {
         select: { is_kit: true, kit_name: true, product: true },
         where: { item_id, city_slug, market_id },
       })
-      .catch(prismaNotFound('Item'));
+      .catch(prismaNotFound("Item"));
   }
 
   async findByIds(itemIds: string[], market_id: string) {
     const { city_slug } = await this.prisma.market
       .findFirstOrThrow({ select: { city_slug: true }, where: { market_id } })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
 
     return this.prisma.item.findMany({
       select: {
@@ -316,7 +316,7 @@ export class ItemsRepository {
           data: {
             market_id,
             market_sub_id,
-            action: 'UPDATE',
+            action: "UPDATE",
             product_code,
             item_name,
             new_price: dto.market_price,
@@ -326,7 +326,7 @@ export class ItemsRepository {
           },
         }),
       ])
-      .catch(prismaNotFound('Item'));
+      .catch(prismaNotFound("Item"));
 
     return { ...item, activity };
   }
@@ -358,9 +358,9 @@ export class ItemsRepository {
           data: {
             market_id,
             market_sub_id,
-            action: 'UPDATE',
+            action: "UPDATE",
             product_code,
-            item_name: item_name ?? 'Sem nome',
+            item_name: item_name ?? "Sem nome",
             new_price: dto.market_price,
             new_stock: dto.stock,
             new_unit_weight: dto.unit_weight,
@@ -369,7 +369,7 @@ export class ItemsRepository {
           },
         }),
       ])
-      .catch(prismaNotFound('Item'));
+      .catch(prismaNotFound("Item"));
 
     return { ...item, activity };
   }
@@ -392,13 +392,13 @@ export class ItemsRepository {
           data: {
             market_id,
             market_sub_id,
-            action: 'DELETE',
+            action: "DELETE",
             item_name,
             product_code,
           },
         }),
       ])
-      .catch(prismaNotFound('Item'));
+      .catch(prismaNotFound("Item"));
 
     return item;
   }
@@ -410,7 +410,7 @@ export class ItemsRepository {
     const isCode = query && /^\d+$/g.test(query);
 
     const sqlQuery = createQuery({
-      table: 'item_activity',
+      table: "item_activity",
       select: sql`*`,
       where: [
         sql`market_id = ${market_id}`,

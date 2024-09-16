@@ -1,6 +1,6 @@
-import { IsEnum, IsOptional, Length } from 'class-validator';
-import { CancelReason } from '../constants/cancel-reasons';
-import { FullOrderId } from './full-order-id.dto';
+import { IsEnum, IsOptional, Length } from "class-validator";
+import { CancelReason } from "../constants/cancel-reasons";
+import { FullOrderId } from "./full-order-id.dto";
 
 export class CancelOrderBody {
   @IsOptional()

@@ -1,16 +1,16 @@
-import { orders } from '@prisma/client';
-import { fail } from 'assert';
-import { QueueName } from '~/common/constants/queue-names';
-import { createQueueNamed } from '~/common/queue/create-queue';
+import { orders } from "@prisma/client";
+import { fail } from "assert";
+import { QueueName } from "~/common/constants/queue-names";
+import { createQueueNamed } from "~/common/queue/create-queue";
 import {
   PaymentMethod,
   InAppPaymentMethod,
-} from '~/payments/constants/payment-methods';
-import { UpdateOrder } from '~/payments/constants/update-order';
-import { CancelOrderDto } from '~/payments/dto/cancel-order.dto';
-import { CompleteOrderDto } from '~/payments/dto/complete-order.dto';
-import { ConfirmOrderPaymentDto } from '~/payments/dto/confirm-order-payment.dto';
-import { PayOrderBaseDto } from '~/payments/dto/pay-order.dto';
+} from "~/payments/constants/payment-methods";
+import { UpdateOrder } from "~/payments/constants/update-order";
+import { CancelOrderDto } from "~/payments/dto/cancel-order.dto";
+import { CompleteOrderDto } from "~/payments/dto/complete-order.dto";
+import { ConfirmOrderPaymentDto } from "~/payments/dto/confirm-order-payment.dto";
+import { PayOrderBaseDto } from "~/payments/dto/pay-order.dto";
 
 export const UpdateOrderQueue = createQueueNamed<UpdateOrder>()(
   QueueName.UpdateOrder,

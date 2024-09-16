@@ -1,7 +1,7 @@
-import { admin } from '@prisma/client';
+import { admin } from "@prisma/client";
 
 export const createAdmin: admin = {
-  admin_id: 'adminId',
-  email: 'email',
+  admin_id: "adminId",
+  email: "email",
   created_at: new Date(),
 };

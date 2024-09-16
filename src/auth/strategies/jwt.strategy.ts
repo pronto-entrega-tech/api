@@ -1,17 +1,17 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import { CONNECT_TOKEN, CREATE_TOKEN } from '~/auth/constants/auth-tokens';
-import { isDev, isTest } from '~/common/constants/is-dev';
-import { AuthToken } from '../constants/auth-tokens';
-import { JwtPayload } from '../constants/jwt-payload';
+import { ForbiddenException, Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
+import { CONNECT_TOKEN, CREATE_TOKEN } from "~/auth/constants/auth-tokens";
+import { isDev, isTest } from "~/common/constants/is-dev";
+import { AuthToken } from "../constants/auth-tokens";
+import { JwtPayload } from "../constants/jwt-payload";
 
 const jwtFromRequest = (type: AuthToken) =>
   ({
     [AuthToken.Access]: () => ExtractJwt.fromAuthHeaderAsBearerToken(),
     [AuthToken.Create]: () => ExtractJwt.fromHeader(CREATE_TOKEN),
     [AuthToken.Connect]: () => ExtractJwt.fromHeader(CONNECT_TOKEN),
-  }[type]());
+  })[type]();
 
 const createStrategy = (requiredType: AuthToken) => {
   @Injectable()
@@ -21,7 +21,7 @@ const createStrategy = (requiredType: AuthToken) => {
         jwtFromRequest: jwtFromRequest(requiredType),
         secretOrKey: process.env.TOKEN_SECRET,
         ignoreExpiration:
-          isTest || (isDev && process.env.IGNORE_TOKEN_EXPIRATION === 'true'),
+          isTest || (isDev && process.env.IGNORE_TOKEN_EXPIRATION === "true"),
       });
     }
 

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { Transporter } from 'nodemailer';
-import Mail from 'nodemailer/lib/mailer';
+import { Injectable } from "@nestjs/common";
+import { Transporter } from "nodemailer";
+import Mail from "nodemailer/lib/mailer";
 
 @Injectable()
 export class MailerService {

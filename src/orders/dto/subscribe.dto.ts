@@ -1,4 +1,4 @@
-import TransformToBigInt from '~/common/decorators/to-bigint';
+import TransformToBigInt from "~/common/decorators/to-bigint";
 
 export class SubscribeOrdersDto {
   @TransformToBigInt()

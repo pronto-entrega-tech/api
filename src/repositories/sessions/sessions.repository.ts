@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { fail } from 'assert';
-import { Role } from '~/auth/constants/roles';
-import { SaveSessionDto, Session } from '~/auth/dto/session';
-import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { fail } from "assert";
+import { Role } from "~/auth/constants/roles";
+import { SaveSessionDto, Session } from "~/auth/dto/session";
+import { prismaNotFound } from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
 
 @Injectable()
 export class SessionsRepository {
@@ -61,7 +61,7 @@ export class SessionsRepository {
     { includeExpired = false } = {},
   ): Promise<Session | null> {
     const where = {
-      session_id: session_id ?? fail('Undefined session_id founded on repo!'),
+      session_id: session_id ?? fail("Undefined session_id founded on repo!"),
       expires_in: { gt: !includeExpired ? new Date() : undefined },
     };
 
@@ -84,7 +84,7 @@ export class SessionsRepository {
       [Role.MarketSub]: () => this.prisma.market_sub_session.delete({ where }),
     }
       [role]()
-      .catch(prismaNotFound('Session'));
+      .catch(prismaNotFound("Session"));
   }
 
   async deleteExpired() {

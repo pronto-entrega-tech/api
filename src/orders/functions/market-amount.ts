@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import { PRONTO_FEE, PRONTO_FEE_IN_APP } from '~/common/constants/app-fee';
+import { Prisma } from "@prisma/client";
+import { PRONTO_FEE, PRONTO_FEE_IN_APP } from "~/common/constants/app-fee";
 
 export function getMarketAmount(
   amount: Prisma.Decimal,

@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client';
-import { Type } from 'class-transformer';
-import TransformToDecimal from '~/common/decorators/to-decimal';
-import { FullOrderId } from '~/orders/dto/full-order-id.dto';
-import { InAppPaymentMethod } from '~/payments/constants/payment-methods';
+import { Prisma } from "@prisma/client";
+import { Type } from "class-transformer";
+import TransformToDecimal from "~/common/decorators/to-decimal";
+import { FullOrderId } from "~/orders/dto/full-order-id.dto";
+import { InAppPaymentMethod } from "~/payments/constants/payment-methods";
 
 export class PayOrderBaseDto {
   @Type(() => FullOrderId)

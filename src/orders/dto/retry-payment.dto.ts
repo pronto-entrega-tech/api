@@ -1,9 +1,9 @@
-import { IsEnum, IsOptional, Length } from 'class-validator';
+import { IsEnum, IsOptional, Length } from "class-validator";
 import {
   InAppPaymentMethod,
   PaymentMethod,
-} from '~/payments/constants/payment-methods';
-import { FullOrderId } from './full-order-id.dto';
+} from "~/payments/constants/payment-methods";
+import { FullOrderId } from "./full-order-id.dto";
 
 export class RetryOrderPaymentBody {
   @IsEnum(InAppPaymentMethod)

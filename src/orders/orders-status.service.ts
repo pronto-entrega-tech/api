@@ -1,18 +1,18 @@
-import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { LockedAction } from '~/common/constants/locked-actions';
-import { pick } from '~/common/functions/pick';
-import { newStateMachine } from '~/common/functions/state-machine';
-import { MutexService } from '~/common/mutex/mutex.service';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { OrderPublicAction as PublicAction } from './constants/order-status';
+import { ConflictException, HttpStatus, Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { LockedAction } from "~/common/constants/locked-actions";
+import { pick } from "~/common/functions/pick";
+import { newStateMachine } from "~/common/functions/state-machine";
+import { MutexService } from "~/common/mutex/mutex.service";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
+import { OrderPublicAction as PublicAction } from "./constants/order-status";
 import {
   OrderAction as Action,
   OrderStatus as Status,
-} from './constants/order-status';
-import { FullOrderId } from './dto/full-order-id.dto';
-import { UpdateOrderExtraDto } from './dto/update.dto';
-import { OrderUpdateGateway } from './order-update.gateway';
+} from "./constants/order-status";
+import { FullOrderId } from "./dto/full-order-id.dto";
+import { UpdateOrderExtraDto } from "./dto/update.dto";
+import { OrderUpdateGateway } from "./order-update.gateway";
 
 @Injectable()
 export class OrdersStatusService {
@@ -147,11 +147,11 @@ export class OrdersStatusService {
       status: nextStatus,
       ...pick(
         extra ?? {},
-        'finished_at',
-        'payment_description',
-        'payment_method',
-        'pix_code',
-        'pix_expires_at',
+        "finished_at",
+        "payment_description",
+        "payment_method",
+        "pix_code",
+        "pix_expires_at",
       ),
     });
     return res;

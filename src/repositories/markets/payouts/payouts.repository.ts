@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client';
-import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { UpdatePayoutDto } from '~/markets/dto/update-payout';
-import { Partitions } from '../partitions';
+import { Prisma } from "@prisma/client";
+import { prismaNotFound } from "~/common/prisma/handle-prisma-errors";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { UpdatePayoutDto } from "~/markets/dto/update-payout";
+import { Partitions } from "../partitions";
 
 export class PayoutsRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -53,7 +53,7 @@ export class PayoutsRepository {
       .findUniqueOrThrow({
         where: { market_id_month: { market_id, month } },
       })
-      .catch(prismaNotFound('Payout'));
+      .catch(prismaNotFound("Payout"));
   }
 
   async increase(market_id: string, month: Date, amount: Prisma.Decimal.Value) {

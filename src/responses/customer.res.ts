@@ -1,6 +1,6 @@
-import { OmitType } from '@nestjs/mapped-types';
-import { Prisma } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { OmitType } from "@nestjs/mapped-types";
+import { Prisma } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   IsDate,
   IsEmpty,
@@ -8,10 +8,10 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-} from 'class-validator';
-import { IsBigInt } from '~/common/decorators/is-bigint';
-import { IsDecimalObject } from '~/common/decorators/is-decimal-object';
-import { SocialProvider } from '~/customers/constants/social-providers';
+} from "class-validator";
+import { IsBigInt } from "~/common/decorators/is-bigint";
+import { IsDecimalObject } from "~/common/decorators/is-decimal-object";
+import { SocialProvider } from "~/customers/constants/social-providers";
 
 export class CustomerFindRes {
   @IsString()
@@ -77,7 +77,7 @@ export class CustomerUpdateRes {
   readonly addresses: CustomerAddressRes[];
 }
 
-export class CustomerDeleteRes extends OmitType(CustomerUpdateRes, ['email']) {
+export class CustomerDeleteRes extends OmitType(CustomerUpdateRes, ["email"]) {
   @IsEmpty()
   readonly email: null;
 }

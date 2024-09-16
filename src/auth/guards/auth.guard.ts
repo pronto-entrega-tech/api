@@ -1,11 +1,11 @@
-import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
-import { MetadataKey } from '~/common/constants/metadata-keys';
-import { AuthReq } from '../constants/auth-req';
-import { AuthToken } from '../constants/auth-tokens';
-import { Role } from '../constants/roles';
-import { SubPermission } from '../constants/sub-permissions';
+import { ExecutionContext, Injectable, Logger } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { AuthGuard } from "@nestjs/passport";
+import { MetadataKey } from "~/common/constants/metadata-keys";
+import { AuthReq } from "../constants/auth-req";
+import { AuthToken } from "../constants/auth-tokens";
+import { Role } from "../constants/roles";
+import { SubPermission } from "../constants/sub-permissions";
 
 const createAuthGuard = (type: AuthToken) => {
   @Injectable()
@@ -40,7 +40,7 @@ const createAuthGuard = (type: AuthToken) => {
       }
 
       const { user } =
-        context.getType() === 'http'
+        context.getType() === "http"
           ? context.switchToHttp().getRequest<AuthReq>()
           : context.switchToWs().getClient<AuthReq>();
 

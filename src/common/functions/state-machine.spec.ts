@@ -1,27 +1,27 @@
-import { newStateMachine } from '~/common/functions/state-machine';
-import { describe, expect, it } from 'vitest';
+import { newStateMachine } from "~/common/functions/state-machine";
+import { describe, expect, it } from "vitest";
 
 const machine = {
   oldState: {
-    action: 'newState',
+    action: "newState",
   },
 };
 
-describe('StateMachine', () => {
+describe("StateMachine", () => {
   const stateMachine = newStateMachine(machine);
 
-  it('should return newState', () => {
-    const newState = stateMachine.reduce('oldState', 'action');
-    expect(newState).toEqual('newState');
+  it("should return newState", () => {
+    const newState = stateMachine.reduce("oldState", "action");
+    expect(newState).toEqual("newState");
   });
 
-  it('should return undefined, given invalided action', () => {
-    const newState = stateMachine.reduce('oldState', 'invalidedAction');
+  it("should return undefined, given invalided action", () => {
+    const newState = stateMachine.reduce("oldState", "invalidedAction");
     expect(newState).toEqual(undefined);
   });
 
-  it('should return undefined, given invalided state', () => {
-    const newState = stateMachine.reduce('invalidedState', 'action');
+  it("should return undefined, given invalided state", () => {
+    const newState = stateMachine.reduce("invalidedState", "action");
     expect(newState).toEqual(undefined);
   });
 });

@@ -20,7 +20,7 @@
       "",
       "describe(fn.name, () => {",
       "  it(...from({ input: 0 }).to({ output: 0 }));",
-      "});"
-    ]
-  }
+      "});",
+    ],
+  },
 }

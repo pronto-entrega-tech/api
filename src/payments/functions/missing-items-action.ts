@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
-import { CustomerBalance } from '~/orders/functions/customer-debit';
-import { createEffect } from '~/common/functions/effect';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
+import { Prisma } from "@prisma/client";
+import { CustomerBalance } from "~/orders/functions/customer-debit";
+import { createEffect } from "~/common/functions/effect";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
 
 type ServerData = OrdersRepository.CompleteData;
 type CreditLogs = CustomerBalance.CreditLogs;
@@ -25,13 +25,13 @@ export function missingItemsAction(order: ServerData, creditLogs: CreditLogs) {
           ? +customerBalance
           : +orderDebit;
 
-        return createEffect('transferToMarket', { transferValue });
+        return createEffect("transferToMarket", { transferValue });
       } else if (orderHasCredit) {
         const transferValue = +orderOverTotal;
 
-        return createEffect('transferFromMarket', { transferValue });
+        return createEffect("transferFromMarket", { transferValue });
       } else {
-        return createEffect('none');
+        return createEffect("none");
       }
     })(),
   };

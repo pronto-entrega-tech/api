@@ -1,4 +1,4 @@
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsString } from "class-validator";
 
 export class MarketCreateRes {
   @IsString()

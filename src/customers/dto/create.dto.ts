@@ -1,5 +1,5 @@
-import { IsEnum, IsString, Length } from 'class-validator';
-import { SocialProvider } from '../constants/social-providers';
+import { IsEnum, IsString, Length } from "class-validator";
+import { SocialProvider } from "../constants/social-providers";
 
 export class CreateCustomerDto {
   @Length(1, 256)

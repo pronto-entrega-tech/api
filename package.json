@@ -7,6 +7,7 @@
     "dev": "cross-env NODE_ENV=development nest start --watch",
     "build": "rimraf dist && nest build",
     "start": "node dist/main",
+    "format": "prettier . --write",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "docker:up": "docker-compose up -d",

@@ -1,15 +1,15 @@
 export enum PaymentMethod {
-  Cash = 'CASH',
-  Card = 'CARD',
-  Pix = 'PIX',
+  Cash = "CASH",
+  Card = "CARD",
+  Pix = "PIX",
 }
 
 export enum InAppPaymentMethod {
-  Card = 'CARD',
-  Pix = 'PIX',
+  Card = "CARD",
+  Pix = "PIX",
 }
 
 export enum InvoicePaymentMethod {
-  Pix = 'PIX',
-  Boleto = 'BOLETO',
+  Pix = "PIX",
+  Boleto = "BOLETO",
 }

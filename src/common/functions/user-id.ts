@@ -1,5 +1,5 @@
-import { JwtPayload } from '~/auth/constants/jwt-payload';
-import { Role } from '~/auth/constants/roles';
+import { JwtPayload } from "~/auth/constants/jwt-payload";
+import { Role } from "~/auth/constants/roles";
 
 export const getMarketOrSubId = (user: JwtPayload) =>
   user.role === Role.MarketSub

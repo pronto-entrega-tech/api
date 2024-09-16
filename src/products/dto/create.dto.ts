@@ -1,15 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 import {
   IsOptional,
   ArrayMaxSize,
   IsInt,
   IsPositive,
   Length,
-} from 'class-validator';
-import TransformToBigInt from '~/common/decorators/to-bigint';
+} from "class-validator";
+import TransformToBigInt from "~/common/decorators/to-bigint";
 
 export class CreateProductDto {
-  @ApiProperty({ description: 'Barcode of product' })
+  @ApiProperty({ description: "Barcode of product" })
   @IsOptional()
   @TransformToBigInt()
   readonly code?: bigint;

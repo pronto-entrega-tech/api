@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { UpdateCardDto } from '~/customers/dto/update-card.dto';
-import { PaymentAccountsService } from '~/payments/accounts/payment-accounts.service';
-import { PaymentCardsService } from '~/payments/cards/payment-cards.service';
-import { CustomersRepository } from '~/repositories/customers/customers.repository';
-import { CreateCardDto } from './dto/create-card.dto';
+import { Injectable } from "@nestjs/common";
+import { UpdateCardDto } from "~/customers/dto/update-card.dto";
+import { PaymentAccountsService } from "~/payments/accounts/payment-accounts.service";
+import { PaymentCardsService } from "~/payments/cards/payment-cards.service";
+import { CustomersRepository } from "~/repositories/customers/customers.repository";
+import { CreateCardDto } from "./dto/create-card.dto";
 
 @Injectable()
 export class CustomerCardsService {

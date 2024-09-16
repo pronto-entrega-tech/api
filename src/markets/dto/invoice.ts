@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import { InvoiceStatus } from '~/payments/constants/invoice-status';
+import { Prisma } from "@prisma/client";
+import { InvoiceStatus } from "~/payments/constants/invoice-status";
 
 export type CreateInvoices = {
   month: Date;

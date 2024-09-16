@@ -1,6 +1,6 @@
-import { IsEnum, IsDate } from 'class-validator';
-import TransformToDate from '~/common/decorators/to-date';
-import { OpenFlipType } from '../constants/market-enums';
+import { IsEnum, IsDate } from "class-validator";
+import TransformToDate from "~/common/decorators/to-date";
+import { OpenFlipType } from "../constants/market-enums";
 
 export class CreateOpenFlipDto {
   @IsEnum(OpenFlipType)

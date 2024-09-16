@@ -1,5 +1,5 @@
-import { ConnectedSocket, OnGatewayConnection } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { ConnectedSocket, OnGatewayConnection } from "@nestjs/websockets";
+import { Socket } from "socket.io";
 
 export class PassportGateway implements OnGatewayConnection {
   async handleConnection(@ConnectedSocket() socket: Socket) {

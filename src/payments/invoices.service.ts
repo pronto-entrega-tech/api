@@ -1,19 +1,19 @@
-import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { market_invoice, orders } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { Queue } from 'bull';
-import { QueueName } from '~/common/constants/queue-names';
-import { Month } from '~/common/functions/month';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { InvoiceAction } from './constants/invoice-status';
-import { payDay } from './constants/pay-day';
-import { ConfirmInvoiceJobDto } from './dto/confirm-invoice.dto';
-import { ProcessInvoiceDto } from './dto/process-invoice.dto';
-import { getAppAmount } from './functions/app-amount';
-import { InvoicesStatusService } from './invoices-status.service';
+import { InjectQueue } from "@nestjs/bull";
+import { Injectable } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { market_invoice, orders } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { Queue } from "bull";
+import { QueueName } from "~/common/constants/queue-names";
+import { Month } from "~/common/functions/month";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
+import { InvoiceAction } from "./constants/invoice-status";
+import { payDay } from "./constants/pay-day";
+import { ConfirmInvoiceJobDto } from "./dto/confirm-invoice.dto";
+import { ProcessInvoiceDto } from "./dto/process-invoice.dto";
+import { getAppAmount } from "./functions/app-amount";
+import { InvoicesStatusService } from "./invoices-status.service";
 
 @Injectable()
 export class InvoicesService {

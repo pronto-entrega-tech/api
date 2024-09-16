@@ -1,17 +1,17 @@
-import { Prisma } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { Prisma } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   ArrayNotEmpty,
   IsEnum,
   IsJWT,
   IsOptional,
   ValidateNested,
-} from 'class-validator';
-import { DecimalSize } from '~/common/decorators/decimal-size';
-import TransformToBigInt from '~/common/decorators/to-bigint';
-import TransformToDecimal from '~/common/decorators/to-decimal';
-import { OrderPublicAction, OrderStatus } from '../constants/order-status';
-import { FullOrderId } from './full-order-id.dto';
+} from "class-validator";
+import { DecimalSize } from "~/common/decorators/decimal-size";
+import TransformToBigInt from "~/common/decorators/to-bigint";
+import TransformToDecimal from "~/common/decorators/to-decimal";
+import { OrderPublicAction, OrderStatus } from "../constants/order-status";
+import { FullOrderId } from "./full-order-id.dto";
 
 export class UpdateOrderBody {
   @IsEnum(OrderPublicAction)
@@ -46,17 +46,17 @@ export class OrderMissingItem {
 
 type UpdateOrderExtra = Pick<
   Prisma.ordersUncheckedUpdateInput,
-  | 'customer_debit'
-  | 'ip'
-  | 'payment_id'
-  | 'payment_description'
-  | 'payment_method'
-  | 'card_token'
-  | 'pix_code'
-  | 'pix_expires_at'
-  | 'cancel_reason'
-  | 'cancel_message'
-  | 'finished_at'
+  | "customer_debit"
+  | "ip"
+  | "payment_id"
+  | "payment_description"
+  | "payment_method"
+  | "card_token"
+  | "pix_code"
+  | "pix_expires_at"
+  | "cancel_reason"
+  | "cancel_message"
+  | "finished_at"
 >;
 
 export type UpdateOrderPaymentDto = UpdateOrderExtra & {

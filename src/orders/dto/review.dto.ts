@@ -6,9 +6,9 @@ import {
   IsInt,
   ArrayMaxSize,
   ArrayUnique,
-} from 'class-validator';
-import TransformTrimString from '~/common/decorators/trim-string';
-import { FullOrderId } from './full-order-id.dto';
+} from "class-validator";
+import TransformTrimString from "~/common/decorators/trim-string";
+import { FullOrderId } from "./full-order-id.dto";
 
 export class CreateReviewBody {
   @IsInt()

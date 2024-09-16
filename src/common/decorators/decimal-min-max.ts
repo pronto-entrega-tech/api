@@ -1,6 +1,6 @@
-import { createValidator } from './create-validator';
-import { Prisma } from '@prisma/client';
-import { ValidationOptions } from 'class-validator';
+import { createValidator } from "./create-validator";
+import { Prisma } from "@prisma/client";
+import { ValidationOptions } from "class-validator";
 
 export const DecimalMinMax = (
   minimum: number,

@@ -1,8 +1,8 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
-import { TestingModule } from '@nestjs/testing';
-import { fastifyCookie } from '@fastify/cookie';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFastifyApplication } from "@nestjs/platform-fastify";
+import { FastifyAdapter } from "@nestjs/platform-fastify";
+import { TestingModule } from "@nestjs/testing";
+import { fastifyCookie } from "@fastify/cookie";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();

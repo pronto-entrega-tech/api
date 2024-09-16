@@ -1,4 +1,4 @@
-import { CookieSerializeOptions } from '@fastify/cookie';
+import { CookieSerializeOptions } from "@fastify/cookie";
 
 const authCookieOpts = (expiresIn: Date) => {
   return {
@@ -7,12 +7,12 @@ const authCookieOpts = (expiresIn: Date) => {
     httpOnly: true,
     secure: true,
     signed: true,
-    path: '/auth',
+    path: "/auth",
   } as CookieSerializeOptions;
 };
 
 export const useCookieQueryOpts = {
-  name: 'useCookie',
+  name: "useCookie",
   example: true,
   required: false,
   type: Boolean,

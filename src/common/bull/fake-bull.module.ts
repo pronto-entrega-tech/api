@@ -1,5 +1,5 @@
-import { BullModuleOptions } from '@nestjs/bull';
-import { DynamicModule } from '@nestjs/common';
+import { BullModuleOptions } from "@nestjs/bull";
+import { DynamicModule } from "@nestjs/common";
 
 export class FakeBullModule {
   static registerQueue(...options: BullModuleOptions[]): DynamicModule {

@@ -1,6 +1,6 @@
-import { Processor, Queue, Worker } from 'bullmq';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
+import { Processor, Queue, Worker } from "bullmq";
+import { ClassConstructor, plainToInstance } from "class-transformer";
+import { validateOrReject } from "class-validator";
 
 export const createQueueDefault = <
   DataSchema extends ClassConstructor<any>,
@@ -34,7 +34,7 @@ export const createQueueDefault = <
   };
 
   return {
-    add: queue.add.bind(queue, 'default'),
+    add: queue.add.bind(queue, "default"),
     getJob: queue.getJob.bind(queue),
     process,
   };

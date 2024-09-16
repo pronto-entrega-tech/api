@@ -1,13 +1,13 @@
-import { fail } from 'assert';
-import { Transform } from 'class-transformer';
-import { ValidationOptions } from 'class-validator';
-import { buildMessage, ValidateBy } from 'class-validator';
-import { WeekDay } from '../constants/market-enums';
-import { BusinessHour } from '../dto/create.dto';
-import { SpecialDay } from '../dto/update.dto';
+import { fail } from "assert";
+import { Transform } from "class-transformer";
+import { ValidationOptions } from "class-validator";
+import { buildMessage, ValidateBy } from "class-validator";
+import { WeekDay } from "../constants/market-enums";
+import { BusinessHour } from "../dto/create.dto";
+import { SpecialDay } from "../dto/update.dto";
 
 const toSec = (time?: string) => {
-  const [timeHour, timeMin] = time?.split(':') ?? [];
+  const [timeHour, timeMin] = time?.split(":") ?? [];
   if (!time || !timeHour || !timeMin) return 0;
 
   return +timeHour * 60 + +timeMin;
@@ -29,7 +29,7 @@ const isBusinessHours = (BHs: (BusinessHour | SpecialDay)[]) => {
   const time = new Map(weekDayArray.map((day) => [day, [] as Hours[]]));
 
   BHs.forEach((bh) => {
-    if ('days' in bh) {
+    if ("days" in bh) {
       const { days, ..._hours } = bh;
 
       days.forEach((day) => time.get(day)?.push(_hours));
@@ -56,7 +56,7 @@ export const IsBusinessHours = (validationOptions?: ValidationOptions) => {
       validator: {
         validate: isBusinessHours,
         defaultMessage: buildMessage(
-          (eachPrefix) => eachPrefix + '$property must not have overlap',
+          (eachPrefix) => eachPrefix + "$property must not have overlap",
           validationOptions,
         ),
       },

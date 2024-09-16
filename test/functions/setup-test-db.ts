@@ -1,7 +1,7 @@
-import { beforeEach, afterEach } from 'vitest';
-import { second } from '~/common/constants/time';
-import { PrismaService } from '~/common/prisma/prisma.service';
-import { dbAnnihilator, AnnihilateDb } from './db-annihilator';
+import { beforeEach, afterEach } from "vitest";
+import { second } from "~/common/constants/time";
+import { PrismaService } from "~/common/prisma/prisma.service";
+import { dbAnnihilator, AnnihilateDb } from "./db-annihilator";
 
 const prisma = new PrismaService();
 

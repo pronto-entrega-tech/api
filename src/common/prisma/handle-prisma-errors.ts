@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
-import { EntityName } from '../constants/entities-names';
-import { AlreadyExistError } from '../errors/already-exist';
-import { NotFoundError } from '../errors/not-found';
+import { Prisma } from "@prisma/client";
+import { EntityName } from "../constants/entities-names";
+import { AlreadyExistError } from "../errors/already-exist";
+import { NotFoundError } from "../errors/not-found";
 
 export const createNullEmailFilter = (fn: (withSame?: string[]) => any) => {
   return <T = any>(email: string | null, res: T) => {
@@ -16,7 +16,7 @@ const captureStackTrace = (error: Error, fn: any) => {
 };
 
 export const prismaAlreadyExist = (prefix: EntityName) => {
-  return prismaError('P2002', '', (withSame) =>
+  return prismaError("P2002", "", (withSame) =>
     captureStackTrace(
       new AlreadyExistError(prefix, withSame),
       prismaAlreadyExist,
@@ -25,7 +25,7 @@ export const prismaAlreadyExist = (prefix: EntityName) => {
 };
 
 export const prismaNotFound = (prefix: EntityName) => {
-  return prismaError('P2025', 'NotFoundError', () =>
+  return prismaError("P2025", "NotFoundError", () =>
     captureStackTrace(new NotFoundError(prefix), prismaNotFound),
   );
 };

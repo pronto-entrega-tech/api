@@ -1,23 +1,23 @@
-import { InjectQueue } from '@nestjs/bull';
-import { Injectable, OnApplicationBootstrap, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { orders } from '@prisma/client';
-import { fail } from 'assert';
-import { Queue } from 'bull';
-import { LockedAction } from '~/common/constants/locked-actions';
-import { QueueName } from '~/common/constants/queue-names';
-import { MutexService } from '~/common/mutex/mutex.service';
-import { OrderStatus } from '~/orders/constants/order-status';
-import { FullOrderId } from '~/orders/dto/full-order-id.dto';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
+import { InjectQueue } from "@nestjs/bull";
+import { Injectable, OnApplicationBootstrap, Logger } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { orders } from "@prisma/client";
+import { fail } from "assert";
+import { Queue } from "bull";
+import { LockedAction } from "~/common/constants/locked-actions";
+import { QueueName } from "~/common/constants/queue-names";
+import { MutexService } from "~/common/mutex/mutex.service";
+import { OrderStatus } from "~/orders/constants/order-status";
+import { FullOrderId } from "~/orders/dto/full-order-id.dto";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
 import {
   InAppPaymentMethod,
   PaymentMethod,
-} from '../constants/payment-methods';
-import { UpdateOrder } from '../constants/update-order';
-import { CancelOrderDto } from '../dto/cancel-order.dto';
-import { ConfirmOrderPaymentDto } from '../dto/confirm-order-payment.dto';
-import { UpdateOrderDto } from '../dto/update-order.dto';
+} from "../constants/payment-methods";
+import { UpdateOrder } from "../constants/update-order";
+import { CancelOrderDto } from "../dto/cancel-order.dto";
+import { ConfirmOrderPaymentDto } from "../dto/confirm-order-payment.dto";
+import { UpdateOrderDto } from "../dto/update-order.dto";
 
 @Injectable()
 export class OrderUpdaterService implements OnApplicationBootstrap {
@@ -35,7 +35,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
     this.checkCanceling();
   }
 
-  @Cron('0 * * * *')
+  @Cron("0 * * * *")
   async checkPaymentProcessing() {
     const orders = await this.ordersRepo.findByStatus(
       OrderStatus.PaymentProcessing,
@@ -46,7 +46,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
     }
   }
 
-  @Cron('0 * * * *')
+  @Cron("0 * * * *")
   async checkCompleting() {
     const orders = await this.ordersRepo.findByStatus(OrderStatus.Completing);
 
@@ -57,7 +57,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
     }
   }
 
-  @Cron('0 * * * *')
+  @Cron("0 * * * *")
   async checkCanceling() {
     const orders = await this.ordersRepo.findByStatus(OrderStatus.Canceling);
 

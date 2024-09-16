@@ -1,7 +1,7 @@
-import { Worker, Job } from 'bullmq';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
-import { QueueName } from '~/common/constants/queue-names';
+import { Worker, Job } from "bullmq";
+import { ClassConstructor, plainToInstance } from "class-transformer";
+import { validateOrReject } from "class-validator";
+import { QueueName } from "~/common/constants/queue-names";
 
 export const createProcessor = <T extends ClassConstructor<any>>(
   name: QueueName,

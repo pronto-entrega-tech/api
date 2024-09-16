@@ -1,8 +1,8 @@
-import { OnModuleDestroy } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
-import { Mutex } from 'redis-semaphore';
-import { LockedAction } from '../constants/locked-actions';
-import { RedisService } from '../redis/redis.service';
+import { OnModuleDestroy } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { Mutex } from "redis-semaphore";
+import { LockedAction } from "../constants/locked-actions";
+import { RedisService } from "../redis/redis.service";
 
 @Injectable()
 export class MutexService implements OnModuleDestroy {

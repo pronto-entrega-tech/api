@@ -1,12 +1,12 @@
-import { BadRequestException } from '@nestjs/common';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
-import { prisma } from '~/common/prisma/prisma';
-import { CreateOrderDto } from '../create-order/create-order.dto';
+import { BadRequestException } from "@nestjs/common";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { prismaNotFound } from "~/common/prisma/handle-prisma-errors";
+import { prisma } from "~/common/prisma/prisma";
+import { CreateOrderDto } from "../create-order/create-order.dto";
 
 type Dto = Pick<
   CreateOrderDto,
-  'market_id' | 'payment_method' | 'customer_id' | 'card_id'
+  "market_id" | "payment_method" | "customer_id" | "card_id"
 >;
 
 export async function validateInAppPayment(dto: Dto) {
@@ -46,7 +46,7 @@ async function validatePaymentMethod({
   function validateCardId() {
     if (!card_id)
       throw new BadRequestException(
-        'card_id must be provided, when payment_method is CARD and paid_in_app is true',
+        "card_id must be provided, when payment_method is CARD and paid_in_app is true",
       );
   }
 
@@ -55,7 +55,7 @@ async function validatePaymentMethod({
 
     if (!document)
       throw new BadRequestException(
-        'customer must have document, when payment_method is PIX and paid_in_app is true',
+        "customer must have document, when payment_method is PIX and paid_in_app is true",
       );
   }
 }
@@ -71,7 +71,7 @@ namespace DB {
         },
         where: { market_id },
       })
-      .catch(prismaNotFound('Market'));
+      .catch(prismaNotFound("Market"));
   }
 
   export async function readCustomer(customer_id: string) {
@@ -80,6 +80,6 @@ namespace DB {
         select: { document: true },
         where: { customer_id },
       })
-      .catch(prismaNotFound('Customer'));
+      .catch(prismaNotFound("Customer"));
   }
 }

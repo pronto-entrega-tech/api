@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer';
+import { Transform } from "class-transformer";
 
 const TransformToDate = () =>
   Transform(({ value }) => new Date(!isNaN(value) ? +value : value));

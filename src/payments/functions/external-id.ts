@@ -1,9 +1,9 @@
-import { fail } from 'assert';
-import { FullInvoiceId } from '~/markets/dto/full-invoice-id';
-import { FullOrderId } from '~/orders/dto/full-order-id.dto';
+import { fail } from "assert";
+import { FullInvoiceId } from "~/markets/dto/full-invoice-id";
+import { FullOrderId } from "~/orders/dto/full-order-id.dto";
 
 export function getTypeFromExternalRef(externalId?: string) {
-  const [type] = externalId?.split('_') ?? [];
+  const [type] = externalId?.split("_") ?? [];
   return type ?? fail(`Invalid externalReference`);
 }
 
@@ -14,8 +14,8 @@ export function getCustomerExternalId(customer_id: string) {
 }
 
 export function fromCustomerExternalId(externalId?: string) {
-  const [type, customer_id] = externalId?.split('_') ?? [];
-  if (type !== 'customer' || !customer_id)
+  const [type, customer_id] = externalId?.split("_") ?? [];
+  if (type !== "customer" || !customer_id)
     return fail(`Invalid externalReference`);
 
   return customer_id;
@@ -28,8 +28,8 @@ export function getMarketExternalId(market_id: string) {
 }
 
 export function fromMarketExternalId(externalId?: string) {
-  const [type, market_id] = externalId?.split('_') ?? [];
-  if (type !== 'market' || !market_id) return fail(`Invalid externalReference`);
+  const [type, market_id] = externalId?.split("_") ?? [];
+  if (type !== "market" || !market_id) return fail(`Invalid externalReference`);
 
   return market_id;
 }
@@ -41,8 +41,8 @@ export function getOrderExternalId({ order_id, market_id }: FullOrderId) {
 }
 
 export function fromOrderExternalId(externalId?: string) {
-  const [type, order_id, market_id] = externalId?.split('_') ?? [];
-  if (type !== 'order' || !order_id || !market_id)
+  const [type, order_id, market_id] = externalId?.split("_") ?? [];
+  if (type !== "order" || !order_id || !market_id)
     return fail(`Invalid externalReference`);
 
   return { order_id, market_id };
@@ -56,8 +56,8 @@ export function getInvoiceExternalId({ invoice_id, month }: FullInvoiceId) {
 }
 
 export function fromInvoiceExternalId(externalId?: string) {
-  const [type, invoice_id, month] = externalId?.split('_') ?? [];
-  if (type !== 'invoice' || !invoice_id || !month)
+  const [type, invoice_id, month] = externalId?.split("_") ?? [];
+  if (type !== "invoice" || !invoice_id || !month)
     return fail(`Invalid externalReference`);
 
   return { invoice_id, month };

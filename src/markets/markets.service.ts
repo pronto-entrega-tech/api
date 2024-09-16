@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { market_sub } from '@prisma/client';
-import { join } from 'path';
-import sharp from 'sharp';
-import { AuthToken } from '~/auth/constants/auth-tokens';
-import { Role } from '~/auth/constants/roles';
-import { SubPermission } from '~/auth/constants/sub-permissions';
-import { SessionsService } from '~/auth/sessions/sessions.service';
-import { STATIC_PATH } from '~/common/constants/paths';
-import { MarketFilter } from '~/common/dto/filter.dto';
-import { Month } from '~/common/functions/month';
-import { removeAccents } from '~/common/functions/remove-accents';
-import { LocationService } from '~/location/location.service';
-import { PaymentAccountsService } from '~/payments/accounts/payment-accounts.service';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { CreateMarketSubDto } from './dto/create-sub.dto';
-import { CreateBankAccountDto, CreateMarketDto } from './dto/create.dto';
-import { DeleteOpenFlipDto, CreateOpenFlipDto } from './dto/open-flip.dto';
-import { UpdateMarketSubDto } from './dto/update-sub.dto';
-import { UpdateBankAccountDto, UpdateMarketDto } from './dto/update.dto';
+import { Injectable } from "@nestjs/common";
+import { market_sub } from "@prisma/client";
+import { join } from "path";
+import sharp from "sharp";
+import { AuthToken } from "~/auth/constants/auth-tokens";
+import { Role } from "~/auth/constants/roles";
+import { SubPermission } from "~/auth/constants/sub-permissions";
+import { SessionsService } from "~/auth/sessions/sessions.service";
+import { STATIC_PATH } from "~/common/constants/paths";
+import { MarketFilter } from "~/common/dto/filter.dto";
+import { Month } from "~/common/functions/month";
+import { removeAccents } from "~/common/functions/remove-accents";
+import { LocationService } from "~/location/location.service";
+import { PaymentAccountsService } from "~/payments/accounts/payment-accounts.service";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { CreateMarketSubDto } from "./dto/create-sub.dto";
+import { CreateBankAccountDto, CreateMarketDto } from "./dto/create.dto";
+import { DeleteOpenFlipDto, CreateOpenFlipDto } from "./dto/open-flip.dto";
+import { UpdateMarketSubDto } from "./dto/update-sub.dto";
+import { UpdateBankAccountDto, UpdateMarketDto } from "./dto/update.dto";
 
 @Injectable()
 export class MarketsService {
@@ -46,7 +46,7 @@ export class MarketsService {
   private async createMarketDto(email: string, dto: CreateMarketDto) {
     const coords = await this.getCoords(dto);
 
-    const city = removeAccents(dto.address_city).replace(/ /g, '-');
+    const city = removeAccents(dto.address_city).replace(/ /g, "-");
     const city_slug = `${city}-${dto.address_state}`.toLowerCase();
 
     return {

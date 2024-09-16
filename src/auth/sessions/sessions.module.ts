@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import { envPath } from '~/common/functions/env-path';
-import { SessionsService } from './sessions.service';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { JwtModule } from "@nestjs/jwt";
+import { envPath } from "~/common/functions/env-path";
+import { SessionsService } from "./sessions.service";
 
 @Module({
   imports: [

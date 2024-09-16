@@ -1,21 +1,21 @@
-import { OnApplicationBootstrap, Logger } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { bank_account, bank_account_type, pix_key_type } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { Month } from '~/common/functions/month';
-import { PaymentMethod } from '~/payments/constants/payment-methods';
-import { MarketsRepository } from '~/repositories/markets/markets.repository';
-import { OrdersRepository } from '~/repositories/orders/orders.repository';
-import { PaymentAccountsService } from './accounts/payment-accounts.service';
-import { AsaasService } from './asaas/asaas.service';
-import { Asaas } from './asaas/asaas.types';
-import { payDay } from './constants/pay-day';
-import { isTest } from '~/common/constants/is-dev';
+import { OnApplicationBootstrap, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { bank_account, bank_account_type, pix_key_type } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { Month } from "~/common/functions/month";
+import { PaymentMethod } from "~/payments/constants/payment-methods";
+import { MarketsRepository } from "~/repositories/markets/markets.repository";
+import { OrdersRepository } from "~/repositories/orders/orders.repository";
+import { PaymentAccountsService } from "./accounts/payment-accounts.service";
+import { AsaasService } from "./asaas/asaas.service";
+import { Asaas } from "./asaas/asaas.types";
+import { payDay } from "./constants/pay-day";
+import { isTest } from "~/common/constants/is-dev";
 
 type Market = Awaited<
-  ReturnType<MarketsRepository['payouts']['findPending']>
->[number]['market'];
+  ReturnType<MarketsRepository["payouts"]["findPending"]>
+>[number]["market"];
 
 type Pix = {
   pix_key: string;
@@ -45,7 +45,7 @@ export class PayoutsService implements OnApplicationBootstrap {
     await this.marketsRepo.payouts.createMany(month);
   }
 
-  @Cron('0 0 25-31 * *')
+  @Cron("0 0 25-31 * *")
   async setup(now = new Date()) {
     const nextMonth = Month.next(now);
 
@@ -241,7 +241,7 @@ export class PayoutsService implements OnApplicationBootstrap {
   ) {
     const params: Asaas.CreateTransfer = {
       value: amount,
-      ...('pix_key' in account
+      ...("pix_key" in account
         ? {
             pixAddressKey: account.pix_key,
             pixAddressKeyType: account.pix_key_type,
@@ -264,7 +264,7 @@ export class PayoutsService implements OnApplicationBootstrap {
   private readonly bankAccountType: {
     [x in bank_account_type]: Asaas.BankAccountType;
   } = {
-    CHECKING: 'CONTA_CORRENTE',
-    SAVINGS: 'CONTA_POUPANCA',
+    CHECKING: "CONTA_CORRENTE",
+    SAVINGS: "CONTA_POUPANCA",
   };
 }
