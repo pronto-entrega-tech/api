@@ -25,7 +25,7 @@ model products {
   ingredients        String?
   portion            String?
   nutrition_facts    Json?
-  ts                 Unsupported("tsvector")? // GENERATED ALWAYS AS (to_tsvector('portuguese', name)||to_tsvector('portuguese', brand)) STORED
+  ts                 Unsupported("tsvector")? @default(dbgenerated()) // GENERATED ALWAYS AS (to_tsvector('portuguese', name)||to_tsvector('portuguese', brand)) STORED
   categories         categories               @relation(fields: [category_id], references: [category_id], onDelete: Restrict)
   items              item[]
   details            item_details[]
@@ -166,7 +166,7 @@ model market {
   address_complement     String?
   address_latitude       Float
   address_longitude      Float
-  location               Unsupported("geometry")? // GENERATED ALWAYS AS (ST_POINT(address_longitude, address_latitude)) STORED
+  location               Unsupported("geometry")? @default(dbgenerated()) // GENERATED ALWAYS AS (ST_POINT(address_longitude, address_latitude)) STORED
   order_min              Decimal                  @db.Decimal(5, 2)
   delivery_fee           Decimal                  @db.Decimal(4, 2)
   markup                 Decimal                  @db.Decimal(4, 2)

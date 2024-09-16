@@ -11,6 +11,7 @@ import { PaymentAccountsService } from './accounts/payment-accounts.service';
 import { AsaasService } from './asaas/asaas.service';
 import { Asaas } from './asaas/asaas.types';
 import { payDay } from './constants/pay-day';
+import { isTest } from '~/common/constants/is-dev';
 
 type Market = Awaited<
   ReturnType<MarketsRepository['payouts']['findPending']>
@@ -32,6 +33,8 @@ export class PayoutsService implements OnApplicationBootstrap {
   private readonly logger = new Logger(PayoutsService.name);
 
   onApplicationBootstrap() {
+    if (isTest) return;
+
     this._setup(Month.getCurrent());
     this._setup(Month.getNext());
   }

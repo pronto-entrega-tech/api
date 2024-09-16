@@ -11,13 +11,17 @@
     "type-check": "tsc --noEmit",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "db:migrate": "pnpm -s dotenv -- sh -c \"prisma generate && prisma db execute --file prisma/schema.sql && tsx prisma/seed.ts\"",
+    "db:migrate": "pnpm -s dotenv -- prisma migrate dev",
+    "db:reset": "pnpm -s dotenv -- prisma migrate reset",
     "db:studio": "pnpm -s dotenv -- prisma studio",
     "db:deploy": "prisma migrate deploy",
     "test": "cross-env NODE_ENV=test pnpm -s dotenv -- vitest run",
     "test:unit": "cross-env NODE_ENV=test pnpm -s dotenv -- vitest --project unit",
     "test:e2e": "cross-env NODE_ENV=test pnpm -s dotenv -- vitest run --project e2e",
     "pre-commit": "pnpm -s dotenv -e CI=true -- sh -c \"pnpm lint && pnpm type-check && pnpm test\""
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@amplication/opentelemetry-nestjs": "^5.0.3",

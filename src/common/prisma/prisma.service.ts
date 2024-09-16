@@ -52,7 +52,7 @@ export class PrismaService
   //   await exec('pnpm docker:up');
 
   //   console.log('Running migrations');
-  //   await exec('pnpm prisma db execute --file prisma/schema.sql');
+  //   await exec('pnpm db:migrate');
   // }
 
   // private async teardown() {

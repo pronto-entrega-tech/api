@@ -8,7 +8,7 @@ export const dbAnnihilator = (prisma: PrismaService) => {
 
   prisma.$on('query', ({ query }) => {
     if (query.startsWith('INSERT'))
-      log(query, calledTables, /(?<="public".").*?(?=")/g);
+      log(query, calledTables, /(?<=INSERT INTO "public".").*?(?=")/g);
 
     if (query.startsWith('CREATE TABLE'))
       log(query, createdPartitions, /(?<=.").*?(?=" PARTITION)/g);
