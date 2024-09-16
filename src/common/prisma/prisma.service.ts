@@ -1,4 +1,4 @@
-import { INestApplication, OnModuleInit } from '@nestjs/common';
+import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
 
@@ -8,8 +8,8 @@ const config = Prisma.validator<Prisma.PrismaClientOptions>()({
 
 @Injectable()
 export class PrismaService
-  extends PrismaClient<typeof config, 'query', false>
-  implements OnModuleInit
+  extends PrismaClient<typeof config, 'query'>
+  implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
     super({ ...config });
@@ -21,12 +21,8 @@ export class PrismaService
     await this.$connect();
   }
 
-  async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
-      // if (isDevOrTest) await this.teardown();
-
-      await app.close();
-    });
+  async onModuleDestroy() {
+    // if (isDevOrTest) await this.teardown();
   }
 
   async truncate(tablesNames: string[]) {

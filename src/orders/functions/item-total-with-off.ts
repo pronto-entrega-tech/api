@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { fail } from 'assert';
 import { DiscountType } from '~/items/constants/discount-type';
 import { ItemsRepository } from '~/repositories/items/items.repository';
@@ -44,7 +44,7 @@ export function getItemTotalWithOff(item: ItemWithPrice, quantity: number) {
         item.discount_type === DiscountType.DiscountPercent ||
         item.discount_type === DiscountType.DiscountPercentOnSecond
       ) {
-        const one = new Decimal(1);
+        const one = new Prisma.Decimal(1);
         const off = item.discount_value_1 ?? missingValue1Fail();
 
         const newPricePercent = one.minus(off.dividedBy(100));

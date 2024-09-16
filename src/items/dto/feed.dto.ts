@@ -6,7 +6,7 @@ import {
   products,
   market,
 } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 
 export class ItemFeed
   implements
@@ -50,7 +50,7 @@ export class ItemDetails implements IItemDetails {
   name: string;
 
   @ApiProperty({ type: String })
-  quantity: Decimal;
+  quantity: Prisma.Decimal;
 }
 
 export type ItemMarketFeed = {

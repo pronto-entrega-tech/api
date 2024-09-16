@@ -1,4 +1,4 @@
-import { PrismaClientKnownRequestError as PrismaRequestError } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { EntityName } from '../constants/entities-names';
 import { AlreadyExistError } from '../errors/already-exist';
 import { NotFoundError } from '../errors/not-found';
@@ -35,7 +35,7 @@ const prismaError = (
   errName: string,
   fn: (withSame?: string[]) => any,
 ) => {
-  return (err: PrismaRequestError): never => {
+  return (err: Prisma.PrismaClientKnownRequestError): never => {
     if (err.code === errCode || (errName && err.name === errName))
       throw fn(err.meta?.target as string[]);
 

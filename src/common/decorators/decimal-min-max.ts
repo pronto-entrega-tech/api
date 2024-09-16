@@ -1,5 +1,5 @@
 import { createValidator } from './create-validator';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { ValidationOptions } from 'class-validator';
 
 export const DecimalMinMax = (
@@ -8,8 +8,8 @@ export const DecimalMinMax = (
   validationOptions?: ValidationOptions,
 ) =>
   createValidator(
-    (value: Decimal) =>
-      Decimal.isDecimal(value) &&
+    (value: Prisma.Decimal) =>
+      Prisma.Decimal.isDecimal(value) &&
       value.greaterThanOrEqualTo(minimum) &&
       value.lessThanOrEqualTo(maximum),
     `$property must be minimum ${minimum} and maximum ${maximum}`,

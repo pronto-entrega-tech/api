@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 
-export const decimalOrNull = (value?: Decimal.Value) =>
-  value ? new Decimal(value) : null;
+export const decimalOrNull = (value?: Prisma.Decimal.Value) =>
+  value ? new Prisma.Decimal(value) : null;

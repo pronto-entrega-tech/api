@@ -1,5 +1,5 @@
 import { createValidator } from './create-validator';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { ValidationOptions } from 'class-validator';
 
 export const DecimalSize = (
@@ -8,8 +8,8 @@ export const DecimalSize = (
   validationOptions?: ValidationOptions,
 ) =>
   createValidator(
-    (value: Decimal) =>
-      Decimal.isDecimal(value) &&
+    (value: Prisma.Decimal) =>
+      Prisma.Decimal.isDecimal(value) &&
       value.truncated().toString().length <= precision - scale &&
       value.decimalPlaces() <= scale,
     `$property must have precision ${precision} and scale ${scale}`,

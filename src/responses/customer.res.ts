@@ -1,5 +1,5 @@
 import { OmitType } from '@nestjs/mapped-types';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsDate,
@@ -30,7 +30,7 @@ export class CustomerFindRes {
 
   @IsOptional()
   @IsDecimalObject()
-  readonly debit: Decimal | null;
+  readonly debit: Prisma.Decimal | null;
 
   @Type(() => CustomerAddressRes)
   readonly addresses: CustomerAddressRes[];
@@ -63,7 +63,7 @@ export class CustomerUpdateRes {
 
   @IsOptional()
   @IsString()
-  readonly debit: Decimal | null;
+  readonly debit: Prisma.Decimal | null;
 
   @IsOptional()
   @IsString()

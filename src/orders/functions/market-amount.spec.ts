@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { format } from 'util';
 import { describe, it, expect } from 'vitest';
 import { getMarketAmount } from './market-amount';
@@ -7,8 +7,8 @@ const from = (i: { total: number; fee: number; inApp: boolean }) => ({
   to: (o: { marketAmount: number }) => {
     const assert = () => {
       const res = getMarketAmount(
-        new Decimal(i.total),
-        new Decimal(i.fee),
+        new Prisma.Decimal(i.total),
+        new Prisma.Decimal(i.fee),
         i.inApp,
       );
 

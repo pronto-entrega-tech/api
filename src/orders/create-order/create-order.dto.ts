@@ -1,5 +1,5 @@
 import { payment_method, customer_card } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
@@ -76,7 +76,7 @@ export class CreateOrderBody {
 
   @TransformToDecimal()
   @IsDecimalPositive()
-  readonly client_total: Decimal;
+  readonly client_total: Prisma.Decimal;
 }
 
 export class CreateOrderItem {
@@ -96,8 +96,8 @@ export type CreateOrderDto = CreateOrderBody & {
 export type CreateOrderPreDto = {
   client: CreateOrderDto;
   server: {
-    market: Awaited<ReturnType<typeof DB['findMarket']>>;
-    items: Awaited<ReturnType<typeof DB['findItems']>>;
+    market: Awaited<ReturnType<(typeof DB)['findMarket']>>;
+    items: Awaited<ReturnType<(typeof DB)['findItems']>>;
     creditLogs?: OneCustomerDebit.CreditLogs;
     card?: customer_card;
     lastMarketOrderId: bigint;
@@ -110,13 +110,13 @@ export type SaveOrderDto = Awaited<ReturnType<typeof createOrderDto>> & {
 
 export class OrderItemDto {
   readonly prod_id: bigint | null;
-  readonly quantity: Decimal.Value;
-  readonly price: Decimal;
+  readonly quantity: Prisma.Decimal.Value;
+  readonly price: Prisma.Decimal;
   readonly is_kit: boolean;
   readonly details?: OrderItemDetailsDto[];
 }
 
 export class OrderItemDetailsDto {
   readonly prod_id: bigint;
-  readonly quantity: Decimal.Value;
+  readonly quantity: Prisma.Decimal.Value;
 }

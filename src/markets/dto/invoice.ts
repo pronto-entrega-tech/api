@@ -1,9 +1,9 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { InvoiceStatus } from '~/payments/constants/invoice-status';
 
 export type CreateInvoices = {
   month: Date;
-  marketsAmount: { id?: bigint; market_id: string; amount: Decimal }[];
+  marketsAmount: { id?: bigint; market_id: string; amount: Prisma.Decimal }[];
 };
 
 export type UpdateInvoice = {

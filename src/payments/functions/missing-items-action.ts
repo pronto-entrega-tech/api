@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { CustomerBalance } from '~/orders/functions/customer-debit';
 import { createEffect } from '~/common/functions/effect';
 import { OrdersRepository } from '~/repositories/orders/orders.repository';
@@ -41,6 +41,6 @@ function calcOrderOverTotal(order: ServerData) {
   return order.missing_items.reduce(
     (overTotal, { order_item: { price }, quantity }) =>
       overTotal.plus(price.times(quantity)),
-    new Decimal(0),
+    new Prisma.Decimal(0),
   );
 }

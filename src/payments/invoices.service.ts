@@ -2,7 +2,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { market_invoice, orders } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { QueueName } from '~/common/constants/queue-names';
 import { Month } from '~/common/functions/month';
@@ -60,7 +60,7 @@ export class InvoicesService {
   }
 
   private getMarketsAmount(orders: orders[]) {
-    const amounts = new Map<string, Decimal>();
+    const amounts = new Map<string, Prisma.Decimal>();
 
     orders.forEach(({ market_id, total }) => {
       const currentAmount = amounts.get(market_id) ?? 0;

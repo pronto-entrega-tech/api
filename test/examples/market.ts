@@ -4,7 +4,6 @@ import {
   market_payout,
 } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { randomUUID } from 'crypto';
 import { SubPermission } from '~/auth/constants/sub-permissions';
 import { omit } from '~/common/functions/omit';
@@ -38,13 +37,13 @@ export const createMarket = Prisma.validator<
   address_city: 'City',
   address_state: 'State',
   address_complement: 'Complement',
-  min_time: new Decimal(30),
-  max_time: new Decimal(60),
-  delivery_fee: new Decimal(0),
-  order_min: new Decimal(0),
+  min_time: new Prisma.Decimal(30),
+  max_time: new Prisma.Decimal(60),
+  delivery_fee: new Prisma.Decimal(0),
+  order_min: new Prisma.Decimal(0),
   document: '123456789',
   payments_accepted: ['Cash'],
-  markup: new Decimal(0),
+  markup: new Prisma.Decimal(0),
   business_hours: [],
   bank_account: {
     holder_name: 'Holder Name',
@@ -100,19 +99,23 @@ export const createMarketSub = Prisma.validator<SaveMarketSubDto>()({
 export const createInvoices = Prisma.validator<CreateInvoices>()({
   month: currentMonth,
   marketsAmount: [
-    { id: 1n, market_id: createMarket.market_id, amount: new Decimal(10) },
+    {
+      id: 1n,
+      market_id: createMarket.market_id,
+      amount: new Prisma.Decimal(10),
+    },
   ],
 });
 
 export const createdInvoice = Prisma.validator<Partial<market_invoice>>()({
   market_id: createMarket.market_id,
   month: currentMonth,
-  amount: new Decimal(10),
+  amount: new Prisma.Decimal(10),
   status: InvoiceStatus.Processing as market_invoice_status,
 });
 
 export const createdPayout = Prisma.validator<Partial<market_payout>>()({
   market_id: createMarket.market_id,
   month: currentMonth,
-  amount: new Decimal(0),
+  amount: new Prisma.Decimal(0),
 });

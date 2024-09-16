@@ -1,6 +1,5 @@
 import { item } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { omit } from '~/common/functions/omit';
 import { pick } from '~/common/functions/pick';
 import { CreateItemDto, SaveItemDto } from '~/items/dto/create.dto';
@@ -12,7 +11,7 @@ import { createProduct, createdProduct } from './product';
 
 export const createItem = Prisma.validator<CreateItemDto>()({
   code: createProduct.code,
-  market_price: new Decimal(10),
+  market_price: new Prisma.Decimal(10),
 });
 
 export const saveItem = Prisma.validator<SaveItemDto>()({
@@ -27,7 +26,7 @@ export const saveItem = Prisma.validator<SaveItemDto>()({
 
 export const createdItem = Prisma.validator<Omit<item, 'item_id'>>()({
   ...omit(saveItem, 'item_id', 'code', 'name', 'brand', 'quantity'),
-  market_price: new Decimal(saveItem.market_price),
+  market_price: new Prisma.Decimal(saveItem.market_price),
   stock: null,
   unit_weight: null,
   is_kit: false,

@@ -1,7 +1,6 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { prisma } from '~/common/prisma/prisma';
 import { OrderStatus } from '../constants/order-status';
-import { Prisma } from '@prisma/client';
 
 export namespace CustomerBalance {
   export function readDB(customer_id: string) {
@@ -17,7 +16,7 @@ export namespace CustomerBalance {
     return creditLogs.reduce(
       (current, v) =>
         current.plus(v.customer_debit ?? 0).plus(v.debit_amount ?? 0),
-      new Decimal(0),
+      new Prisma.Decimal(0),
     );
   }
 }
@@ -52,14 +51,14 @@ export namespace OneCustomerDebit {
   }
 
   function getCreditsPerMarket(creditLogs: CreditLogs) {
-    const totalCredits = new Map<string, Decimal>();
+    const totalCredits = new Map<string, Prisma.Decimal>();
 
     creditLogs.forEach((v) => {
       addCredit();
       addDebitIfHas();
 
       function addCredit() {
-        const credit = totalCredits.get(v.market_id) ?? new Decimal(0);
+        const credit = totalCredits.get(v.market_id) ?? new Prisma.Decimal(0);
         totalCredits.set(
           v.market_id,
           credit.plus(v.customer_debit ?? 0).minus(v.credit_used ?? 0),
@@ -68,7 +67,8 @@ export namespace OneCustomerDebit {
 
       function addDebitIfHas() {
         if (v.debit_market_id && v.debit_amount) {
-          const debit = totalCredits.get(v.debit_market_id) ?? new Decimal(0);
+          const debit =
+            totalCredits.get(v.debit_market_id) ?? new Prisma.Decimal(0);
           totalCredits.set(v.debit_market_id, debit.plus(v.debit_amount));
         }
       }
@@ -77,7 +77,7 @@ export namespace OneCustomerDebit {
     return totalCredits;
   }
 
-  function findFirstDebit(credits: Map<string, Decimal>) {
+  function findFirstDebit(credits: Map<string, Prisma.Decimal>) {
     for (const credit of credits) {
       const [, amount] = credit;
       if (amount.isNegative()) return credit;

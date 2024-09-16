@@ -1,5 +1,5 @@
 import { BadRequestException, HttpStatus } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { addMinutes } from 'date-fns';
 import { omit } from '~/common/functions/omit';
 import { OrderStatus } from '../constants/order-status';
@@ -51,7 +51,7 @@ export function createOrderDto(dto: CreateOrderPreDto) {
       : OrderStatus.ApprovalPending;
   }
 
-  function getDeliveryTime(minutes: Decimal) {
+  function getDeliveryTime(minutes: Prisma.Decimal) {
     return addMinutes(new Date(), +minutes);
   }
 }

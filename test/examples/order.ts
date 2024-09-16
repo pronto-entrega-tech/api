@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { omit } from '~/common/functions/omit';
 import { OrderStatus } from '~/orders/constants/order-status';
 import {
@@ -33,7 +32,7 @@ export const createOrder = Prisma.validator<
   address_latitude: 0,
   address_longitude: 0,
   ip: 'ip',
-  client_total: new Decimal(10),
+  client_total: new Prisma.Decimal(10),
 });
 
 export const saveOrder = Prisma.validator<SaveOrderDto>()({
@@ -45,16 +44,16 @@ export const saveOrder = Prisma.validator<SaveOrderDto>()({
     {
       prod_id: 1n,
       quantity: 1,
-      price: new Decimal(10),
+      price: new Prisma.Decimal(10),
       is_kit: false,
     },
   ],
   card_token: 'card_token',
   payment_description: 'Cartão de Crédito',
   status: OrderStatus.ApprovalPending,
-  total: new Decimal(10),
-  delivery_fee: new Decimal(0),
-  market_amount: new Decimal(8.8),
+  total: new Prisma.Decimal(10),
+  delivery_fee: new Prisma.Decimal(0),
+  market_amount: new Prisma.Decimal(8.8),
   delivery_min_time: new Date('2000-01-01'),
   delivery_max_time: new Date('2000-01-01'),
 

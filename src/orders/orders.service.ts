@@ -166,11 +166,8 @@ export class OrdersService {
   async update(dto: UpdateOrderDto) {
     const { action, ...fullOrderId } = omit(dto, 'confirmation_token');
 
-    await this.ordersStatus.update(
-      fullOrderId,
-      action,
-      await this.completingData(dto),
-    );
+    const extra = await this.completingData(dto);
+    await this.ordersStatus.update(fullOrderId, action, extra);
 
     switch (action) {
       case OrderPublicAction.Complete:
@@ -196,7 +193,7 @@ export class OrdersService {
     return order.paid_in_app
       ? {
           ...base,
-          increasePayout: true,
+          increasePayout: true as const,
           payoutMonth:
             order.payment_method === PaymentMethod.Card
               ? Month.next(now)

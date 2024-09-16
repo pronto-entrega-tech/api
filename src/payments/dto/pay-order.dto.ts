@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
 import TransformToDecimal from '~/common/decorators/to-decimal';
 import { FullOrderId } from '~/orders/dto/full-order-id.dto';
@@ -11,15 +11,15 @@ export class PayOrderBaseDto {
   readonly customer_id: string;
 
   @TransformToDecimal()
-  readonly total: Decimal;
+  readonly total: Prisma.Decimal;
 
   @TransformToDecimal()
-  readonly market_amount: Decimal.Value;
+  readonly market_amount: Prisma.Decimal.Value;
 
   readonly payment_method: InAppPaymentMethod;
 
   @TransformToDecimal()
-  readonly customer_debit?: Decimal.Value;
+  readonly customer_debit?: Prisma.Decimal.Value;
 
   readonly debit_market_id?: string;
 }

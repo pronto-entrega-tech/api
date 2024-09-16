@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { fail } from 'assert';
 import { pick } from '~/common/functions/pick';
 import { DiscountType } from '~/items/constants/discount-type';
@@ -40,7 +40,7 @@ export function getSubtotalAndOrderItems({
       ...(discountValue || {}),
     };
     return subtotal.plus(getItemTotalWithOff(itemWithPrice, quantity).toDP(2));
-  }, new Decimal(0));
+  }, new Prisma.Decimal(0));
 
   return {
     subtotal,

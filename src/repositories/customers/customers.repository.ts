@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { NotFoundError } from '~/common/errors/not-found';
 import {
   createNullEmailFilter,
@@ -13,7 +13,6 @@ import { UpdateCustomerDto } from '~/customers/dto/update.dto';
 import { UpdateCardDto } from '~/customers/dto/update-card.dto';
 import { CreateAddressDto } from '~/customers/dto/create-address.dto';
 import { UpdateAddressDto } from '~/customers/dto/update-address.dto';
-import { Prisma } from '@prisma/client';
 
 const filterNullEmail = createNullEmailFilter(
   () => new NotFoundError('Customer'),
@@ -107,7 +106,7 @@ export class CustomersRepository {
       .catch(prismaNotFound('Customer'));
   }
 
-  async updateBalance(customer_id: string, debit: Decimal.Value) {
+  async updateBalance(customer_id: string, debit: Prisma.Decimal.Value) {
     await this.prisma.customer
       .update({
         data: { debit },

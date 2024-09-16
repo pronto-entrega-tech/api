@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
 import TransformToDecimal from '~/common/decorators/to-decimal';
 import { FullInvoiceId } from '~/markets/dto/full-invoice-id';
@@ -10,5 +10,5 @@ export class ProcessInvoiceDto {
   readonly market_id: string;
 
   @TransformToDecimal()
-  readonly amount: Decimal;
+  readonly amount: Prisma.Decimal;
 }

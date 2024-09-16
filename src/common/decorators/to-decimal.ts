@@ -1,6 +1,6 @@
 import { applyDecorators, BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { Allow } from 'class-validator';
 
@@ -12,7 +12,7 @@ const transform = Transform(({ value, key }) => {
   if (value == null) return value;
 
   try {
-    return new Decimal(value);
+    return new Prisma.Decimal(value);
   } catch {
     throw new BadRequestException(`${key} must be a valid decimal`);
   }

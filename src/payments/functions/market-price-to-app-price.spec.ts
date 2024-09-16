@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { format } from 'util';
 import { marketPriceToAppPrice } from './market-price-to-app-price';
 import { describe, expect, it } from 'vitest';
@@ -7,8 +7,8 @@ const from = (i: { marketPrice: number; markup: number }) => ({
   to: (o: { appPrice: number }) => {
     const assert = () => {
       const res = marketPriceToAppPrice(
-        new Decimal(i.marketPrice),
-        new Decimal(i.markup),
+        new Prisma.Decimal(i.marketPrice),
+        new Prisma.Decimal(i.markup),
       );
 
       expect(+res).toEqual(o.appPrice);

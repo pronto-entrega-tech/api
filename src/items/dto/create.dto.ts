@@ -1,5 +1,5 @@
 import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
@@ -28,7 +28,7 @@ export class CreateItemDto {
 
   @TransformToDecimal()
   @IsDecimalPositive()
-  readonly market_price: Decimal;
+  readonly market_price: Prisma.Decimal;
 
   @IsOptional()
   @IsInt()
@@ -39,7 +39,7 @@ export class CreateItemDto {
   @TransformToDecimal()
   @IsOptional()
   @IsDecimalPositive()
-  readonly unit_weight?: Decimal;
+  readonly unit_weight?: Prisma.Decimal;
 
   @IsOptional()
   @IsEnum(DiscountType)
@@ -48,7 +48,7 @@ export class CreateItemDto {
   @TransformToDecimal()
   @IsOptional()
   @IsDecimalPositive()
-  readonly discount_value_1?: Decimal;
+  readonly discount_value_1?: Prisma.Decimal;
 
   @IsOptional()
   @IsInt()

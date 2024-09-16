@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
@@ -100,27 +100,27 @@ export class CreateMarketDto {
   @TransformToDecimal()
   @IsDecimalNonNegative()
   @DecimalSize(5, 2)
-  readonly order_min: Decimal;
+  readonly order_min: Prisma.Decimal;
 
   @TransformToDecimal()
   @IsDecimalNonNegative()
   @DecimalSize(4, 2)
-  readonly delivery_fee: Decimal;
+  readonly delivery_fee: Prisma.Decimal;
 
   @TransformToDecimal()
   @IsDecimalNonNegative()
   @DecimalSize(4, 2)
-  readonly markup: Decimal;
+  readonly markup: Prisma.Decimal;
 
   @TransformToDecimal()
   @IsDecimalPositive()
   @DecimalSize(3, 0)
-  readonly min_time: Decimal;
+  readonly min_time: Prisma.Decimal;
 
   @TransformToDecimal()
   @IsDecimalPositive()
   @DecimalSize(3, 0)
-  readonly max_time: Decimal;
+  readonly max_time: Prisma.Decimal;
 
   @IsOptional()
   @IsInt()

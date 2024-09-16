@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { format } from 'util';
 import { getAppAmount } from './app-amount';
 import { describe, expect, it } from 'vitest';
@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 const from = (i: { total: number }) => ({
   to: (o: { appAmount: number }) => {
     const assert = () => {
-      const res = getAppAmount(new Decimal(i.total));
+      const res = getAppAmount(new Prisma.Decimal(i.total));
 
       expect(+res).toEqual(o.appAmount);
     };

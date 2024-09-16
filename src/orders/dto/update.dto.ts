@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
@@ -42,7 +41,7 @@ export class OrderMissingItem {
 
   @TransformToDecimal()
   @DecimalSize(5, 3)
-  readonly quantity: Decimal;
+  readonly quantity: Prisma.Decimal;
 }
 
 type UpdateOrderExtra = Pick<

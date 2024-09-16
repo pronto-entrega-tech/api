@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { prismaNotFound } from '~/common/prisma/handle-prisma-errors';
 import { PrismaService } from '~/common/prisma/prisma.service';
 import { UpdatePayoutDto } from '~/markets/dto/update-payout';
@@ -59,14 +58,14 @@ export class PayoutsRepository {
       .catch(prismaNotFound('Payout'));
   }
 
-  async increase(market_id: string, month: Date, amount: Decimal.Value) {
+  async increase(market_id: string, month: Date, amount: Prisma.Decimal.Value) {
     return this.prisma.market_payout.update({
       data: { amount: { increment: amount } },
       where: { market_id_month: { market_id, month } },
     });
   }
 
-  async decrease(market_id: string, month: Date, amount: Decimal.Value) {
+  async decrease(market_id: string, month: Date, amount: Prisma.Decimal.Value) {
     return this.prisma.market_payout.update({
       data: { amount: { decrement: amount } },
       where: { market_id_month: { market_id, month } },

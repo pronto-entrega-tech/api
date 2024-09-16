@@ -1,8 +1,8 @@
 import { createValidator } from './create-validator';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 
-const isDecimalNonNegative = (value: Decimal) =>
-  Decimal.isDecimal(value) && !value.isNegative();
+const isDecimalNonNegative = (value: Prisma.Decimal) =>
+  Prisma.Decimal.isDecimal(value) && !value.isNegative();
 
 export const IsDecimalNonNegative = createValidator(
   isDecimalNonNegative,

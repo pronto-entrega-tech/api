@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { Sql } from '@prisma/client/runtime';
 import { fail } from 'assert';
 import { isArray } from 'class-validator';
 
@@ -11,18 +10,26 @@ type Falsy = undefined | null | false | '' | 0;
 
 export type BaseQuery = {
   table: TableName;
-  select?: Enumerable<Sql | Falsy>;
-  leftJoin?: Enumerable<Sql | Falsy>;
-  innerJoin?: Enumerable<Sql | Falsy>;
-  where?: Enumerable<Sql | Falsy>;
-  orderBy?: Enumerable<Sql | Falsy>;
-  groupBy?: Enumerable<Sql | Falsy>;
+  select?: Enumerable<Prisma.Sql | Falsy>;
+  leftJoin?: Enumerable<Prisma.Sql | Falsy>;
+  innerJoin?: Enumerable<Prisma.Sql | Falsy>;
+  where?: Enumerable<Prisma.Sql | Falsy>;
+  orderBy?: Enumerable<Prisma.Sql | Falsy>;
+  groupBy?: Enumerable<Prisma.Sql | Falsy>;
 };
 
 export type CreateQuery = Omit<BaseQuery, 'table' | 'select'> &
   (
-    | { table: TableName; select: Enumerable<Sql>; baseQuery?: undefined }
-    | { baseQuery: BaseQuery; table?: undefined; select?: Enumerable<Sql> }
+    | {
+        table: TableName;
+        select: Enumerable<Prisma.Sql>;
+        baseQuery?: undefined;
+      }
+    | {
+        baseQuery: BaseQuery;
+        table?: undefined;
+        select?: Enumerable<Prisma.Sql>;
+      }
   );
 
 export const createQuery = (params: CreateQuery) => {

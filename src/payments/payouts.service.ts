@@ -2,7 +2,7 @@ import { OnApplicationBootstrap, Logger } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { bank_account, bank_account_type, pix_key_type } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { Month } from '~/common/functions/month';
 import { PaymentMethod } from '~/payments/constants/payment-methods';
 import { MarketsRepository } from '~/repositories/markets/markets.repository';
@@ -64,7 +64,11 @@ export class PayoutsService implements OnApplicationBootstrap {
     }
   }
 
-  private async makeOne(lastMonth: Date, savedAmount: Decimal, market: Market) {
+  private async makeOne(
+    lastMonth: Date,
+    savedAmount: Prisma.Decimal,
+    market: Market,
+  ) {
     if (!savedAmount.isPositive())
       return this.confirmPayout(market.market_id, lastMonth);
 
@@ -181,7 +185,7 @@ export class PayoutsService implements OnApplicationBootstrap {
     const orders = [...pixOrders, ...cardOrders];
     const total = orders.reduce(
       (amount, { market_amount }) => amount.plus(market_amount),
-      new Decimal(0),
+      new Prisma.Decimal(0),
     );
     return +total;
   }
@@ -204,7 +208,7 @@ export class PayoutsService implements OnApplicationBootstrap {
 
   private async compareWithSavedState(
     amount: number,
-    savedAmount: Decimal,
+    savedAmount: Prisma.Decimal,
     market_id: string,
   ) {
     if (amount !== +savedAmount)
