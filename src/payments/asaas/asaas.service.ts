@@ -113,7 +113,7 @@ class AsaasCustomers extends AsaasSubClass {
     return this.req.get<Asaas.CustomerPage>(url);
   }
 
-  update(id: string, params: any) {
+  update(id: string, params: unknown) {
     const url = `/customers/${id}`;
 
     return this.req.post<Asaas.CustomerObject>(url, params);
@@ -144,6 +144,7 @@ class AsaasErrors extends AsaasSubClass {
   isInvalidCard(err: unknown) {
     return (
       err instanceof AxiosError &&
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       err.response?.data.errors[0].code === "invalid_action"
     );
   }

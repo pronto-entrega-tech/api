@@ -45,7 +45,7 @@ describe("TransformToYearMonth", () => {
     expect(transformation).toThrow(BadRequestException);
   });
 
-  function transform(value: any) {
+  function transform(value: unknown) {
     return plainToInstance(TestClass, { value });
   }
 });

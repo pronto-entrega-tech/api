@@ -6,7 +6,7 @@ import {
   PaymentMethod,
   InAppPaymentMethod,
 } from "~/payments/constants/payment-methods";
-import { UpdateOrder } from "~/payments/constants/update-order";
+import { UpdateOrder, updateOrder } from "~/payments/constants/update-order";
 import { CancelOrderDto } from "~/payments/dto/cancel-order.dto";
 import { CompleteOrderDto } from "~/payments/dto/complete-order.dto";
 import { ConfirmOrderPaymentDto } from "~/payments/dto/confirm-order-payment.dto";
@@ -15,16 +15,16 @@ import { PayOrderBaseDto } from "~/payments/dto/pay-order.dto";
 export const UpdateOrderQueue = createQueueNamed<UpdateOrder>()(
   QueueName.UpdateOrder,
   {
-    [UpdateOrder.Pay]: PayOrderBaseDto,
-    [UpdateOrder.ConfirmPayment]: ConfirmOrderPaymentDto,
-    [UpdateOrder.Complete]: CompleteOrderDto,
-    [UpdateOrder.Cancel]: CancelOrderDto,
-  },
+    [updateOrder.Pay]: PayOrderBaseDto,
+    [updateOrder.ConfirmPayment]: ConfirmOrderPaymentDto,
+    [updateOrder.Complete]: CompleteOrderDto,
+    [updateOrder.Cancel]: CancelOrderDto,
+  }
 );
 
 export async function queueOrderPayment(order: orders) {
   await UpdateOrderQueue.add(
-    UpdateOrder.Pay,
+    updateOrder.Pay,
     {
       fullOrderId: {
         order_id: order.order_id,
@@ -34,15 +34,15 @@ export async function queueOrderPayment(order: orders) {
       total: order.total,
       market_amount: order.market_amount,
       customer_debit: order.customer_debit ?? undefined,
-      ...(await getValidPayment()),
+      ...getValidPayment(),
     },
-    { jobId: `${order.order_id}`, removeOnComplete: true },
+    { jobId: `${order.order_id}`, removeOnComplete: true }
   );
 
-  async function getValidPayment() {
+  function getValidPayment() {
     const { payment_method: method, ip, card_token } = order;
 
-    switch (method as PaymentMethod) {
+    switch (method) {
       case PaymentMethod.Card:
         return {
           payment_method: InAppPaymentMethod.Card as const,
@@ -56,6 +56,9 @@ export async function queueOrderPayment(order: orders) {
         };
 
       case PaymentMethod.Cash:
+        return fail();
+
+      default:
         return fail();
     }
   }

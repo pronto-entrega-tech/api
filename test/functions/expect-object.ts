@@ -1,4 +1,4 @@
-import { plainToInstance } from "class-transformer";
+import { ClassConstructor, plainToInstance } from "class-transformer";
 import { ValidationError } from "class-validator";
 import { isArray, ValidateNested, validateOrReject } from "class-validator";
 
@@ -20,10 +20,10 @@ import { isArray, ValidateNested, validateOrReject } from "class-validator";
 
 class Array {
   @ValidateNested()
-  array: any;
+  array: object;
 }
 
-export function expectObject(obj: any) {
+export function expectObject(obj: object) {
   function handle(errs: ValidationError[]) {
     const a = JSON.stringify(errs, null, "  ").replace(/"/g, "");
     console.log(a);
@@ -31,8 +31,8 @@ export function expectObject(obj: any) {
     const reducer = (errors: string[], err: ValidationError) =>
       errors.concat(
         Object.values(err.constraints ?? {}).map(
-          (msg) => `${msg}, but has ${typeof err.value}`,
-        ),
+          (msg) => `${msg}, but has ${typeof err.value}`
+        )
       );
 
     const reduceArr = (errors: string[], err: ValidationError) =>
@@ -49,19 +49,21 @@ export function expectObject(obj: any) {
 
     const received = JSON.stringify(obj, null, "  ").replace(/"/g, "");
     const error = new Error(
-      `Errors:\n  ${errors.join("\n  ")}\n\nReceived: ${received}`,
+      `Errors:\n  ${errors.join("\n  ")}\n\nReceived: ${received}`
     );
     Error.captureStackTrace(error, toBe);
     throw error;
   }
 
-  async function toBe(cls: any) {
+  async function toBe(cls: ClassConstructor<object>) {
     const instance = plainToInstance(cls, obj);
-    isArray(instance)
-      ? await validateOrReject(
-          plainToInstance(Array, { array: instance }),
-        ).catch(handle)
-      : await validateOrReject(instance).catch(handle);
+    if (isArray(instance)) {
+      await validateOrReject(plainToInstance(Array, { array: instance })).catch(
+        handle
+      );
+    } else {
+      await validateOrReject(instance).catch(handle);
+    }
   }
   return { toBe };
 }

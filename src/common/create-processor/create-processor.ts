@@ -3,14 +3,14 @@ import { ClassConstructor, plainToInstance } from "class-transformer";
 import { validateOrReject } from "class-validator";
 import { QueueName } from "~/common/constants/queue-names";
 
-export const createProcessor = <T extends ClassConstructor<any>>(
+export const createProcessor = <T extends object>(
   name: QueueName,
-  opts: { dataSchema: T },
-  fn: (job: Job<InstanceType<T>>) => any,
+  opts: { dataSchema: ClassConstructor<T> },
+  fn: (job: Job<T>) => unknown
 ) => {
-  new Worker(name, async (job: Job) => {
+  new Worker<T>(name, async (job) => {
     job.data = plainToInstance(opts.dataSchema, job.data);
-    validateOrReject(job.data);
+    await validateOrReject(job.data);
 
     await fn(job);
   });

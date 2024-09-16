@@ -49,7 +49,7 @@ export const createQuery = (params: CreateQuery) => {
   function buildSelect() {
     const selects = Prisma.join(getParam("select"));
     const table = Prisma.raw(
-      baseParams?.table ?? params.table ?? fail("table must be defined"),
+      baseParams?.table ?? params.table ?? fail("table must be defined")
     );
 
     return Prisma.sql`SELECT ${selects} FROM ${table}`;
@@ -92,14 +92,14 @@ export const createQuery = (params: CreateQuery) => {
     return Prisma.sql`GROUP BY ${Prisma.join(params, " AND ")}`;
   }
 
-  function getParam(param: keyof CreateQuery) {
+  function getParam(param: keyof Omit<CreateQuery, "table">) {
     return [
       ...toSqlArray(baseParams?.[param]),
       ...toSqlArray(params[param]),
     ].filter(Boolean);
   }
 
-  function toSqlArray(value: any) {
-    return value ? (isArray(value) ? value : [value]) : [];
+  function toSqlArray(value: unknown) {
+    return value ? (isArray<unknown>(value) ? value : [value]) : [];
   }
 };

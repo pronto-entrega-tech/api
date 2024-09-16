@@ -36,7 +36,7 @@ export class LocationService {
   private formateAddress(components: GMaps.AddressComponent[]) {
     return components.reduce(
       (previous, address) => ({ ...previous, ...this.getProperty(address) }),
-      {} as AddressRes,
+      {} as AddressRes
     );
   }
 
@@ -51,10 +51,10 @@ export class LocationService {
 
     return Object.entries(namesMap).reduce(
       (previous, [name, rawName]) =>
-        address.types.includes(rawName as any)
+        address.types.some((v) => v.valueOf() === rawName)
           ? { [name]: address.short_name }
           : previous,
-      {} as AddressRes,
+      {} as AddressRes
     );
   }
 

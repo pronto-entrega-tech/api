@@ -1,16 +1,11 @@
-import { Processor, Queue, Worker } from "bullmq";
+import { Processor, Queue, Worker, JobsOptions } from "bullmq";
 import { ClassConstructor, plainToInstance } from "class-transformer";
 import { validateOrReject } from "class-validator";
 
-export const createQueueDefault = <
-  DataSchema extends ClassConstructor<any>,
-  ResultType = void,
->(
+export const createQueueDefault = <DataType extends object, ResultType = void>(
   queueName: string,
-  dataSchema: DataSchema,
+  dataSchema: ClassConstructor<DataType>
 ) => {
-  type DataType = InstanceType<typeof dataSchema>;
-
   const queue = new Queue<DataType, ResultType>(queueName);
 
   let worker: Worker<DataType, ResultType>;
@@ -29,7 +24,7 @@ export const createQueueDefault = <
         await validateOrReject(job.data);
 
         return processor(job);
-      },
+      }
     ));
   };
 
@@ -43,11 +38,11 @@ export const createQueueDefault = <
 export const createQueueNamed =
   <NameType extends string = string>() =>
   <
-    DataSchema extends { [x in NameType]: ClassConstructor<any> },
+    DataSchema extends { [x in NameType]: ClassConstructor<object> },
     ResultType = void,
   >(
     queueName: string,
-    dataSchema: DataSchema,
+    dataSchema: DataSchema
   ) => {
     type DataType = InstanceType<DataSchema[NameType]>;
 
@@ -63,27 +58,27 @@ export const createQueueNamed =
         const processor = processors[job.name];
         if (!processor) throw new Error(`Missing processor of "${job.name}"`);
 
-        job.data = plainToInstance(dataSchema[job.name], job.data);
+        job.data = plainToInstance(dataSchema[job.name], job.data) as DataType;
         await validateOrReject(job.data);
 
         return processor(job);
       },
-      { autorun: false, connection: {} },
+      { autorun: false, connection: {} }
     );
 
     const process = <Name extends NameType>(
       name: Name,
-      processor: Processor<
-        InstanceType<DataSchema[Name]>,
-        ResultType,
-        NameType
-      >,
+      processor: Processor<InstanceType<DataSchema[Name]>, ResultType, NameType>
     ) => {
       processors[name] = processor;
     };
 
     return {
-      add: queue.add.bind(queue),
+      add: <Name extends NameType>(
+        name: Name,
+        data: InstanceType<DataSchema[Name]>,
+        opts?: JobsOptions
+      ) => queue.add(name, data, opts),
       getJob: queue.getJob.bind(queue),
       process,
       /**

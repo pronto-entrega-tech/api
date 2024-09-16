@@ -18,7 +18,7 @@ export class AsaasRequests {
     return (await axios.get<T>(url, config)).data;
   }
 
-  async post<T>(url: string, params: any, key?: string) {
+  async post<T>(url: string, params: unknown, key?: string) {
     const config = !key
       ? this.config
       : { ...this.config, headers: { access_token: key } };

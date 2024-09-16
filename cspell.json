@@ -1,6 +1,7 @@
 {
   "language": "en,pt-BR",
   "words": [
+    "amplication",
     "asaas",
     "autorun",
     "bullmq",
@@ -11,10 +12,13 @@
     "fastify",
     "Italac",
     "Km",
+    "latlng",
     "mailpit",
     "nestjs",
     "opentelemetry",
+    "sublocality",
     "thumbhash",
+    "tseslint",
     "unplugin",
     "unsign",
     "websockets"

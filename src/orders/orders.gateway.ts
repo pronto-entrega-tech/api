@@ -30,7 +30,7 @@ export class OrdersGateway extends PassportGateway {
   @SubscribeMessage(WsEvent.Orders)
   async findOne(
     @MessageBody() data: SubscribeOrdersDto,
-    @ConnectedSocket() socket: AuthSocket,
+    @ConnectedSocket() socket: AuthSocket
   ) {
     const customer_id = socket.user.sub;
     const { order_id, market_id } = data;
@@ -56,14 +56,15 @@ export class OrdersGateway extends PassportGateway {
     const orders = await this.orders.findMany({ market_id });
 
     socket.emit(WsEvent.Orders, ...orders);
-    await socket.join(orders.map(({ order_id }) => wsRoom("order", order_id)));
+    const _orders = orders as { order_id: bigint }[];
+    await socket.join(_orders.map(({ order_id }) => wsRoom("order", order_id)));
 
     const statuses = await this.orders.manyStatus(
       market_id,
-      orders.map(({ order_id }) => order_id),
+      _orders.map(({ order_id }) => order_id)
     );
     const differentStatuses = statuses.filter(
-      ({ status }, i) => status !== orders[i]?.status,
+      ({ status }, i) => status !== orders[i]?.status
     );
     if (differentStatuses.length)
       socket.emit(WsEvent.Orders, ...differentStatuses);

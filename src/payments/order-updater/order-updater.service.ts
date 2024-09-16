@@ -14,7 +14,7 @@ import {
   InAppPaymentMethod,
   PaymentMethod,
 } from "../constants/payment-methods";
-import { UpdateOrder } from "../constants/update-order";
+import { updateOrder } from "../constants/update-order";
 import { CancelOrderDto } from "../dto/cancel-order.dto";
 import { ConfirmOrderPaymentDto } from "../dto/confirm-order-payment.dto";
 import { UpdateOrderDto } from "../dto/update-order.dto";
@@ -25,20 +25,20 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
     private readonly mutex: MutexService,
     private readonly ordersRepo: OrdersRepository,
     @InjectQueue(QueueName.UpdateOrder)
-    private readonly updateOrderQueue: Queue<UpdateOrderDto>,
+    private readonly updateOrderQueue: Queue<UpdateOrderDto>
   ) {}
   private readonly logger = new Logger(OrderUpdaterService.name);
 
   onApplicationBootstrap() {
-    this.checkPaymentProcessing();
-    this.checkCompleting();
-    this.checkCanceling();
+    this.checkPaymentProcessing().catch((err) => this.logger.error(err));
+    this.checkCompleting().catch((err) => this.logger.error(err));
+    this.checkCanceling().catch((err) => this.logger.error(err));
   }
 
   @Cron("0 * * * *")
   async checkPaymentProcessing() {
     const orders = await this.ordersRepo.findByStatus(
-      OrderStatus.PaymentProcessing,
+      OrderStatus.PaymentProcessing
     );
 
     for (const order of orders) {
@@ -52,7 +52,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
     for (const { order_id, market_id } of orders) {
       this.complete({ fullOrderId: { order_id, market_id } }).catch((err) =>
-        this.logger.error(err),
+        this.logger.error(err)
       );
     }
   }
@@ -63,14 +63,14 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
     for (const { order_id, market_id } of orders) {
       this.cancel({ fullOrderId: { order_id, market_id } }).catch((err) =>
-        this.logger.error(err),
+        this.logger.error(err)
       );
     }
   }
 
   async pay(order: orders) {
     await this.updateOrderQueue.add(
-      UpdateOrder.Pay,
+      updateOrder.Pay,
       {
         fullOrderId: {
           order_id: order.order_id,
@@ -80,23 +80,23 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
         total: order.total,
         market_amount: order.market_amount,
         customer_debit: order.customer_debit ?? undefined,
-        ...(await this.getValidPayment(order)),
+        ...this.getValidPayment(order),
       },
-      { jobId: `${order.order_id}`, removeOnComplete: true },
+      { jobId: `${order.order_id}`, removeOnComplete: true }
     );
   }
 
   confirmPayment(dto: ConfirmOrderPaymentDto) {
     return this.mutex.exec(LockedAction.UpdateOrder, this.orderJobId(dto), () =>
-      this.nonAtomicConfirmPayment(dto),
+      this.nonAtomicConfirmPayment(dto)
     );
   }
 
   private async nonAtomicConfirmPayment(dto: ConfirmOrderPaymentDto) {
     const job = await this.updateOrderQueue.getJob(this.orderJobId(dto));
-    if (job?.name === UpdateOrder.Pay) await job.remove();
+    if (job?.name === updateOrder.Pay) await job.remove();
 
-    await this.updateOrderQueue.add(UpdateOrder.ConfirmPayment, dto, {
+    await this.updateOrderQueue.add(updateOrder.ConfirmPayment, dto, {
       jobId: this.orderJobId(dto),
       removeOnComplete: true,
     });
@@ -104,15 +104,15 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
   complete(dto: ConfirmOrderPaymentDto) {
     return this.mutex.exec(LockedAction.UpdateOrder, this.orderJobId(dto), () =>
-      this.nonAtomicComplete(dto),
+      this.nonAtomicComplete(dto)
     );
   }
 
   private async nonAtomicComplete(dto: ConfirmOrderPaymentDto) {
     const job = await this.updateOrderQueue.getJob(this.orderJobId(dto));
-    if (job && job.name !== UpdateOrder.Cancel) await job.remove();
+    if (job && job.name !== updateOrder.Cancel) await job.remove();
 
-    await this.updateOrderQueue.add(UpdateOrder.Complete, dto, {
+    await this.updateOrderQueue.add(updateOrder.Complete, dto, {
       jobId: this.orderJobId(dto),
       removeOnComplete: true,
     });
@@ -120,21 +120,21 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
   cancel(dto: CancelOrderDto) {
     return this.mutex.exec(LockedAction.UpdateOrder, this.orderJobId(dto), () =>
-      this.nonAtomicCancel(dto),
+      this.nonAtomicCancel(dto)
     );
   }
 
   private async nonAtomicCancel(dto: CancelOrderDto) {
     const job = await this.updateOrderQueue.getJob(this.orderJobId(dto));
-    if (job && job.name !== UpdateOrder.Complete) await job.remove();
+    if (job && job.name !== updateOrder.Complete) await job.remove();
 
-    await this.updateOrderQueue.add(UpdateOrder.Cancel, dto, {
+    await this.updateOrderQueue.add(updateOrder.Cancel, dto, {
       jobId: this.orderJobId(dto),
       removeOnComplete: true,
     });
   }
 
-  async getValidPayment(order: orders) {
+  getValidPayment(order: orders) {
     const { payment_method: method, ip } = order;
 
     switch (method) {

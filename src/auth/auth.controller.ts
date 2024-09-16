@@ -52,7 +52,7 @@ export class AuthController {
   async validate(
     @Query(useCookieQueryOpts.name) useCookie: boolean,
     @Body() dto: ValidateDto,
-    @Res({ passthrough: true }) res: FastifyReply,
+    @Res({ passthrough: true }) res: FastifyReply
   ): Promise<AuthTokenAndSessionRes> {
     const result = await this.auth.validate(dto);
 
@@ -64,7 +64,7 @@ export class AuthController {
       res.setCookie(
         cookieName(dto.role),
         refresh_token,
-        authCookieOpts(expires_in),
+        authCookieOpts(expires_in)
       );
     }
     return response;
@@ -79,10 +79,11 @@ export class AuthController {
     @Query(useCookieQueryOpts.name) useCookie: boolean,
     @Query("refreshToken") refreshToken: string,
     @Body() { role }: RoleDto,
-    @Req() { cookies, unsignCookie }: FastifyRequest,
-    @Res({ passthrough: true }) res: FastifyReply,
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) res: FastifyReply
   ): Promise<AccessTokenAndSessionRes> {
-    const cookie = () => unsignCookie(cookies[cookieName(role)] ?? "").value;
+    const cookie = () =>
+      req.unsignCookie(req.cookies[cookieName(role)] ?? "").value;
     const token = useCookie ? cookie() : refreshToken;
     if (!token) throw new UnauthorizedException();
 
@@ -108,7 +109,7 @@ export class AuthController {
   async connect(
     @Query(useCookieQueryOpts.name) useCookie: boolean,
     @Req() { user: { sub: sub_id } }: AuthReq,
-    @Res({ passthrough: true }) res: FastifyReply,
+    @Res({ passthrough: true }) res: FastifyReply
   ): Promise<AccessTokenAndSessionRes> {
     const result = await this.auth.connect(sub_id);
 
@@ -118,7 +119,7 @@ export class AuthController {
     res.setCookie(
       MARKET_SUB_REFRESH_TOKEN,
       refresh_token,
-      authCookieOpts(expires_in),
+      authCookieOpts(expires_in)
     );
 
     return response;
@@ -129,10 +130,11 @@ export class AuthController {
   async signOut(
     @Query("refresh_token") refreshToken: string | undefined,
     @Body() { role }: RoleDto,
-    @Req() { cookies, unsignCookie }: FastifyRequest,
-    @Res({ passthrough: true }) res: FastifyReply,
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const cookie = () => unsignCookie(cookies[cookieName(role)] ?? "").value;
+    const cookie = () =>
+      req.unsignCookie(req.cookies[cookieName(role)] ?? "").value;
     const token = refreshToken ?? cookie();
     if (!token) throw new UnauthorizedException();
 

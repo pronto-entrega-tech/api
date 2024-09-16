@@ -8,10 +8,10 @@ const client = axios.create({
 export const BrasilApi = {
   async cep(postalCode: string) {
     const url = `/cep/v1/${postalCode}`;
-    const { data } = await client.get(url).catch(() => {
+    const res = await client.get(url).catch(() => {
       throw new NotFoundError("Postal Code");
     });
-    return data as {
+    return res.data as {
       street: string;
       neighborhood: string;
       city: string;
@@ -21,10 +21,10 @@ export const BrasilApi = {
 
   async cnpj(document: string) {
     const url = `/cnpj/v1/${document}`;
-    const { data } = await client.get(url).catch(() => {
+    const res = await client.get(url).catch(() => {
       throw new NotFoundError("Document");
     });
-    return data as {
+    return res.data as {
       razao_social: string;
       ddd_telefone_1: number;
       logradouro: string;

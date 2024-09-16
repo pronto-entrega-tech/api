@@ -8,9 +8,10 @@ const allow = Allow();
 const type = ApiProperty({ type: String });
 
 const transform = Transform(({ value, key }) => {
-  if (value == null) return value;
+  if (value == null) return value as unknown;
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return BigInt(value);
   } catch {
     throw new BadRequestException(`${key} must be a valid bigint`);

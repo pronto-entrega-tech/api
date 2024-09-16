@@ -6,6 +6,7 @@ import { STATIC_URL } from "../constants/urls";
 async function otp(code: string, time: number, link: string, role: Role) {
   const type = {
     [Role.Admin]: "admin",
+    [Role.Customer]: undefined,
     [Role.Market]: "mercado",
     [Role.MarketSub]: "secundária de mercado",
   }[role];

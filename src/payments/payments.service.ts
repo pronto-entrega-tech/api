@@ -23,7 +23,7 @@ export class PaymentsService {
 
     private readonly orderUpdater: OrderUpdaterService,
     @InjectQueue(QueueName.ConfirmInvoice)
-    private readonly confirmInvoiceQueue: Queue<ConfirmInvoiceJobDto>,
+    private readonly confirmInvoiceQueue: Queue<ConfirmInvoiceJobDto>
   ) {}
   private readonly ASAAS_WH_SECRET =
     process.env.ASAAS_WH_SECRET ?? fail("ASAAS_WH_SECRET must be defined");
@@ -59,7 +59,7 @@ export class PaymentsService {
     if (billingType !== "PIX" && billingType !== "BOLETO") return;
 
     const { invoice_id, month } = fromInvoiceExternalId(
-      payment.externalReference,
+      payment.externalReference
     );
 
     const dto = plainToInstance(ConfirmInvoiceJobDto, {
@@ -68,12 +68,12 @@ export class PaymentsService {
     await this.confirmInvoiceQueue.add(dto);
   }
 
-  private async confirmOrderPayment(payment: any) {
+  private async confirmOrderPayment(payment: Asaas.WebHookBody["payment"]) {
     const billingType = payment.billingType;
     if (billingType !== "PIX") return;
 
     const { order_id, market_id } = fromOrderExternalId(
-      payment.externalReference,
+      payment.externalReference
     );
 
     await this.orderUpdater.confirmPayment({

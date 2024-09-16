@@ -52,7 +52,7 @@ const validateImage: MulterOptions["fileFilter"] = (_, file, callback) => {
 
   if (file.size && file.size >= 1 * MiB)
     return callback(
-      new PayloadTooLargeException("File size must be lower than 1MiB"),
+      new PayloadTooLargeException("File size must be lower than 1MiB")
     );
 
   callback(null, true);
@@ -74,7 +74,7 @@ export class MarketsController {
   @Post()
   async create(
     @Req() { user: { sub: email } }: AuthReq,
-    @Body() dto: CreateMarketDto,
+    @Body() dto: CreateMarketDto
   ): Promise<AccessTokenAndSessionRes> {
     return this.markets.create(email, dto);
   }
@@ -140,7 +140,7 @@ export class MarketsPrivateController {
   @Post("open-flip")
   createOpenFlip(
     @Req() { user: { sub: id } }: AuthReq,
-    @Body() dto: CreateOpenFlipDto,
+    @Body() dto: CreateOpenFlipDto
   ) {
     return this.markets.createOpenFlip(id, dto);
   }
@@ -149,7 +149,7 @@ export class MarketsPrivateController {
   @Delete("open-flip/:created_at")
   deleteOpenFlip(
     @Req() { user: { sub: id } }: AuthReq,
-    @Param() dto: DeleteOpenFlipDto,
+    @Param() dto: DeleteOpenFlipDto
   ) {
     return this.markets.deleteOpenFlip(id, dto);
   }
@@ -160,14 +160,13 @@ export class MarketsPrivateController {
     FileInterceptor("picture", {
       dest: "/tmp/pronto-entrega-uploads",
       fileFilter: validateImage,
-    }),
+    })
   )
   @Post("upload-picture")
   async uploadFile(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() _: UploadFileDto,
     @Req() { user: { sub: id } }: AuthReq,
-    @UploadedFile() file?: File,
+    @UploadedFile() file?: File
   ) {
     if (!file || !file.path)
       throw new BadRequestException("Image file must be attached");
@@ -185,7 +184,7 @@ export class MarketsPrivateController {
   @Post("bank-account")
   createBankAccount(
     @Req() { user: { sub: id } }: AuthReq,
-    @Body() dto: CreateBankAccountDto,
+    @Body() dto: CreateBankAccountDto
   ) {
     return this.markets.createBankAccount(id, dto);
   }
@@ -194,7 +193,7 @@ export class MarketsPrivateController {
   @Patch("bank-account")
   updateBankAccount(
     @Req() { user: { sub: id } }: AuthReq,
-    @Body() dto: UpdateBankAccountDto,
+    @Body() dto: UpdateBankAccountDto
   ) {
     return this.markets.updateBankAccount(id, dto);
   }

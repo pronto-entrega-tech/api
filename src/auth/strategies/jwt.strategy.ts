@@ -25,7 +25,7 @@ const createStrategy = (requiredType: AuthToken) => {
       });
     }
 
-    async validate(payload: JwtPayload): Promise<JwtPayload> {
+    validate(payload: JwtPayload) {
       if (payload.type !== requiredType) throw new ForbiddenException();
 
       return payload;

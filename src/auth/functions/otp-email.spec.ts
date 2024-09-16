@@ -18,11 +18,11 @@ const assert = (i: Input, o: Output) => async () => {
     { email, ...i },
     {
       fakeKey: () => fakeKey,
-      adminExist: async () => !!i.adminExist,
-      createOtpHash: async (otp) => otp,
-      saveOtp: async () => ({ otp_id: key }),
-      sendMail: async () => void 0,
-    },
+      adminExist: () => Promise.resolve(!!i.adminExist),
+      createOtpHash: (otp) => Promise.resolve(otp),
+      saveOtp: () => Promise.resolve({ otp_id: key }),
+      sendMail: () => Promise.resolve(),
+    }
   );
 
   expect(res).toEqual(o);

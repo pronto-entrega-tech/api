@@ -13,7 +13,7 @@ export class ConfirmInvoiceConsumer {
   @Process()
   async exec(job: Job) {
     const dto = plainToInstance(ConfirmInvoiceJobDto, job.data);
-    validateOrReject(dto);
+    await validateOrReject(dto);
 
     await this.invoices.confirm(dto);
   }

@@ -82,14 +82,12 @@ const queryBase2 = (city: string): BaseQuery => ({
   leftJoin: sql`item ON products.prod_id = item.prod_id AND item.city_slug = ${city}`,
 });
 
-const getDiscountValues = (dto: any) =>
-  pick(
-    dto,
-    "discount_type",
-    "discount_value_1",
-    "discount_value_2",
-    "discount_max_per_client",
-  );
+const discountValuesKeys = [
+  "discount_type",
+  "discount_value_1",
+  "discount_value_2",
+  "discount_max_per_client",
+] as const;
 
 export namespace ItemsRepository {
   export type ItemById = Awaited<
@@ -131,7 +129,7 @@ export class ItemsRepository {
               new_price: dto.market_price,
               new_stock: dto.stock,
               new_unit_weight: dto.unit_weight,
-              new_discount: getDiscountValues(dto),
+              new_discount: pick(dto, ...discountValuesKeys),
             }),
           },
         },
@@ -166,7 +164,7 @@ export class ItemsRepository {
               ...v,
               prod_id: `${v.prod_id}`,
             })),
-            new_discount: getDiscountValues(dto),
+            new_discount: pick(dto, ...discountValuesKeys),
           }),
         },
       },
@@ -176,7 +174,7 @@ export class ItemsRepository {
   async exist(
     market_id: string,
     city_slug: string,
-    { prod_id, kit_name }: { prod_id?: bigint; kit_name?: string },
+    { prod_id, kit_name }: { prod_id?: bigint; kit_name?: string }
   ) {
     return !!(await this.prisma.item.count({
       where: { market_id, city_slug, prod_id, kit_name },
@@ -186,7 +184,7 @@ export class ItemsRepository {
   async findMany(
     city_slug: string,
     market?: string | string[],
-    filter?: Pick<ItemFeedFilter, "ids" | "query" | "categories">,
+    filter?: Pick<ItemFeedFilter, "ids" | "query" | "categories">
   ) {
     const { ids, query, categories } = filter ?? {};
 
@@ -302,7 +300,7 @@ export class ItemsRepository {
   async update(
     { item_id, city_slug }: FullItemId,
     dto: UpdateItemDto,
-    { product_code, item_name, market_id, market_sub_id }: ActivityExtra,
+    { product_code, item_name, market_id, market_sub_id }: ActivityExtra
   ) {
     const validData = Prisma.validator<Prisma.itemUncheckedUpdateManyInput>();
 
@@ -322,7 +320,7 @@ export class ItemsRepository {
             new_price: dto.market_price,
             new_stock: dto.stock,
             new_unit_weight: dto.unit_weight,
-            new_discount: getDiscountValues(dto),
+            new_discount: pick(dto, ...discountValuesKeys),
           },
         }),
       ])
@@ -334,7 +332,7 @@ export class ItemsRepository {
   async updateKit(
     { item_id, city_slug }: FullItemId,
     dto: UpdateKitDto,
-    { product_code, item_name, market_id, market_sub_id }: ActivityExtra,
+    { product_code, item_name, market_id, market_sub_id }: ActivityExtra
   ) {
     const { details, ..._dto } = dto;
 
@@ -364,8 +362,8 @@ export class ItemsRepository {
             new_price: dto.market_price,
             new_stock: dto.stock,
             new_unit_weight: dto.unit_weight,
-            new_details: details as any,
-            new_discount: getDiscountValues(dto),
+            new_details: details?.map((v) => JSON.stringify(v)),
+            new_discount: JSON.stringify(pick(dto, ...discountValuesKeys)),
           },
         }),
       ])
@@ -376,7 +374,7 @@ export class ItemsRepository {
 
   async delete(
     { item_id, city_slug }: FullItemId,
-    { product_code, item_name, market_id, market_sub_id }: ActivityExtra,
+    { product_code, item_name, market_id, market_sub_id }: ActivityExtra
   ) {
     const [, item] = await this.prisma
       .$transaction([
@@ -405,7 +403,7 @@ export class ItemsRepository {
 
   async findActivities(
     market_id: string,
-    { fullId, query }: { fullId?: FullItemId; query?: string },
+    { fullId, query }: { fullId?: FullItemId; query?: string }
   ) {
     const isCode = query && /^\d+$/g.test(query);
 

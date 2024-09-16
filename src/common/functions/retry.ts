@@ -2,8 +2,8 @@
  * If is throw a error, will try again the function, 10 times by default
  */
 const retry = async <T = void>(
-  fn: (tryNumber: number) => T,
-  maxNumberOfTries = 10,
+  fn: (tryNumber: number) => Promise<T>,
+  maxNumberOfTries = 10
 ): Promise<T> => {
   return _try();
 

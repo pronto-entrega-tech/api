@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { fail } from "assert";
 import { randomUUID } from "crypto";
@@ -30,15 +30,18 @@ export class AuthService {
     private readonly sessionsRepo: SessionsRepository,
     private readonly adminRepo: AdminRepository,
     private readonly customersRepo: CustomersRepository,
-    private readonly marketsRepo: MarketsRepository,
+    private readonly marketsRepo: MarketsRepository
   ) {}
+  private readonly logger = new Logger(AuthService.name);
   private readonly OTP_SECRET =
     process.env.OTP_SECRET ?? fail("OTP_SECRET must be defined");
 
   @Cron("0 0 * * *")
   deleteExpired() {
-    this.otpRepo.deleteExpired();
-    this.sessionsRepo.deleteExpired();
+    this.otpRepo.deleteExpired().catch((error) => this.logger.error(error));
+    this.sessionsRepo
+      .deleteExpired()
+      .catch((error) => this.logger.error(error));
   }
 
   email(dto: EmailDto) {

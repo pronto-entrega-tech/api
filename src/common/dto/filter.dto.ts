@@ -21,7 +21,7 @@ export class ItemByMarketFilter {
 
   @ApiProperty({ description: "Category id" })
   @Type(() => Number)
-  @Transform(({ value: v }) => (v && !isArray(v) ? [v] : v))
+  @Transform(({ value: v }) => (v && !isArray(v) ? [v] : v) as unknown)
   @IsOptional()
   @IsNumber({}, { each: true })
   readonly categories?: number[];
@@ -29,7 +29,7 @@ export class ItemByMarketFilter {
 
 export class ItemFeedFilter extends ItemByMarketFilter {
   @ApiProperty({ description: "Item Id" })
-  @Transform(({ value: v }) => (v && !isArray(v) ? [v] : v))
+  @Transform(({ value: v }) => (v && !isArray(v) ? [v] : v) as unknown)
   @IsOptional()
   @IsString({ each: true })
   readonly ids?: string[];

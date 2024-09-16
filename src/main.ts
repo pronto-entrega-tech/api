@@ -28,11 +28,13 @@ import {
   ExecutionContext,
   CallHandler,
 } from "@nestjs/common";
+import { FastifyReply, FastifyRequest } from "fastify";
+import EventEmitter from "events";
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({ ...httpsOpts, bodyLimit: 2 * MiB }),
+    new FastifyAdapter({ ...httpsOpts, bodyLimit: 2 * MiB })
   );
 
   app.enableCors({
@@ -83,13 +85,15 @@ const bootstrap = async () => {
     serverAdapter.setBasePath(bullBoardPath);
 
     const queues = Object.values(QueueName).map(
-      (name) => new BullAdapter(new BullQueue(name)),
+      (name) => new BullAdapter(new BullQueue(name))
     );
     createBullBoard({ queues, serverAdapter });
-    app.register(serverAdapter.registerPlugin(), {
-      basePath: "",
-      prefix: bullBoardPath,
-    });
+    app
+      .register(serverAdapter.registerPlugin(), {
+        basePath: "",
+        prefix: bullBoardPath,
+      })
+      .catch(console.error);
   }
 
   const port = process.env.PORT ?? 3000;
@@ -116,14 +120,14 @@ process.on("unhandledRejection", (error) => {
 });
 
 // This Fix `TypeError: Do not know how to serialize a BigInt`
-(BigInt.prototype as any).toJSON = function () {
+BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
 const MiB = 2 ** 20;
 
 const localIp = networkInterfaces().en0?.find(
-  (v) => v.family === "IPv4",
+  (v) => v.family === "IPv4"
 )?.address;
 
 const prodHelmetOpts: FastifyHelmetOptions = {
@@ -155,19 +159,26 @@ const httpsOpts =
 @Injectable()
 export class ReqResModifyInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
-    const request = context.switchToHttp().getRequest();
-    const response = context.switchToHttp().getResponse();
+    const request = context
+      .switchToHttp()
+      .getRequest<FastifyRequest & { route?: { path?: string } }>();
+    const response = context
+      .switchToHttp()
+      .getResponse<FastifyReply & { __proto__: EventEmitter }>();
 
     request.route = Object.assign(request.route || {}, {
       path: request.raw.url,
     });
-    response.__proto__.once = response.raw.once;
-    response.__proto__.removeListener = response.raw.removeListener;
+    response.__proto__.once = response.raw.once.bind(response.raw);
+    response.__proto__.removeListener = response.raw.removeListener.bind(
+      response.raw
+    );
     response.__proto__.on = function (_, callback) {
       callback();
+      return this;
     };
     return next.handle();
   }
 }
 
-bootstrap();
+void bootstrap();

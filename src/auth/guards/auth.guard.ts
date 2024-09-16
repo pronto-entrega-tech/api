@@ -18,7 +18,7 @@ const createAuthGuard = (type: AuthToken) => {
     async canActivate(context: ExecutionContext) {
       await super.canActivate(context);
 
-      // eslint-disable-next-line @typescript-eslint/ban-types
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       const targets: [Function, Function] = [
         context.getHandler(),
         context.getClass(),
@@ -34,7 +34,7 @@ const createAuthGuard = (type: AuthToken) => {
 
       if (!requiredRoles) {
         this.logger.error(
-          `Missing roles on ${targets[1].name}.${targets[0].name}`,
+          `Missing roles on ${targets[1].name}.${targets[0].name}`
         );
         return false;
       }
@@ -49,7 +49,7 @@ const createAuthGuard = (type: AuthToken) => {
         user.role !== Role.MarketSub ||
         !requiredSubPermissions?.length ||
         requiredSubPermissions.some((role) =>
-          user.sub_permissions?.includes(role),
+          user.sub_permissions?.includes(role)
         );
 
       return hasRole && hasPermission;

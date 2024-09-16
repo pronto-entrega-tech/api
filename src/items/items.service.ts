@@ -32,14 +32,14 @@ export class ItemsService {
     private readonly itemsRepo: ItemsRepository,
     private readonly productsRepo: ProductsRepository,
     private readonly marketsRepo: MarketsRepository,
-    private readonly events: ItemUpdateGateway,
+    private readonly events: ItemUpdateGateway
   ) {}
   private readonly logger = new Logger(ItemsService.name);
   private readonly SHARED_PATH = process.env.SHARED_PATH ?? "";
 
-  async logging(body: any) {
+  async logging(data: string) {
     const path = join(this.SHARED_PATH, `item-logging-${Date.now()}`);
-    await writeFile(path, body).catch((err) => this.logger.error(err));
+    await writeFile(path, data).catch((err) => this.logger.error(err));
   }
 
   async create(marketIds: MarketOrSubId, dto: CreateItemDto) {
@@ -55,7 +55,7 @@ export class ItemsService {
     const existingItem = await this.itemsRepo.exist(
       marketIds.market_id,
       city_slug,
-      { prod_id: prod.prod_id },
+      { prod_id: prod.prod_id }
     );
     if (existingItem) throw new AlreadyExistError("Item", ["code"]);
 
@@ -82,7 +82,7 @@ export class ItemsService {
     const existingItem = await this.itemsRepo.exist(
       marketIds.market_id,
       city_slug,
-      { kit_name: dto.kit_name },
+      { kit_name: dto.kit_name }
     );
     if (existingItem) throw new AlreadyExistError("Item", ["kit_name"]);
 
@@ -100,8 +100,10 @@ export class ItemsService {
 
     const missingProductFail = () => {
       const notFoundCodes = prodCodes.filter((id) => !prodIds.includes(id));
-      this.logger.error(`Missing product code: ${notFoundCodes}`);
-      throw new NotFoundException(`Product code ${notFoundCodes} not found`);
+      this.logger.error(`Missing product code: ${notFoundCodes.toString()}`);
+      throw new NotFoundException(
+        `Product code ${notFoundCodes.toString()} not found`
+      );
     };
 
     return details.map(({ quantity }, i) => ({
@@ -137,7 +139,7 @@ export class ItemsService {
 
   async findActivities(
     market_id: string,
-    params: { fullId?: FullItemId; query?: string },
+    params: { fullId?: FullItemId; query?: string }
   ) {
     return this.itemsRepo.findActivities(market_id, params);
   }
@@ -145,7 +147,7 @@ export class ItemsService {
   async update(
     marketIds: MarketOrSubId,
     fullId: FullItemId,
-    dto: UpdateItemDto,
+    dto: UpdateItemDto
   ) {
     this.validateUpdateDto(dto);
 
@@ -175,7 +177,7 @@ export class ItemsService {
   async updateKit(
     marketIds: MarketOrSubId,
     fullId: FullItemId,
-    dto: UpdateKitDto,
+    dto: UpdateKitDto
   ) {
     this.validateUpdateDto(dto);
 
@@ -228,7 +230,7 @@ export class ItemsService {
   private itemName(
     kit_name: string | null,
     product: products | null,
-    fullId: FullItemId,
+    fullId: FullItemId
   ) {
     const item_name = kit_name ?? (product && getProductName(product));
     if (!item_name) this.logger.log("Item don't have a name", fullId);

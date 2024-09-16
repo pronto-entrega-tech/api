@@ -19,7 +19,7 @@ export class OrdersStatusService {
   constructor(
     private readonly mutex: MutexService,
     private readonly ordersRepo: OrdersRepository,
-    private readonly events: OrderUpdateGateway,
+    private readonly events: OrderUpdateGateway
   ) {}
 
   private readonly machine = {
@@ -62,14 +62,14 @@ export class OrdersStatusService {
   update<T>(
     fullOrderId: FullOrderId,
     action: Action | PublicAction,
-    extra?: Prisma.Exact<T, UpdateOrderExtraDto>,
+    extra?: Prisma.Exact<T, UpdateOrderExtraDto>
   ) {
     return this.execUnderMutex(fullOrderId, () =>
       this.nonAtomicUpdate(
         fullOrderId,
         action,
-        extra as UpdateOrderExtraDto | undefined,
-      ),
+        extra as UpdateOrderExtraDto | undefined
+      )
     );
   }
 
@@ -77,15 +77,15 @@ export class OrdersStatusService {
     customer_id: string,
     fullOrderId: FullOrderId,
     action: Action | PublicAction,
-    extra?: Prisma.Exact<T, UpdateOrderExtraDto>,
+    extra?: Prisma.Exact<T, UpdateOrderExtraDto>
   ) {
     return this.execUnderMutex(fullOrderId, () =>
       this.nonAtomicCustomerUpdate(
         customer_id,
         fullOrderId,
         action,
-        extra as UpdateOrderExtraDto | undefined,
-      ),
+        extra as UpdateOrderExtraDto | undefined
+      )
     );
   }
 
@@ -93,29 +93,29 @@ export class OrdersStatusService {
     return this.mutex.exec(
       LockedAction.UpdateOrderStatus,
       `${fullOrderId.order_id}`,
-      fn,
+      fn
     );
   }
 
   private async nonAtomicUpdate(
     fullOrderId: FullOrderId,
     action: Action | PublicAction,
-    extra?: UpdateOrderExtraDto,
+    extra?: UpdateOrderExtraDto
   ) {
     const status = await this.ordersRepo.status(fullOrderId);
 
-    return this.validateStatus(status as Status, fullOrderId, action, extra);
+    return this.validateStatus(status, fullOrderId, action, extra);
   }
 
   private async nonAtomicCustomerUpdate(
     customer_id: string,
     fullOrderId: FullOrderId,
     action: Action | PublicAction,
-    extra?: UpdateOrderExtraDto,
+    extra?: UpdateOrderExtraDto
   ) {
     const status = await this.ordersRepo.customerFindStatus(
       customer_id,
-      fullOrderId,
+      fullOrderId
     );
 
     return this.validateStatus(status as Status, fullOrderId, action, extra);
@@ -125,7 +125,7 @@ export class OrdersStatusService {
     status: Status,
     fullOrderId: FullOrderId,
     action: Action | PublicAction,
-    extra?: UpdateOrderExtraDto,
+    extra?: UpdateOrderExtraDto
   ) {
     const nextStatus = this.stateMachine.reduce(status, action);
 
@@ -151,7 +151,7 @@ export class OrdersStatusService {
         "payment_description",
         "payment_method",
         "pix_code",
-        "pix_expires_at",
+        "pix_expires_at"
       ),
     });
     return res;

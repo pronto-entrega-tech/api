@@ -6,7 +6,7 @@ import { QueueName } from "~/common/constants/queue-names";
 import { CancelOrderService } from "../cancel-order.service";
 import { CompleteOrderService } from "../complete-order.service";
 import { ConfirmOrderPaymentService } from "../confirm-order-payment.service";
-import { UpdateOrder } from "../constants/update-order";
+import { updateOrder } from "../constants/update-order";
 import { CancelOrderDto } from "../dto/cancel-order.dto";
 import { CompleteOrderDto } from "../dto/complete-order.dto";
 import { ConfirmOrderPaymentDto } from "../dto/confirm-order-payment.dto";
@@ -20,10 +20,10 @@ export class UpdateOrderConsumer {
     private readonly payOrder: PayOrderService,
     private readonly confirmOrderPayment: ConfirmOrderPaymentService,
     private readonly completeOrderService: CompleteOrderService,
-    private readonly cancelOrder: CancelOrderService,
+    private readonly cancelOrder: CancelOrderService
   ) {}
 
-  @Process(UpdateOrder.Pay)
+  @Process(updateOrder.Pay)
   async pay(job: Job<PayOrderBaseDto>) {
     const dto = plainToInstance(PayOrderBaseDto, job.data) as PayOrderDto;
     await validateOrReject(dto);
@@ -31,7 +31,7 @@ export class UpdateOrderConsumer {
     return this.payOrder.exec(dto);
   }
 
-  @Process(UpdateOrder.ConfirmPayment)
+  @Process(updateOrder.ConfirmPayment)
   async confirmPayment(job: Job<ConfirmOrderPaymentDto>) {
     const dto = plainToInstance(ConfirmOrderPaymentDto, job.data);
     await validateOrReject(dto);
@@ -39,7 +39,7 @@ export class UpdateOrderConsumer {
     return this.confirmOrderPayment.exec(dto);
   }
 
-  @Process(UpdateOrder.Complete)
+  @Process(updateOrder.Complete)
   async complete(job: Job<CompleteOrderDto>) {
     const dto = plainToInstance(CompleteOrderDto, job.data);
     await validateOrReject(dto);
@@ -47,7 +47,7 @@ export class UpdateOrderConsumer {
     return this.completeOrderService.exec(dto);
   }
 
-  @Process(UpdateOrder.Cancel)
+  @Process(updateOrder.Cancel)
   async cancel(job: Job<CancelOrderDto>) {
     const dto = plainToInstance(CancelOrderDto, job.data);
     await validateOrReject(dto);

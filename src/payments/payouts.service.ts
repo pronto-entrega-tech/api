@@ -28,15 +28,15 @@ export class PayoutsService implements OnApplicationBootstrap {
     private readonly asaas: AsaasService,
     private readonly paymentAccounts: PaymentAccountsService,
     private readonly marketsRepo: MarketsRepository,
-    private readonly ordersRepo: OrdersRepository,
+    private readonly ordersRepo: OrdersRepository
   ) {}
   private readonly logger = new Logger(PayoutsService.name);
 
   onApplicationBootstrap() {
     if (isTest) return;
 
-    this._setup(Month.getCurrent());
-    this._setup(Month.getNext());
+    this._setup(Month.getCurrent()).catch((err) => this.logger.error(err));
+    this._setup(Month.getNext()).catch((err) => this.logger.error(err));
   }
 
   private async _setup(month: Date) {
@@ -62,7 +62,7 @@ export class PayoutsService implements OnApplicationBootstrap {
 
     for (const { amount, market } of payouts) {
       this.makeOne(lastMonth, amount, market).catch((err) =>
-        this.logger.error(err),
+        this.logger.error(err)
       );
     }
   }
@@ -70,7 +70,7 @@ export class PayoutsService implements OnApplicationBootstrap {
   private async makeOne(
     lastMonth: Date,
     savedAmount: Prisma.Decimal,
-    market: Market,
+    market: Market
   ) {
     if (!savedAmount.isPositive())
       return this.confirmPayout(market.market_id, lastMonth);
@@ -88,11 +88,11 @@ export class PayoutsService implements OnApplicationBootstrap {
         market_id,
         lastMonth,
         payout.amount,
-        payout.transfer_id,
+        payout.transfer_id
       );
     const { amount } = payout;
 
-    await this.compareWithSavedState(amount, savedAmount, market_id);
+    this.compareWithSavedState(amount, savedAmount, market_id);
 
     const transfer = await this.createTransfer(recipient_key, amount, account);
 
@@ -107,7 +107,7 @@ export class PayoutsService implements OnApplicationBootstrap {
 
     if (!account) {
       this.logger.error(
-        `Market ${market_id} don't have pix key or bank account`,
+        `Market ${market_id} don't have pix key or bank account`
       );
       return { hasMissingData: true } as const;
     }
@@ -126,7 +126,7 @@ export class PayoutsService implements OnApplicationBootstrap {
   private async checkPayout(
     market_id: string,
     recipient_key: string,
-    lastMonth: Date,
+    lastMonth: Date
   ) {
     const currentMonth = Month.next(lastMonth);
     const transfer = await this.checkTransfers(recipient_key, currentMonth);
@@ -150,7 +150,7 @@ export class PayoutsService implements OnApplicationBootstrap {
     const transfers = await this.asaas.transfers.find(
       Month.shortDate(month),
       Month.shortDate(Month.next(month)),
-      recipient_key,
+      recipient_key
     );
 
     const [transfer] = transfers.data;
@@ -188,7 +188,7 @@ export class PayoutsService implements OnApplicationBootstrap {
     const orders = [...pixOrders, ...cardOrders];
     const total = orders.reduce(
       (amount, { market_amount }) => amount.plus(market_amount),
-      new Prisma.Decimal(0),
+      new Prisma.Decimal(0)
     );
     return +total;
   }
@@ -196,27 +196,27 @@ export class PayoutsService implements OnApplicationBootstrap {
   private async checkBalance(
     amount: number,
     market_id: string,
-    account_key: string,
+    account_key: string
   ) {
     const { totalBalance } = await this.asaas.balance(account_key);
 
     const hasSufficientFunds = amount <= totalBalance;
     if (!hasSufficientFunds)
       this.logger.error(
-        `Market ${market_id} have a payout amount (${amount}) greater that account balance (${totalBalance})`,
+        `Market ${market_id} have a payout amount (${amount}) greater that account balance (${totalBalance})`
       );
 
     return { hasSufficientFunds };
   }
 
-  private async compareWithSavedState(
+  private compareWithSavedState(
     amount: number,
     savedAmount: Prisma.Decimal,
-    market_id: string,
+    market_id: string
   ) {
     if (amount !== +savedAmount)
       this.logger.error(
-        `Market ${market_id} have a reconstructed amount (${amount}) different from saved amount (${savedAmount})`,
+        `Market ${market_id} have a reconstructed amount (${amount}) different from saved amount (${savedAmount.toString()})`
       );
   }
 
@@ -224,7 +224,7 @@ export class PayoutsService implements OnApplicationBootstrap {
     market_id: string,
     lastMonth: Date,
     amount?: number,
-    transfer_id?: string,
+    transfer_id?: string
   ) {
     await this.marketsRepo.payouts.update(market_id, lastMonth, {
       amount,
@@ -237,7 +237,7 @@ export class PayoutsService implements OnApplicationBootstrap {
   private createTransfer(
     key: string,
     amount: number,
-    account: bank_account | Pix,
+    account: bank_account | Pix
   ) {
     const params: Asaas.CreateTransfer = {
       value: amount,

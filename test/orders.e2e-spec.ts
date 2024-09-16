@@ -80,7 +80,7 @@ test("Customer make a order", async () => {
   await marketUpdateStatus(
     order_id,
     OrderPublicAction.Complete,
-    confirmation_token,
+    confirmation_token
   );
   await customerCheckStatus(order_id, OrderStatus.Completing);
 
@@ -99,13 +99,13 @@ async function createOrderFn() {
   });
 
   expect(res.statusCode).toEqual(201);
-  return res.json();
+  return res.json<{ order_id: string; confirmation_token: string }>();
 }
 
 async function marketUpdateStatus(
   order_id: string,
   action: OrderPublicAction,
-  confirmation_token?: string,
+  confirmation_token?: string
 ) {
   const res = await app.inject({
     method: "PATCH",
@@ -151,7 +151,9 @@ async function marketCheckInvoice() {
     headers: authHeader(market_access_token),
   });
 
-  expect(res.json()).toMatchObject([{ amount: `${saveOrder.market_amount}` }]);
+  expect(res.json()).toMatchObject([
+    { amount: saveOrder.market_amount.toString() },
+  ]);
 }
 
 function authHeader(token: string) {

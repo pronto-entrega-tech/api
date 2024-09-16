@@ -3,14 +3,15 @@ import { EntityName } from "../constants/entities-names";
 import { AlreadyExistError } from "../errors/already-exist";
 import { NotFoundError } from "../errors/not-found";
 
-export const createNullEmailFilter = (fn: (withSame?: string[]) => any) => {
-  return <T = any>(email: string | null, res: T) => {
+export const createNullEmailFilter = (fn: (withSame?: string[]) => unknown) => {
+  return <T = unknown>(email: string | null, res: T) => {
     if (!email) throw fn();
     return { email, ...res };
   };
 };
 
-const captureStackTrace = (error: Error, fn: any) => {
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+const captureStackTrace = (error: Error, fn: Function) => {
   Error.captureStackTrace(error, fn);
   return error;
 };
@@ -19,21 +20,21 @@ export const prismaAlreadyExist = (prefix: EntityName) => {
   return prismaError("P2002", "", (withSame) =>
     captureStackTrace(
       new AlreadyExistError(prefix, withSame),
-      prismaAlreadyExist,
-    ),
+      prismaAlreadyExist
+    )
   );
 };
 
 export const prismaNotFound = (prefix: EntityName) => {
   return prismaError("P2025", "NotFoundError", () =>
-    captureStackTrace(new NotFoundError(prefix), prismaNotFound),
+    captureStackTrace(new NotFoundError(prefix), prismaNotFound)
   );
 };
 
 const prismaError = (
   errCode: string,
   errName: string,
-  fn: (withSame?: string[]) => any,
+  fn: (withSame?: string[]) => unknown
 ) => {
   return (err: Prisma.PrismaClientKnownRequestError): never => {
     if (err.code === errCode || (errName && err.name === errName))

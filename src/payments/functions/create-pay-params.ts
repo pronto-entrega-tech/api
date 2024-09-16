@@ -13,12 +13,12 @@ type PayCommonParams = {
   externalReference: string;
 };
 
-export async function createPayParams(
+export function createPayParams(
   dto: PayOrderDto & {
     customerPayerId: string;
     marketRecipientId: string;
     debitMarketRecipientId?: string;
-  },
+  }
 ) {
   {
     const commonParams: PayCommonParams = {
@@ -67,7 +67,7 @@ export async function createPayParams(
 
   function card(
     commonParams: PayCommonParams,
-    payData: CardData,
+    payData: CardData
   ): Asaas.CreatePayment {
     return {
       ...commonParams,
