@@ -41,7 +41,7 @@
     "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-fastify": "^10.4.1",
-    "@nestjs/platform-socket.io": "^ 10.4.1",
+    "@nestjs/platform-socket.io": "^10.4.1",
     "@nestjs/schedule": "^4.1.0",
     "@nestjs/swagger": "^7.4.0",
     "@nestjs/throttler": "^6.2.1",
