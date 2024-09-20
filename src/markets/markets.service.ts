@@ -18,6 +18,7 @@ import { CreateBankAccountDto, CreateMarketDto } from "./dto/create.dto";
 import { DeleteOpenFlipDto, CreateOpenFlipDto } from "./dto/open-flip.dto";
 import { UpdateMarketSubDto } from "./dto/update-sub.dto";
 import { UpdateBankAccountDto, UpdateMarketDto } from "./dto/update.dto";
+import { getThumbHash } from "~/common/functions/getThumbHash";
 
 @Injectable()
 export class MarketsService {
@@ -25,7 +26,7 @@ export class MarketsService {
     private readonly sessions: SessionsService,
     private readonly paymentAccounts: PaymentAccountsService,
     private readonly location: LocationService,
-    private readonly marketsRepo: MarketsRepository,
+    private readonly marketsRepo: MarketsRepository
   ) {}
 
   async create(email: string, dto: CreateMarketDto) {
@@ -106,9 +107,12 @@ export class MarketsService {
   }
 
   async savePicture(market_id: string, filePath: string) {
-    await sharp(filePath)
-      .webp()
-      .toFile(join(STATIC_PATH, `market/${market_id}.webp`));
+    const destination = join(STATIC_PATH, `market/${market_id}.webp`);
+
+    await sharp(filePath).webp().toFile(destination);
+
+    const imageThumbHash = await getThumbHash(destination);
+    await this.marketsRepo.updateThumbhash(market_id, imageThumbHash);
   }
 
   async createBankAccount(market_id: string, dto: CreateBankAccountDto) {

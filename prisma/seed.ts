@@ -97,7 +97,7 @@ async function main() {
         approved: true,
         type: "SUPERMARKET",
         name: "Jaré da Maré",
-        thumbhash: "F9gEBwQHyHeHd4iAfYR3uFeGh3",
+        thumbhash: "F9gEBwQHyHeHd4iAfYR3uFeGh3/nB4cA",
         address_street: "Rua Itaruma",
         address_number: "355",
         address_district: "Setor Santa Maria",
