@@ -32,6 +32,8 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import EventEmitter from "events";
 
 const bootstrap = async () => {
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({ ...httpsOpts, bodyLimit: 2 * MiB })
@@ -39,7 +41,7 @@ const bootstrap = async () => {
 
   app.enableCors({
     origin: isDev
-      ? [/localhost:\d+$/, `http://${localIp}:3001`]
+      ? [/localhost:\d+$/, `http://${lanIp}:3001`]
       : "https://prontoentrega.com.br",
     credentials: true,
   });
@@ -92,15 +94,34 @@ const bootstrap = async () => {
         prefix: bullBoardPath,
       })
       .catch?.(console.error);
+
+    const { createServer } = await import("node:http");
+    const { createProxyServer } = await import("httpxy");
+
+    const proxy = createProxyServer({});
+
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    const server = createServer(async (req, res) => {
+      try {
+        await proxy.web(req, res, {
+          target: { port, host: "localhost" },
+        });
+      } catch (error) {
+        console.error(error);
+        res.statusCode = 500;
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        res.end(`Lan proxy error: ${error}`);
+      }
+    });
+    server.listen(port, lanIp, () => {
+      console.log(`Proxy is listening on http://${lanIp}:${port}`);
+    });
   }
 
-  const port = process.env.PORT ?? 3000;
-  const address = isDev ? localIp : undefined;
-
   // Start
-  await app.listen(port, address ?? "localhost");
+  await app.listen(port, "localhost");
 
-  const appUrl = await app.getUrl();
+  const appUrl = (await app.getUrl()).replace("[::1]", "localhost");
   console.log(`Application is running on: ${appUrl}`);
   if (isDev) {
     console.log(`Docs is running on:        ${appUrl}${docsPath}`);
@@ -124,7 +145,7 @@ BigInt.prototype.toJSON = function () {
 
 const MiB = 2 ** 20;
 
-const localIp = networkInterfaces().en0?.find(
+const lanIp = networkInterfaces().en0?.find(
   (v) => v.family === "IPv4"
 )?.address;
 

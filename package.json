@@ -89,6 +89,7 @@
     "eslint": "^9.10.0",
     "eslint-config-prettier": "^9.0.0",
     "globals": "^15.9.0",
+    "httpxy": "^0.1.5",
     "prettier": "^3.0.3",
     "prisma": "^5.19.1",
     "ts-loader": "^9.5.1",

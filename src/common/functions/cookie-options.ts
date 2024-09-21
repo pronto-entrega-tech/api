@@ -1,11 +1,12 @@
 import { CookieSerializeOptions } from "@fastify/cookie";
+import { isDev } from "../constants/is-dev";
 
 const authCookieOpts = (expiresIn: Date) => {
   return {
     expires: expiresIn,
-    sameSite: true,
+    sameSite: "lax",
+    secure: !isDev,
     httpOnly: true,
-    secure: true,
     signed: true,
     path: "/auth",
   } as CookieSerializeOptions;
