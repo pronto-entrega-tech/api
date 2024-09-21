@@ -38,11 +38,9 @@ const bootstrap = async () => {
   );
 
   app.enableCors({
-    origin: [
-      /localhost:\d+$/,
-      `http://${localIp}:3000`,
-      "https://prontoentrega.com.br",
-    ],
+    origin: isDev
+      ? [/localhost:\d+$/, `http://${localIp}:3001`]
+      : "https://prontoentrega.com.br",
     credentials: true,
   });
   app.useGlobalInterceptors(new ReqResModifyInterceptor());
