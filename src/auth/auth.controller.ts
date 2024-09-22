@@ -72,7 +72,7 @@ export class AuthController {
 
   @ApiOperation({ summary: "Generate a new access_token and refresh_token" })
   @ApiQuery(useCookieQueryOpts)
-  @ApiQuery({ name: "refresh_token", required: false })
+  @ApiQuery({ name: "refreshToken", required: false })
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post("revalidate")
   async revalidate(
@@ -126,9 +126,10 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "Sign out, overwrite refresh_token cookie" })
+  @ApiQuery({ name: "refreshToken", required: false })
   @Post("sign-out")
   async signOut(
-    @Query("refresh_token") refreshToken: string | undefined,
+    @Query("refreshToken") refreshToken: string | undefined,
     @Body() { role }: RoleDto,
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) res: FastifyReply
