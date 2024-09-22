@@ -20,21 +20,21 @@ export const prismaAlreadyExist = (prefix: EntityName) => {
   return prismaError("P2002", "", (withSame) =>
     captureStackTrace(
       new AlreadyExistError(prefix, withSame),
-      prismaAlreadyExist
-    )
+      prismaAlreadyExist,
+    ),
   );
 };
 
 export const prismaNotFound = (prefix: EntityName) => {
   return prismaError("P2025", "NotFoundError", () =>
-    captureStackTrace(new NotFoundError(prefix), prismaNotFound)
+    captureStackTrace(new NotFoundError(prefix), prismaNotFound),
   );
 };
 
 const prismaError = (
   errCode: string,
   errName: string,
-  fn: (withSame?: string[]) => unknown
+  fn: (withSame?: string[]) => unknown,
 ) => {
   return (err: Prisma.PrismaClientKnownRequestError): never => {
     if (err.code === errCode || (errName && err.name === errName))

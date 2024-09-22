@@ -50,7 +50,7 @@ describe(orderPaymentPendingAction.name, () => {
         payment_id,
         action: OrderAction.Complete,
         payment_method: PaymentMethod.Card,
-      })
+      }),
     );
   });
 
@@ -77,7 +77,7 @@ describe(orderPaymentPendingAction.name, () => {
         action: OrderAction.QuasiConfirmPayment,
         payment_id: payment_id,
         extra: PaymentExample.pix,
-      })
+      }),
     );
   });
 });

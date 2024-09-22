@@ -22,7 +22,7 @@ const assert = (i: Input, o: Output) => async () => {
       createOtpHash: (otp) => Promise.resolve(otp),
       saveOtp: () => Promise.resolve({ otp_id: key }),
       sendMail: () => Promise.resolve(),
-    }
+    },
   );
 
   expect(res).toEqual(o);

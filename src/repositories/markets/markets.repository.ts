@@ -29,7 +29,7 @@ import { BrasilApi } from "~/common/brasil-api/brasil-api";
 const { sql } = Prisma;
 
 const filterNullEmail = createNullEmailFilter(
-  () => new NotFoundError("Market")
+  () => new NotFoundError("Market"),
 );
 
 const publicFields = Prisma.validator<Prisma.marketSelect>()({
@@ -88,14 +88,14 @@ const feedFields = pick(
   "max_time",
   "delivery_fee",
   "address_latitude",
-  "address_longitude"
+  "address_longitude",
 );
 const feedJoins = pick(publicJoins, "business_hours");
 const feedSelectSql = Prisma.raw(
   [
     ...Object.keys(feedFields),
     ...Object.keys(feedJoins).map((v) => `coalesce(${v},'[]'::json) as ${v}`),
-  ].join(", ")
+  ].join(", "),
 );
 
 export namespace MarketsRepository {
@@ -233,11 +233,11 @@ export class MarketsRepository {
 
   findMany(
     city: string,
-    filter: MarketFilter & { justIds?: false }
+    filter: MarketFilter & { justIds?: false },
   ): Promise<MarketFeed[]>;
   findMany(
     city: string,
-    filter: MarketFilter & { justIds: true }
+    filter: MarketFilter & { justIds: true },
   ): Promise<string[]>;
   async findMany(city: string, filter: MarketFilter & { justIds?: boolean }) {
     const { justIds, latLong, distance, query, order_by } = filter;
@@ -447,7 +447,7 @@ export class MarketsRepository {
 
   async updateRecipient(
     market_id: string,
-    recipient: { id: string; key: string }
+    recipient: { id: string; key: string },
   ) {
     return this.prisma.market
       .update({
@@ -519,12 +519,12 @@ export class MarketsRepository {
   private async createPartitions(
     prisma: Prisma.TransactionClient,
     id: string,
-    tables: (keyof typeof Prisma.ModelName)[]
+    tables: (keyof typeof Prisma.ModelName)[],
   ) {
     // run in sequence to avoid deadlock
     for (const table of tables) {
       await prisma.$executeRawUnsafe(
-        `CREATE TABLE IF NOT EXISTS "${table}_${id}" PARTITION OF ${table} FOR VALUES IN ('${id}')`
+        `CREATE TABLE IF NOT EXISTS "${table}_${id}" PARTITION OF ${table} FOR VALUES IN ('${id}')`,
       );
     }
   }
@@ -536,7 +536,7 @@ export class MarketsRepository {
   private partitionDropper(
     prisma: Prisma.TransactionClient,
     id: string,
-    tables: (keyof typeof Prisma.ModelName)[]
+    tables: (keyof typeof Prisma.ModelName)[],
   ) {
     return tables.map((table) => {
       return prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${table}_${id}"`);

@@ -25,7 +25,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
     private readonly mutex: MutexService,
     private readonly ordersRepo: OrdersRepository,
     @InjectQueue(QueueName.UpdateOrder)
-    private readonly updateOrderQueue: Queue<UpdateOrderDto>
+    private readonly updateOrderQueue: Queue<UpdateOrderDto>,
   ) {}
   private readonly logger = new Logger(OrderUpdaterService.name);
 
@@ -38,7 +38,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
   @Cron("0 * * * *")
   async checkPaymentProcessing() {
     const orders = await this.ordersRepo.findByStatus(
-      OrderStatus.PaymentProcessing
+      OrderStatus.PaymentProcessing,
     );
 
     for (const order of orders) {
@@ -52,7 +52,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
     for (const { order_id, market_id } of orders) {
       this.complete({ fullOrderId: { order_id, market_id } }).catch((err) =>
-        this.logger.error(err)
+        this.logger.error(err),
       );
     }
   }
@@ -63,7 +63,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
     for (const { order_id, market_id } of orders) {
       this.cancel({ fullOrderId: { order_id, market_id } }).catch((err) =>
-        this.logger.error(err)
+        this.logger.error(err),
       );
     }
   }
@@ -82,13 +82,13 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
         customer_debit: order.customer_debit ?? undefined,
         ...this.getValidPayment(order),
       },
-      { jobId: `${order.order_id}`, removeOnComplete: true }
+      { jobId: `${order.order_id}`, removeOnComplete: true },
     );
   }
 
   confirmPayment(dto: ConfirmOrderPaymentDto) {
     return this.mutex.exec(LockedAction.UpdateOrder, this.orderJobId(dto), () =>
-      this.nonAtomicConfirmPayment(dto)
+      this.nonAtomicConfirmPayment(dto),
     );
   }
 
@@ -104,7 +104,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
   complete(dto: ConfirmOrderPaymentDto) {
     return this.mutex.exec(LockedAction.UpdateOrder, this.orderJobId(dto), () =>
-      this.nonAtomicComplete(dto)
+      this.nonAtomicComplete(dto),
     );
   }
 
@@ -120,7 +120,7 @@ export class OrderUpdaterService implements OnApplicationBootstrap {
 
   cancel(dto: CancelOrderDto) {
     return this.mutex.exec(LockedAction.UpdateOrder, this.orderJobId(dto), () =>
-      this.nonAtomicCancel(dto)
+      this.nonAtomicCancel(dto),
     );
   }
 

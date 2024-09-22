@@ -26,7 +26,7 @@ export class MarketsService {
     private readonly sessions: SessionsService,
     private readonly paymentAccounts: PaymentAccountsService,
     private readonly location: LocationService,
-    private readonly marketsRepo: MarketsRepository
+    private readonly marketsRepo: MarketsRepository,
   ) {}
 
   async create(email: string, dto: CreateMarketDto) {

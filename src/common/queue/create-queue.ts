@@ -4,7 +4,7 @@ import { validateOrReject } from "class-validator";
 
 export const createQueueDefault = <DataType extends object, ResultType = void>(
   queueName: string,
-  dataSchema: ClassConstructor<DataType>
+  dataSchema: ClassConstructor<DataType>,
 ) => {
   const queue = new Queue<DataType, ResultType>(queueName);
 
@@ -24,7 +24,7 @@ export const createQueueDefault = <DataType extends object, ResultType = void>(
         await validateOrReject(job.data);
 
         return processor(job);
-      }
+      },
     ));
   };
 
@@ -42,7 +42,7 @@ export const createQueueNamed =
     ResultType = void,
   >(
     queueName: string,
-    dataSchema: DataSchema
+    dataSchema: DataSchema,
   ) => {
     type DataType = InstanceType<DataSchema[NameType]>;
 
@@ -63,12 +63,16 @@ export const createQueueNamed =
 
         return processor(job);
       },
-      { autorun: false, connection: {} }
+      { autorun: false, connection: {} },
     );
 
     const process = <Name extends NameType>(
       name: Name,
-      processor: Processor<InstanceType<DataSchema[Name]>, ResultType, NameType>
+      processor: Processor<
+        InstanceType<DataSchema[Name]>,
+        ResultType,
+        NameType
+      >,
     ) => {
       processors[name] = processor;
     };
@@ -77,7 +81,7 @@ export const createQueueNamed =
       add: <Name extends NameType>(
         name: Name,
         data: InstanceType<DataSchema[Name]>,
-        opts?: JobsOptions
+        opts?: JobsOptions,
       ) => queue.add(name, data, opts),
       getJob: queue.getJob.bind(queue),
       process,

@@ -30,7 +30,7 @@ export class AuthService {
     private readonly sessionsRepo: SessionsRepository,
     private readonly adminRepo: AdminRepository,
     private readonly customersRepo: CustomersRepository,
-    private readonly marketsRepo: MarketsRepository
+    private readonly marketsRepo: MarketsRepository,
   ) {}
   private readonly logger = new Logger(AuthService.name);
   private readonly OTP_SECRET =

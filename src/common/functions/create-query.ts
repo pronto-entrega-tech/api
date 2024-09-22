@@ -49,7 +49,7 @@ export const createQuery = (params: CreateQuery) => {
   function buildSelect() {
     const selects = Prisma.join(getParam("select"));
     const table = Prisma.raw(
-      baseParams?.table ?? params.table ?? fail("table must be defined")
+      baseParams?.table ?? params.table ?? fail("table must be defined"),
     );
 
     return Prisma.sql`SELECT ${selects} FROM ${table}`;

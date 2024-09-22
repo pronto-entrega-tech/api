@@ -6,7 +6,7 @@ import { QueueName } from "~/common/constants/queue-names";
 export const createProcessor = <T extends object>(
   name: QueueName,
   opts: { dataSchema: ClassConstructor<T> },
-  fn: (job: Job<T>) => unknown
+  fn: (job: Job<T>) => unknown,
 ) => {
   new Worker<T>(name, async (job) => {
     job.data = plainToInstance(opts.dataSchema, job.data);

@@ -22,7 +22,7 @@ export class RepositoryInjector extends BaseTraceInjector implements Injector {
       if (!provider.name.endsWith("Repository")) continue;
 
       const keys = this.metadataScanner.getAllFilteredMethodNames(
-        provider.metatype.prototype
+        provider.metatype.prototype,
       );
 
       for (const key of keys) {
@@ -37,14 +37,14 @@ export class RepositoryInjector extends BaseTraceInjector implements Injector {
             {
               repository: provider.name,
               method: provider.metatype.prototype[key].name,
-            }
+            },
           );
           this.reDecorate(provider.metatype.prototype[key], method);
 
           provider.metatype.prototype[key] = method;
           this.loggerService.log(
             `Mapped ${provider.name}.${key}`,
-            this.constructor.name
+            this.constructor.name,
           );
         }
       }

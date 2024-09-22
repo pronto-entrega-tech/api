@@ -23,7 +23,7 @@ export class PaymentAccountsService {
     @InjectQueue(QueueName.CreateCustomerPayer)
     private readonly createCustomerPayerQueue: Queue<CreateCustomerPayerDto>,
     @InjectQueue(QueueName.UpdateCustomerPayer)
-    private readonly updateCustomerPayerQueue: Queue<UpdateCustomerPayerDto>
+    private readonly updateCustomerPayerQueue: Queue<UpdateCustomerPayerDto>,
   ) {}
 
   initCreatePayer(market_id: string) {

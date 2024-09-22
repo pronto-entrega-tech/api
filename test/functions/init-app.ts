@@ -27,7 +27,7 @@ export const initAppAndListen = async (module: TestingModule) => {
 
 const createApp = async (module: TestingModule) => {
   const app = module.createNestApplication<NestFastifyApplication>(
-    new FastifyAdapter()
+    new FastifyAdapter(),
   );
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
   await app.register(fastifyCookie, {

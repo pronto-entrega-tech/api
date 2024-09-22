@@ -31,8 +31,8 @@ export function expectObject(obj: object) {
     const reducer = (errors: string[], err: ValidationError) =>
       errors.concat(
         Object.values(err.constraints ?? {}).map(
-          (msg) => `${msg}, but has ${typeof err.value}`
-        )
+          (msg) => `${msg}, but has ${typeof err.value}`,
+        ),
       );
 
     const reduceArr = (errors: string[], err: ValidationError) =>
@@ -49,7 +49,7 @@ export function expectObject(obj: object) {
 
     const received = JSON.stringify(obj, null, "  ").replace(/"/g, "");
     const error = new Error(
-      `Errors:\n  ${errors.join("\n  ")}\n\nReceived: ${received}`
+      `Errors:\n  ${errors.join("\n  ")}\n\nReceived: ${received}`,
     );
     Error.captureStackTrace(error, toBe);
     throw error;
@@ -59,7 +59,7 @@ export function expectObject(obj: object) {
     const instance = plainToInstance(cls, obj);
     if (isArray(instance)) {
       await validateOrReject(plainToInstance(Array, { array: instance })).catch(
-        handle
+        handle,
       );
     } else {
       await validateOrReject(instance).catch(handle);

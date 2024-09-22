@@ -3,7 +3,7 @@
  */
 const retry = async <T = void>(
   fn: (tryNumber: number) => Promise<T>,
-  maxNumberOfTries = 10
+  maxNumberOfTries = 10,
 ): Promise<T> => {
   return _try();
 

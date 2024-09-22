@@ -36,7 +36,7 @@ const bootstrap = async () => {
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({ ...httpsOpts, bodyLimit: 2 * MiB })
+    new FastifyAdapter({ ...httpsOpts, bodyLimit: 2 * MiB }),
   );
 
   app.enableCors({
@@ -85,7 +85,7 @@ const bootstrap = async () => {
     serverAdapter.setBasePath(bullBoardPath);
 
     const queues = Object.values(QueueName).map(
-      (name) => new BullAdapter(new BullQueue(name))
+      (name) => new BullAdapter(new BullQueue(name)),
     );
     createBullBoard({ queues, serverAdapter });
     app
@@ -146,7 +146,7 @@ BigInt.prototype.toJSON = function () {
 const MiB = 2 ** 20;
 
 const lanIp = networkInterfaces().en0?.find(
-  (v) => v.family === "IPv4"
+  (v) => v.family === "IPv4",
 )?.address;
 
 const prodHelmetOpts: FastifyHelmetOptions = {
@@ -190,7 +190,7 @@ export class ReqResModifyInterceptor implements NestInterceptor {
     });
     response.__proto__.once = response.raw.once.bind(response.raw);
     response.__proto__.removeListener = response.raw.removeListener.bind(
-      response.raw
+      response.raw,
     );
     response.__proto__.on = function (_, callback) {
       callback();

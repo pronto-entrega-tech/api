@@ -13,7 +13,7 @@ import {
 export class InvoicesStatusService {
   constructor(
     private readonly mutex: MutexService,
-    private readonly marketsRepo: MarketsRepository
+    private readonly marketsRepo: MarketsRepository,
   ) {}
 
   private readonly machine = {
@@ -30,19 +30,19 @@ export class InvoicesStatusService {
   update(
     fullId: FullInvoiceId,
     action: Action,
-    fn: (nextStatus: Status) => unknown
+    fn: (nextStatus: Status) => unknown,
   ) {
     return this.mutex.exec(
       LockedAction.UpdateInvoiceStatus,
       `${fullId.invoice_id}`,
-      () => this._update(fullId, action, fn)
+      () => this._update(fullId, action, fn),
     );
   }
 
   private async _update(
     fullId: FullInvoiceId,
     action: Action,
-    fn: (nextStatus: Status) => unknown
+    fn: (nextStatus: Status) => unknown,
   ) {
     const status = await this.marketsRepo.invoices.status(fullId);
 

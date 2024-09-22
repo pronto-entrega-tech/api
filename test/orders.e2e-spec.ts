@@ -80,7 +80,7 @@ test("Customer make a order", async () => {
   await marketUpdateStatus(
     order_id,
     OrderPublicAction.Complete,
-    confirmation_token
+    confirmation_token,
   );
   await customerCheckStatus(order_id, OrderStatus.Completing);
 
@@ -105,7 +105,7 @@ async function createOrderFn() {
 async function marketUpdateStatus(
   order_id: string,
   action: OrderPublicAction,
-  confirmation_token?: string
+  confirmation_token?: string,
 ) {
   const res = await app.inject({
     method: "PATCH",

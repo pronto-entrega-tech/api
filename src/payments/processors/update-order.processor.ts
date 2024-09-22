@@ -20,7 +20,7 @@ export class UpdateOrderConsumer {
     private readonly payOrder: PayOrderService,
     private readonly confirmOrderPayment: ConfirmOrderPaymentService,
     private readonly completeOrderService: CompleteOrderService,
-    private readonly cancelOrder: CancelOrderService
+    private readonly cancelOrder: CancelOrderService,
   ) {}
 
   @Process(updateOrder.Pay)

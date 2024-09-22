@@ -19,7 +19,7 @@ export const UpdateOrderQueue = createQueueNamed<UpdateOrder>()(
     [updateOrder.ConfirmPayment]: ConfirmOrderPaymentDto,
     [updateOrder.Complete]: CompleteOrderDto,
     [updateOrder.Cancel]: CancelOrderDto,
-  }
+  },
 );
 
 export async function queueOrderPayment(order: orders) {
@@ -36,7 +36,7 @@ export async function queueOrderPayment(order: orders) {
       customer_debit: order.customer_debit ?? undefined,
       ...getValidPayment(),
     },
-    { jobId: `${order.order_id}`, removeOnComplete: true }
+    { jobId: `${order.order_id}`, removeOnComplete: true },
   );
 
   function getValidPayment() {

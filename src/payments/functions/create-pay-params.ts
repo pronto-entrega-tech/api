@@ -18,7 +18,7 @@ export function createPayParams(
     customerPayerId: string;
     marketRecipientId: string;
     debitMarketRecipientId?: string;
-  }
+  },
 ) {
   {
     const commonParams: PayCommonParams = {
@@ -67,7 +67,7 @@ export function createPayParams(
 
   function card(
     commonParams: PayCommonParams,
-    payData: CardData
+    payData: CardData,
   ): Asaas.CreatePayment {
     return {
       ...commonParams,

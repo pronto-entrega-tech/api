@@ -48,7 +48,7 @@ export class ItemsController {
   feedByMarket(
     @Param("city_slug") city: string,
     @Param("market_id") market_id: string,
-    @Query() params: ItemFilter
+    @Query() params: ItemFilter,
   ) {
     return this.itemsService.feed(city, { ...params, market_id });
   }
@@ -114,7 +114,7 @@ export class ItemsPrivateController {
   update(
     @Req() { user }: AuthReq,
     @Param() params: FullItemId,
-    @Body() dto: UpdateItemDto
+    @Body() dto: UpdateItemDto,
   ) {
     return this.itemsService.update(getMarketOrSubId(user), params, dto);
   }
@@ -124,7 +124,7 @@ export class ItemsPrivateController {
   updateKit(
     @Req() { user }: AuthReq,
     @Param() params: FullItemId,
-    @Body() dto: UpdateKitDto
+    @Body() dto: UpdateKitDto,
   ) {
     return this.itemsService.updateKit(getMarketOrSubId(user), params, dto);
   }

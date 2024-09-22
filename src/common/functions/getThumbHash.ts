@@ -15,7 +15,7 @@ export async function getThumbHash(path: string) {
   const binaryThumbHash = (await thumbhash).rgbaToThumbHash(
     info.width,
     info.height,
-    data
+    data,
   );
   return Buffer.from(binaryThumbHash).toString("base64url");
 }

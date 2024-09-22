@@ -7,5 +7,5 @@ export const pick = <T extends object, K extends keyof T>(
       if (key in obj) result[key] = obj[key];
       return result;
     },
-    {} as Pick<T, K>
+    {} as Pick<T, K>,
   );
