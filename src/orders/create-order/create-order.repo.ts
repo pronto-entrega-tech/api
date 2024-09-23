@@ -18,6 +18,24 @@ export namespace CreateOrderRepo {
         ...Prisma.validator<Prisma.ordersCreateManyInput>()(data),
         items: { create: orderItems },
       },
+      include: {
+        customer: { select: { name: true } },
+        market: { select: { thumbhash: true, name: true } },
+        items: {
+          select: {
+            is_kit: true,
+            quantity: true,
+            price: true,
+            product: {
+              select: { code: true, name: true, brand: true, quantity: true },
+            },
+            details: {
+              select: { quantity: true, product: { select: { name: true } } },
+            },
+            missing: { select: { quantity: true } },
+          },
+        },
+      },
     });
   }
 

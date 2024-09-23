@@ -3,12 +3,17 @@ import { queueOrderPayment } from "../common/init-order-payment";
 import { validateInAppPayment } from "../common/validate-in-app-payment";
 import { createOrderDto } from "../functions/create-order-dto";
 import { OneCustomerDebit } from "../functions/customer-debit";
+import { OrderUpdateGateway } from "../order-update.gateway";
 import { CreateOrderDto as ClientData } from "./create-order.dto";
 import { CreateOrderRepo as DB } from "./create-order.repo";
 
-export async function createOrder(client: ClientData) {
+export async function createOrder(
+  client: ClientData,
+  events: OrderUpdateGateway,
+) {
   {
     const order = await saveOrderOnDB();
+    events.orderCreate(order);
 
     if (client.paid_in_app) await queueOrderPayment(order);
 

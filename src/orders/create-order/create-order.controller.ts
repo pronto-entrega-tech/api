@@ -7,6 +7,7 @@ import { Role } from "~/auth/constants/roles";
 import { Roles } from "~/auth/guards/roles.guard";
 import { CreateOrderBody } from "./create-order.dto";
 import { createOrder } from "./create-order";
+import { OrderUpdateGateway } from "../order-update.gateway";
 
 @ApiBearerAuth(CUSTOMER_ACCESS_TOKEN)
 @UseGuards(AccessAuthGuard)
@@ -14,12 +15,13 @@ import { createOrder } from "./create-order";
 @ApiTags("Orders")
 @Controller("orders")
 export default class CreateOrderController {
+  constructor(private readonly orderUpdateGateway: OrderUpdateGateway) {}
   @ApiOperation({ summary: "Create a order" })
   @Post()
   create(
     @Req() { user: { sub: customer_id }, ip }: AuthReq,
     @Body() body: CreateOrderBody,
   ) {
-    return createOrder({ ...body, customer_id, ip });
+    return createOrder({ ...body, customer_id, ip }, this.orderUpdateGateway);
   }
 }

@@ -53,6 +53,8 @@ export class OrdersGateway extends PassportGateway {
   async findMany(@ConnectedSocket() socket: AuthSocket) {
     const { market_id } = getMarketOrSubId(socket.user);
 
+    await socket.join(wsRoom("market", market_id));
+
     const orders = await this.orders.findMany({ market_id });
 
     socket.emit(WsEvent.Orders, ...orders);
