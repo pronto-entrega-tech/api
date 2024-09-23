@@ -3,6 +3,7 @@ import { fail } from "assert";
 import { DiscountType } from "~/items/constants/discount-type";
 import { ItemsRepository } from "~/repositories/items/items.repository";
 import { OrderItemDto } from "../create-order/create-order.dto";
+import { match, P } from "ts-pattern";
 
 type ItemWithPrice = Pick<
   ItemsRepository.ItemById,
@@ -18,7 +19,7 @@ export function getItemTotalWithOff(item: ItemWithPrice, quantity: number) {
   {
     return item.discount_type === DiscountType.OneFree
       ? getWithOneOrMoreFree()
-      : getWithDiscountPercentOrValue();
+      : getWithDiscountPercentOrValue(item.discount_type);
   }
 
   function getWithOneOrMoreFree() {
@@ -27,49 +28,60 @@ export function getItemTotalWithOff(item: ItemWithPrice, quantity: number) {
     if (quantity < minQuantity) return item.price.times(quantity);
 
     const freeNumber = item.discount_value_2 ?? 1;
-    const freeQuantity = max(freeNumber * Math.trunc(quantity / minQuantity));
+    const freeQuantity = Math.min(
+      freeNumber * Math.trunc(quantity / minQuantity),
+      item.discount_max_per_client ?? Infinity,
+    );
 
     return item.price.times(quantity - freeQuantity);
   }
 
-  function getWithDiscountPercentOrValue() {
+  function getWithDiscountPercentOrValue(
+    discount_type:
+      | "DISCOUNT_VALUE"
+      | "DISCOUNT_PERCENT"
+      | "DISCOUNT_PERCENT_ON_SECOND"
+      | null,
+  ) {
     if (item.discount_type === DiscountType.DiscountPercentOnSecond) {
       const minQuantity = item.discount_value_2 ?? 2;
 
       if (quantity < minQuantity) return item.price.times(quantity);
     }
 
-    const price = (() => {
-      if (
-        item.discount_type === DiscountType.DiscountPercent ||
-        item.discount_type === DiscountType.DiscountPercentOnSecond
-      ) {
+    const price = match(discount_type)
+      .with(P.union("DISCOUNT_PERCENT", "DISCOUNT_PERCENT_ON_SECOND"), () => {
         const one = new Prisma.Decimal(1);
         const off = item.discount_value_1 ?? missingValue1Fail();
 
         const newPricePercent = one.minus(off.dividedBy(100));
 
         return item.price.times(newPricePercent).toDP(2);
-      } else if (item.discount_type === DiscountType.DiscountValue) {
-        return item.discount_value_1 ?? missingValue1Fail();
-      } else {
-        return item.price;
-      }
-    })();
+      })
+      .with(
+        "DISCOUNT_VALUE",
+        () => item.discount_value_1 ?? missingValue1Fail(),
+      )
+      .with(null, () => item.price)
+      .exhaustive();
 
-    if (!item.discount_max_per_client) return price.times(quantity);
+    const _quantityWithOff = match(discount_type)
+      .with(
+        "DISCOUNT_PERCENT_ON_SECOND",
+        () => quantity - ((item.discount_value_2 ?? 2) - 1),
+      )
+      .with(P.union("DISCOUNT_PERCENT", "DISCOUNT_VALUE", null), () => quantity)
+      .exhaustive();
 
-    const quantityWithOff = max(quantity);
+    const quantityWithOff = Math.min(
+      _quantityWithOff,
+      item.discount_max_per_client ?? Infinity,
+    );
 
     const totalWithoutOff = item.price.times(quantity - quantityWithOff);
     const totalWithOff = price.times(quantityWithOff);
 
     return totalWithoutOff.plus(totalWithOff);
-  }
-
-  function max(v: number) {
-    const maxQuantity = item.discount_max_per_client ?? Infinity;
-    return v < maxQuantity ? v : maxQuantity;
   }
 
   function missingValue1Fail() {

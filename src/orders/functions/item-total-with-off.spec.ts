@@ -30,6 +30,7 @@ describe(getItemTotalWithOff.name, () => {
     assert({
       result: 100,
     }));
+
   it("with DiscountPercent", () =>
     assert({
       discount_type: DiscountType.DiscountPercent,
@@ -43,11 +44,12 @@ describe(getItemTotalWithOff.name, () => {
       discount_max_per_client: 5,
       result: 95,
     }));
+
   it("with DiscountPercentOnSecond, sufficient minimum", () =>
     assert({
       discount_type: DiscountType.DiscountPercentOnSecond,
       discount_value_1: new Prisma.Decimal(10),
-      result: 90,
+      result: 91,
     }));
   it("with DiscountPercentOnSecond, insufficient minimum", () =>
     assert({
@@ -63,6 +65,7 @@ describe(getItemTotalWithOff.name, () => {
       discount_max_per_client: 5,
       result: 95,
     }));
+
   it("with DiscountValue", () =>
     assert({
       discount_type: DiscountType.DiscountValue,
@@ -76,6 +79,7 @@ describe(getItemTotalWithOff.name, () => {
       discount_max_per_client: 5,
       result: 75,
     }));
+
   it("with OneFree, sufficient minimum", () =>
     assert({
       discount_type: DiscountType.OneFree,
